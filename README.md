@@ -1,4 +1,4 @@
-# Proposal
+# Visualization Proposal
 ###### Jesse Emmelot <br> 11963522
 
 ### Summary
