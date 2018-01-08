@@ -39,7 +39,7 @@ http://projects.knmi.nl/klimatologie/daggegevens/selectie.cgi
 
 ### Similar visualizations
 - https://www.comparemysolar.nl/calculator-zonnepanelen/ <br><br>
-This website has similar attributes to my idea, with an interactive map and drop down lists to specify the input values. The orientation and roof area are specified by clicking selecting the roof boundary on the map itself, whereas I intent to also get these values from an input text box or drop down options list. The result on that website is presented as a list of possible solar panel brands, along with their output and gains with the previously given inputs. This is useful, though I might have the types of solar panels in a drop down list of options in order to keep the results more concise. 
+This website has similar attributes to my idea, with an interactive map and drop down lists to specify the input values. The orientation and roof area are specified by selecting the roof boundary on the map itself, whereas I intent to also get these values from an input text box or drop down options list. The result on that website is presented as a list of possible solar panel brands, along with their output and gains with the previously given inputs. This is useful, though I might have the types of solar panels in a drop down list of options in order to keep the results more concise. 
 
 - https://www.zonnepanelen.net/terugverdientijd-zonnepanelen-berekenen/ <br><br>
 This website has a clear combination of text boxes and drop down lists, as well as a concise display of results. I intend to use a similar setup to get all the custom input values, since it is an easily understandable but effective way for users to specify their inputs. 
