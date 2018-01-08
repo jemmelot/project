@@ -35,7 +35,6 @@ http://projects.knmi.nl/klimatologie/daggegevens/selectie.cgi
 
 ### External components
 - d3-tip
-- jQuery
 - bootstrap
 
 ### Similar visualizations
