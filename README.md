@@ -7,7 +7,10 @@ This visualization will be made to inform people who are interested in personal 
 ### Problem statement
 With climate being an important reoccurring topic of news and discussion, it is often stated that the individual can contribute in a positive way. One of the ways is personal solar energy, and although solar panels on regular houses are a common sight, it may not be clear to everyone what the benefits for them could be. This project targets every home owner with interest in personal solar power.
 
+### Solution
 This visualization shows the potential benefits of personal solar energy.
+
+![](doc/solar_power_visualization_sketch.png)
 
 ### Main features
 - interactive (click/drag/zoom/highlight) colored map *(MVP)*
