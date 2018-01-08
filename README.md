@@ -10,10 +10,10 @@ With climate being an important reoccurring topic of news and discussion, it is 
 This visualization shows the potential benefits of personal solar energy.
 
 ### Main features
-- interactive (click/drag/zoom/highlight) colored map (MVP)
+- interactive (click/drag/zoom/highlight) colored map *(MVP)*
 - buttons to switch between displayable graphs
-- graphs are interactive (clicking on different line displays data for different weather station) (MVP)
-- textboxes or drop down menus to input data for calculation (MVP)
+- graphs are interactive (clicking on different line displays data for different weather station) *(MVP)*
+- textboxes or drop down menus to input data for calculation *(MVP)*
 - results that get automatically updated when input values are changed
 
 ### Data sources
