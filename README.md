@@ -16,12 +16,12 @@ This visualization shows the potential benefits of personal solar energy.
 - textboxes or drop down menus to input data for calculation (MVP)
 
 ### Data sources
-###### KNMI
+##### KNMI
 http://projects.knmi.nl/klimatologie/daggegevens/selectie.cgi
 - temperature
 - radiation
 
-User Specific Inputs:
+##### User Specific Inputs
 - location (closest weather station)
 - orientation
 - roof tilt angle
@@ -29,7 +29,7 @@ User Specific Inputs:
 - panel type (efficiency)
 - energy usage
 
-Standard inputs:
+##### Standard inputs
 - inverter efficiency
 
 ### External components
