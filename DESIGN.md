@@ -14,6 +14,9 @@ All KNMI data is in .txt format and can be converted to JSON by running a selfma
 
 - https://woonbewust.nl/blog/soorten-zonnepanelen <br> Also four types of solar panel, including efficiency percentage as well as pros and cons. These pros and cons could also be in a tooltip that gets displayed when a dropdown menu option is hovered over.
 
+### Compenent overview
+
+
 ### Components description
 The images above contain general descriptions of how they function. This paragraph will add remaining details.
 - 
