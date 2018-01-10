@@ -19,7 +19,7 @@ This visualization shows the potential benefits of personal solar energy. More i
 - switches to switch between tooltip data at the crosshairs
 - textboxes or drop down menus to input data for calculation *(MVP)*
 - radar plot to show how well a house is suited for solar energy *(MVP)*
-- results that get automatically updated when input values are changed
+- results that get automatically updated when input values are changed *(MVP)*
 
 ### Data sources
 ###### KNMI
