@@ -14,6 +14,9 @@ All KNMI data is in .txt format and can be converted to JSON by running a selfma
 
 - https://woonbewust.nl/blog/soorten-zonnepanelen <br> Also four types of solar panel, including efficiency percentage as well as pros and cons. These pros and cons could also be in a tooltip that gets displayed when a dropdown menu option is hovered over.
 
+###### User data
+All user specific variables will have a selection menu of several value choices, for quicker usability and more concise plotting.
+
 ### Compenent overview
 ###### Country map
 ![](doc/advanced_sketch_map.png)
@@ -28,6 +31,12 @@ All KNMI data is in .txt format and can be converted to JSON by running a selfma
 ![](doc/advanced_sketch_results.png)
 
 ### Components description
+###### Overall data structure
+Since most components of this visualisation are linked together, changing a value in one place may usually mean other values and visualization elements have to be updated. These updates can be made using an update function, which takes new data as input values to apply to other elements. Data is processed in the following ways:
+- KNMI data: JSON format, each category has its own key-value pairs which can be called using a return-function with the key name as specified place to return from (for example "return d.temperature")
+- Solar panel data: information stored as strings linked to a variable, processed by calling variable name
+- User data: inputs in the dropdown menus can be used as input values for calculation functions.
+
 The images above contain general descriptions of how they function. This paragraph will add remaining details.
 - ###### Country map
 The dots representing the locations of the weather stations can be made by appending circles at the coordinates on the map, which are included in the KNMI datasets.
