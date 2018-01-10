@@ -29,11 +29,14 @@ All KNMI data is in .txt format and can be converted to JSON by running a selfma
 
 ### Components description
 The images above contain general descriptions of how they function. This paragraph will add remaining details.
-- ###### Country map <br>The dots representing the locations of the weather stations can be made by appending circles at the coordinates on the map, which are included in the KNMI datasets.
+- ###### Country map
+The dots representing the locations of the weather stations can be made by appending circles at the coordinates on the map, which are included in the KNMI datasets.
 
-- ###### Chart containing lines and bars <br> To switch between showing temperature/radiation and energy/profit potential next to the crosshairs, an simple switch element may be added to the charts.
+- ###### Chart containing lines and bars
+To switch between showing temperature/radiation and energy/profit potential next to the crosshairs, an simple switch element may be added to the charts.
 
-- ###### Radar plot <br> Plotting the colored lines on the radarplot can be done by connecting the five radial points of data together. 
+- ###### Radar plot
+Plotting the colored lines on the radarplot can be done by connecting the five radial points of data together. 
 
 ### D3 plugins
 ###### d3-tip
