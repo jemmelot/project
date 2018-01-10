@@ -10,13 +10,15 @@ With climate being an important reoccurring topic of news and discussion, it is 
 ### Solution
 This visualization shows the potential benefits of personal solar energy.
 
-![](doc/solar_power_visualization_sketch.png)
+![](doc/advanced_sketch.png)
 
 ### Main features
-- interactive (click/drag/zoom/highlight) colored map *(MVP)*
-- buttons to switch between displayable graphs
-- graphs are interactive (clicking on different line displays data for different weather station) *(MVP)*
+- country map containing all weather stations, each clickable to update location *(MVP)*
+- buttons to switch between displayable graphs *(MVP)*
+- crosshairs along lines/bars on the graphs to show relevant data
+- switches to switch between tooltip data at the crosshairs
 - textboxes or drop down menus to input data for calculation *(MVP)*
+- radar plot to show how well a house is suited for solar energy *(MVP)*
 - results that get automatically updated when input values are changed
 
 ### Data sources
@@ -38,6 +40,8 @@ http://projects.knmi.nl/klimatologie/daggegevens/selectie.cgi
 
 ### External components
 - d3-tip
+- datamaps
+- d3.slider
 - bootstrap
 
 ### Similar visualizations
