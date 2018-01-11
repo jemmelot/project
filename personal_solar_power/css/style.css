@@ -1,0 +1,11 @@
+/* Jesse Emmelot, 11963522 */
+
+.button_width{
+	width: 100px;
+}
+
+.buttons {
+	position: absolute;
+	left: 490px;
+	top: 30px;
+}

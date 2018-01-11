@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+	<!-- Jesse Emmelot, 11963522 -->
+
+	<head>
+		<meta charset="UTF-8">
+		<title> Personal Solar Power </title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<style>
+			@import url('css/style.css');
+		</style>
+	</head>
+	
+	<body>
+		<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+		<script src="http://d3js.org/topojson.v1.min.js"></script>
+		<script src="https://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+				
+		<div class="buttons">
+		<p>Voer gegevens in</p>
+		<div class="btn-group">
+			<button type="button" class="btn btn-default button_width">Oriëntatie</button>
+			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
+			<ul class="dropdown-menu">
+				<li><a href="#" onClick="orientation('oost')">Oost</a></li>
+				<li><a href="#" onClick="orientation('zuid_oost')">Zuid-Oost</a></li>
+				<li><a href="#" onClick="orientation('zuid')">Zuid</a></li>
+				<li><a href="#" onClick="orientation('zuid_west')">Zuid-West</a></li>
+				<li><a href="#" onClick="orientation('west')">West</a></li>				
+			</ul>
+		</div>
+		
+		<p></p>
+		
+		<div class="btn-group">
+			<button type="button" class="btn btn-default button_width">Dakhoek</button>
+			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
+			<ul class="dropdown-menu">
+				<li><a href="#" onClick="angle(0)">0 graden</a></li>
+				<li><a href="#" OnClick="angle(15)">15 graden</a></li>
+				<li><a href="#" onClick="angle(30)">30 graden</a></li>
+				<li><a href="#" onClick="angle(45)">45 graden</a></li>
+				<li><a href="#" onClick="angle(60)">60 graden</a></li>
+				<li><a href="#" onClick="angle(75)">75 graden</a></li>
+				<li><a href="#" onClick="angle(90)">90 graden</a></li>	
+			</ul>
+		</div>
+		
+		<p></p>
+		
+		<div class="btn-group">
+			<button type="button" class="btn btn-default button_width">Oppervlak</button>
+			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
+			<ul class="dropdown-menu">
+				<li><a href="#" onClick="surface(5)">5 m2</a></li>
+				<li><a href="#" OnClick="surface(10)">10 m2</a></li>
+				<li><a href="#" onClick="surface(15)">15 m2</a></li>
+				<li><a href="#" onClick="surface(20)">20 m2</a></li>
+				<li><a href="#" onClick="surface(25)">25 m2</a></li>				
+			</ul>
+		</div>
+		
+		<p></p>
+		
+		<div class="btn-group">
+			<button type="button" class="btn btn-default button_width">Type paneel</button>
+			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
+			<ul class="dropdown-menu">
+				<li><a href="#" onClick="panel('Mono-kristallijn')">Mono-kristallijn</a></li>
+				<li><a href="#" onClick="panel('Polykristallijn')">Polykristallijn</a></li>
+				<li><a href="#" onClick="panel('Amorf/Dunne lijn')">Amorf/Dunne lijn</a></li>
+				<li><a href="#" onClick="panel('CIGS')">CIGS</a></li>
+			</ul>
+		</div>
+
+		<p></p>
+		
+		<div class="btn-group">
+			<button type="button" class="btn btn-default button_width">Verbruik</button>
+			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
+			<ul class="dropdown-menu">
+				<li><a href="#" onClick="usage(1000)">1000 kWh</a></li>
+				<li><a href="#" onClick="usage(2000)">2000 kWh</a></li>
+				<li><a href="#" onClick="usage(3000)">3000 kWh</a></li>
+				<li><a href="#" onClick="usage(4000)">4000 kWh</a></li>
+				<li><a href="#" onClick="usage(5000)">5000 kWh</a></li>	
+			</ul>
+		</div>
+			<p><br>	This prototype allows selecting options from the dropdown menus <br>
+					which are then logged on the console. Once all calculation formulas <br> 
+					are implemented	these user selected options will be used as input values. <br>
+					Also in this prototype are the plotted locations of all weather stations. <br>
+					These are currently not interactive, but ultimately will get highlighted <br>
+					on hover, show a tooltip and be clickable. This will then change the location <br>
+					in the dropdown menu and update the weather data, there by all visualizations <br>
+					and resulting numbers. Some weather stations are missing data (see the json <br>
+					logged on the console) and will therefore not be suitable for some calculations. <br>
+					<br> Jesse Emmelot, 11963522
+			</p>
+		</div>
+				
+		<script src="https://d3js.org/d3-queue.v3.min.js"></script>		
+		<script src="javascript/main.js"></script>
+	</body>
+</html>
