@@ -20,7 +20,6 @@ This visualization shows the potential benefits of personal solar energy. More i
 - textboxes or drop down menus to input data for calculation *(MVP)*
 - radar plot to show how well a house is suited for solar energy *(MVP)*
 - two switchable radar plots to compare changes in house features
-- results that get automatically updated when input values are changed *(MVP)*
 - radial progress bars that show the overall score of a house (bases on the average of its features scores) *(MVP)*
 
 ### Data sources
