@@ -10,7 +10,7 @@ With climate being an important reoccurring topic of news and discussion, it is 
 ### Solution
 This visualization shows the potential benefits of personal solar energy. More in depth images are in the doc folder, as well as the Design Document.
 
-![](doc/advanced_sketch.png)
+![](doc/maart_hoogeveen.png)
 
 ### Main features
 - country map containing all weather stations, each clickable to update location *(MVP)*
@@ -19,7 +19,8 @@ This visualization shows the potential benefits of personal solar energy. More i
 - switches to switch between tooltip data at the crosshairs
 - textboxes or drop down menus to input data for calculation *(MVP)*
 - radar plot to show how well a house is suited for solar energy *(MVP)*
-- results that get automatically updated when input values are changed *(MVP)*
+- two switchable radar plots to compare changes in house features
+- radial progress bars that show the overall score of a house (bases on the average of its features scores) *(MVP)*
 
 ### Data sources
 ###### KNMI
