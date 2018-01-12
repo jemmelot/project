@@ -10,7 +10,7 @@ With climate being an important reoccurring topic of news and discussion, it is 
 ### Solution
 This visualization shows the potential benefits of personal solar energy. More in depth images are in the doc folder, as well as the Design Document.
 
-![](doc/advanced_sketch.png)
+![](doc/maart_hogeveen.png)
 
 ### Main features
 - country map containing all weather stations, each clickable to update location *(MVP)*
