@@ -14,6 +14,12 @@
 */
 
 // log user input
+function locations(clicked)
+{
+    console.log(clicked);
+}
+
+// log user input
 function orientation(clicked)
 {
     console.log(clicked);
