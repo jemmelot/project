@@ -20,8 +20,8 @@ with open(locations, 'rb') as infile:
 		data = {}
 		data['name'] = row[3]
 		data['id'] = row[0]
-		data['lon'] = row[1]
-		data['lat'] = row[2]
+		data['lon'] = float(row[1])
+		data['lat'] = float(row[2])
 		data['dates'] = {}
 		all_data.append(data)
 

@@ -96,7 +96,7 @@ function ready(error, data, nld) {
 		
 	// make an array with weather station coordinates
 	for (var i = 0; i < data.length; i++) {
-		dot = [data[i].lon, data[i].lat];
+		dot = [data[i].lon, data[i].lat, data[i].name];
 		dots.push(dot)		
 	}
 			
@@ -107,5 +107,15 @@ function ready(error, data, nld) {
 		.attr("cx", function (d) { return projection(d)[0]; })
 		.attr("cy", function (d) { return projection(d)[1]; })
 		.attr("r", "8px")
-		.attr("fill", "red")	
+		.attr("fill", "red")
+		.on("click", function (d) { 		
+			console.log(d[2])
+			
+			d3.selectAll("circle")
+				.style("fill","red")
+				.attr("r", 8);
+			d3.select(this)
+				.style("fill", "#FFB6C1")
+				.attr("r", 8);
+		});
 };
