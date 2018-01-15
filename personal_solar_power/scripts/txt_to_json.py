@@ -30,14 +30,14 @@ with open(radiation_txt, 'rb') as infile:
 	for row in reader:
 		for line in all_data:
 			if line['id'] == row[0]:
-				line['dates'][row[1]] = {'radiation': row[2]}
+				line['dates'][row[1]] = {'radiation': int(row[2])}
 
 with open(temperature_txt, 'rb') as infile:
 	reader = csv.reader(infile)
 	for row in reader:
 		for line in all_data:
 			if line['id'] == row[0]:
-				line['dates'][row[1]]['temperature'] = row[2]
+				line['dates'][row[1]]['temperature'] = int(row[2])
 				
 with open(combined_json, 'w') as outfile:
 	json.dump(all_data, outfile)

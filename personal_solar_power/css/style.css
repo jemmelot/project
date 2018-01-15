@@ -15,3 +15,9 @@
 	bottom: 10px;
 	right: 10px;
 }
+
+.scrollable {
+    height: auto;
+    max-height: 300px;
+    overflow-x: hidden;
+}

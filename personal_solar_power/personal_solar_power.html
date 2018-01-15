@@ -20,26 +20,24 @@
 				
 		<div class="buttons">
 		<p>Voer gegevens in</p>
-		<div class="btn-group">
+		<div class="btn-group" id="location">
 			<button type="button" class="btn btn-default button_width">Locatie</button>
 			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
-			<ul class="dropdown-menu">
-				<li><a href="#" onClick="locations('Ijmond')">Ijmond</a></li>
-				<li><a href="#" onClick="locations('etc.')">etc.</a></li>								
+			<ul class="dropdown-menu scrollable">												
 			</ul>
 		</div>
 		
 		<p></p>
 		
-		<div class="btn-group">
+		<div class="btn-group" id="orientation">
 			<button type="button" class="btn btn-default button_width">Oriëntatie</button>
 			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
 			<ul class="dropdown-menu">
-				<li><a href="#" onClick="orientation('oost')">Oost</a></li>
-				<li><a href="#" onClick="orientation('zuid_oost')">Zuid-Oost</a></li>
-				<li><a href="#" onClick="orientation('zuid')">Zuid</a></li>
-				<li><a href="#" onClick="orientation('zuid_west')">Zuid-West</a></li>
-				<li><a href="#" onClick="orientation('west')">West</a></li>				
+				<li><a href="#" class="orientation_a" data-orientation="oost_west">Oost</a></li>
+				<li><a href="#" class="orientation_a" data-orientation="zuid_oost_west">Zuid-Oost</a></li>
+				<li><a href="#" class="orientation_a" data-orientation="zuid">Zuid</a></li>
+				<li><a href="#" class="orientation_a" data-orientation="zuid_oost_west">Zuid-West</a></li>
+				<li><a href="#" class="orientation_a" data-orientation="oost_west">West</a></li>				
 			</ul>
 		</div>
 		
@@ -49,13 +47,13 @@
 			<button type="button" class="btn btn-default button_width">Dakhoek</button>
 			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
 			<ul class="dropdown-menu">
-				<li><a href="#" onClick="angle(0)">0 graden</a></li>
-				<li><a href="#" OnClick="angle(15)">15 graden</a></li>
-				<li><a href="#" onClick="angle(30)">30 graden</a></li>
-				<li><a href="#" onClick="angle(45)">45 graden</a></li>
-				<li><a href="#" onClick="angle(60)">60 graden</a></li>
-				<li><a href="#" onClick="angle(75)">75 graden</a></li>
-				<li><a href="#" onClick="angle(90)">90 graden</a></li>	
+				<li><a href="#" class="angle_a" data-angle="0">0 graden</a></li>
+				<li><a href="#" class="angle_a" data-angle="15">15 graden</a></li>
+				<li><a href="#" class="angle_a" data-angle="30">30 graden</a></li>
+				<li><a href="#" class="angle_a" data-angle="45">45 graden</a></li>
+				<li><a href="#" class="angle_a" data-angle="60">60 graden</a></li>
+				<li><a href="#" class="angle_a" data-angle="75">75 graden</a></li>
+				<li><a href="#" class="angle_a" data-angle="90">90 graden</a></li>				
 			</ul>
 		</div>
 		
@@ -65,11 +63,11 @@
 			<button type="button" class="btn btn-default button_width">Oppervlak</button>
 			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
 			<ul class="dropdown-menu">
-				<li><a href="#" onClick="surface(5)">5 m2</a></li>
-				<li><a href="#" OnClick="surface(10)">10 m2</a></li>
-				<li><a href="#" onClick="surface(15)">15 m2</a></li>
-				<li><a href="#" onClick="surface(20)">20 m2</a></li>
-				<li><a href="#" onClick="surface(25)">25 m2</a></li>				
+				<li><a href="#" class="surface_a" data-surface="5">5 m2</a></li>
+				<li><a href="#" class="surface_a" data-surface="10">10 m2</a></li>
+				<li><a href="#" class="surface_a" data-surface="15">15 m2</a></li>
+				<li><a href="#" class="surface_a" data-surface="20">20 m2</a></li>
+				<li><a href="#" class="surface_a" data-surface="25">25 m2</a></li>						
 			</ul>
 		</div>
 		
@@ -79,10 +77,10 @@
 			<button type="button" class="btn btn-default button_width">Type paneel</button>
 			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
 			<ul class="dropdown-menu">
-				<li><a href="#" onClick="panel('Mono-kristallijn')">Mono-kristallijn</a></li>
-				<li><a href="#" onClick="panel('Polykristallijn')">Polykristallijn</a></li>
-				<li><a href="#" onClick="panel('Amorf/Dunne lijn')">Amorf/Dunne lijn</a></li>
-				<li><a href="#" onClick="panel('CIGS')">CIGS</a></li>
+				<li><a href="#" class="panel_a" data-panel="0.17" data-coefficient="0.43">Mono-kristallijn</a></li>
+				<li><a href="#" class="panel_a" data-panel="0.14" data-coefficient="0.45">Poly-kristallijn</a></li>
+				<li><a href="#" class="panel_a" data-panel="0.08" data-coefficient="0.20">Amorf/Dunne lijn</a></li>
+				<li><a href="#" class="panel_a" data-panel="0.14" data-coefficient="0.36">CIGS</a></li>				
 			</ul>
 		</div>
 
@@ -92,11 +90,11 @@
 			<button type="button" class="btn btn-default button_width">Verbruik</button>
 			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
 			<ul class="dropdown-menu">
-				<li><a href="#" onClick="usage(1000)">1000 kWh</a></li>
-				<li><a href="#" onClick="usage(2000)">2000 kWh</a></li>
-				<li><a href="#" onClick="usage(3000)">3000 kWh</a></li>
-				<li><a href="#" onClick="usage(4000)">4000 kWh</a></li>
-				<li><a href="#" onClick="usage(5000)">5000 kWh</a></li>	
+				<li><a href="#" class="usage_a" data-usage="1000">1000 kWh</a></li>
+				<li><a href="#" class="usage_a" data-usage="2000">2000 kWh</a></li>
+				<li><a href="#" class="usage_a" data-usage="3000">3000 kWh</a></li>
+				<li><a href="#" class="usage_a" data-usage="4000">4000 kWh</a></li>
+				<li><a href="#" class="usage_a" data-usage="5000">5000 kWh</a></li>					
 			</ul>
 		</div>
 			<p><br>	This prototype allows selecting options from the dropdown menus <br>
