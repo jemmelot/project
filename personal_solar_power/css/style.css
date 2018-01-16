@@ -1,23 +1,214 @@
 /* Jesse Emmelot, 11963522 */
 
-.button_width{
+/* location button width */
+.button_width_location{
 	width: 100px;
 }
 
+/* orientation button width */
+.button_width_orientation{
+	width: 100px;
+}
+
+/* angle button width */
+.button_width_angle{
+	width: 100px;
+}
+
+/* surface button width */
+.button_width_surface{
+	width: 100px;
+}
+
+/* panel button width */
+.button_width_panel{
+	width: 100px;
+}
+
+/* width button width */
+.button_width_usage{
+	width: 100px;
+}
+
+/* button group position */
 .buttons {
 	position: absolute;
 	left: 490px;
 	top: 30px;
 }
 
+/* student credentials */
 .name{
 	position: absolute;
 	bottom: 10px;
 	right: 10px;
 }
 
+/* dropdown menu properties */
 .scrollable {
     height: auto;
     max-height: 300px;
     overflow-x: hidden;
+}
+
+/* results group properties */
+.results {
+	position: absolute;
+	top: 30px;
+	left: 800px;	
+	font-size: 70px;
+}
+
+/* production result position */
+.production {
+	position: absolute;	
+}
+
+/* profit result position */
+.profit {
+	position: absolute;
+	left: 200px;	
+}
+
+/* payback result position */
+.payback {
+	position: absolute;
+	left: 400px;
+}
+
+/* production result position */
+.p_production {
+	text-align: center;
+}
+
+/* profit result position */
+.p_profit {
+	text-align: center;
+}
+
+/* profit result position */
+.p_payback {
+	text-align: center;
+}
+
+/* results units group properties */
+.results_units {
+	position: absolute;
+	top: 110px;
+	left: 840px;	
+	font-size: 30px;
+}
+
+/* production result unit position */
+.production_unit {
+	position: absolute;	
+}
+
+/* profit result unit position */
+.profit_unit {
+	position: absolute;
+	left: 200px;
+}
+
+/* payback result unit position */
+.payback_unit {
+	position: absolute;
+	left: 400px;
+}
+
+/* 
+	below are all slider properties 
+*/
+.wrapper{
+	position: absolute;
+	bottom: 200px;
+	left: 40px;
+	width: 580px;
+}
+
+.d3-slider {
+    position: relative;
+    font-family: Verdana,Arial,sans-serif;
+    font-size: 1.1em;
+    border: 1px solid #aaaaaa;
+    z-index: 2;
+}
+
+.d3-slider-horizontal {
+    height: .8em;
+}  
+
+.d3-slider-range {
+  background:#2980b9;
+  left:0px;
+  right:0px;
+  height: 0.8em;
+  position: absolute;
+}
+
+.d3-slider-range-vertical {
+  background:#2980b9;
+  left:0px;
+  right:0px;
+  position: absolute;
+  top:0;
+}
+
+.d3-slider-vertical {
+    width: .8em;
+    height: 100px;
+}      
+
+.d3-slider-handle {
+    position: absolute;
+    width: 1.2em;
+    height: 1.2em;
+    border: 1px solid #d3d3d3;
+    border-radius: 4px;
+    background: #eee;
+    background: linear-gradient(to bottom, #eee 0%, #ddd 100%);
+    z-index: 3;
+}
+
+.d3-slider-handle:hover {
+    border: 1px solid #999999;
+}
+
+.d3-slider-horizontal .d3-slider-handle {
+    top: -.3em;
+    margin-left: -.6em;
+}
+
+.d3-slider-axis {
+    position: relative;
+    z-index: 1;    
+}
+
+.d3-slider-axis-bottom {
+    top: .8em;
+}
+
+.d3-slider-axis-right {
+    left: .8em;
+}
+
+.d3-slider-axis path {
+    stroke-width: 0;
+    fill: none;
+}
+
+.d3-slider-axis line {
+    fill: none;
+    stroke: #aaa;
+    shape-rendering: crispEdges;
+}
+
+.d3-slider-axis text {
+    font-size: 11px;
+}
+
+.d3-slider-vertical .d3-slider-handle {
+    left: -.25em;
+    margin-left: 0;
+    margin-bottom: -.6em;      
 }

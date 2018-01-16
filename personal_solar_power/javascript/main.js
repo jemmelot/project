@@ -57,6 +57,7 @@ function ready(error, data, nld, percentages) {
 	var surface = 0;
 	var panel = 0;
 	var coefficient = 0;
+	var cost = 0;
 	var usage = 0;
 	
 	// placeholder variables for testing
@@ -69,10 +70,16 @@ function ready(error, data, nld, percentages) {
 	var insolation = 0;
 	var reference = 25;
 	var temperature_factor = 0;
-		
+	
+	// cost per kWh
+	var energy = 0.20;
+	
+	// size of one panel in square meters
+	var size = 1.65
+			
 	// calculation function
-	function calculation(orientation, angle, surface, panel, coefficient, usage) {
-		if (orientation.length != 0 && angle.length != 0 && surface !=0 && panel != 0 && coefficient != 0 && usage != 0) {
+	function calculation(orientation, angle, surface, panel, coefficient, cost, usage) {
+		if (orientation.length != 0 && angle.length != 0 && surface !=0 && panel != 0 && usage != 0) {
 			insolation_efficiency = percentages[orientation]["angle"][angle];
 									
 			ideal_insolation = (radiation*10000)/3600000;
@@ -83,53 +90,83 @@ function ready(error, data, nld, percentages) {
 			
 			basic_output = true_insolation*capacity;
 						
-			true_output = basic_output - (basic_output*((temperature - 25)*coefficient));
+			production_day = basic_output*(1-(((temperature - 25)*coefficient))/100);
+			production_year = production_day*365;
 			
+			total_cost = (surface/size)*cost;
+			console.log(total_cost);
+						
+			profit = production_year*energy;
+			
+			payback = total_cost/profit;
+			console.log(payback);
+			
+			// update span values when a new calculation is made
+			$("span.production").find("p.p_production").text(parseInt(production_year));
+			$("span.profit").find("p.p_profit").text(parseInt(profit));
+			$("span.payback").find("p.p_payback").text(parseInt(payback));					
 		}
 	};
 	
-	// location
+	// when a location is selected, display it in the button and store its value in a variable for calculation
 	$('a[class=location_a]').on('click', function(){
 		station = $(this).attr('data-location');
 		console.log(station);
-		calculation(orientation, angle, surface, panel, coefficient, usage);
+		$("button.button_width_location").text($(this).text());	
+		
+		// highlight the selected weather station dot and make all other dots red
+		d3.selectAll("circle")
+			.style("fill","red")
+			.attr("r", 8);
+		d3.select("#name" + station)
+			.style("fill", "#FFB6C1")
+			.attr("r", 8);
+		
+		// select corresponding station data from json
+		for (var i = 0; i < data.length; i++) {
+			if (data[i].name == station) {
+				console.log(data[i]);
+			}					
+		};
+		
+		calculation(orientation, angle, surface, panel, coefficient, cost, usage);
 	});
 	
-	// orientation
+	// when an orientation is selected, display it in the button and store its value in a variable for calculation
 	$('a[class=orientation_a]').on('click', function(){
 		orientation = $(this).attr('data-orientation');
-		console.log(orientation);
-		calculation(orientation, angle, surface, panel, coefficient, usage);
+		$("button.button_width_orientation").text($(this).text());	
+		calculation(orientation, angle, surface, panel, coefficient, cost, usage);		
 	});
 	
-	// angle
+	// when an angle is selected, display it in the button and store its value in a variable for calculation
 	$('a[class=angle_a]').on('click', function(){
 		angle = $(this).attr('data-angle');
-		console.log(angle);
-		calculation(orientation, angle, surface, panel, coefficient, usage);
+		$("button.button_width_angle").text($(this).text());
+		calculation(orientation, angle, surface, panel, coefficient, cost, usage);
 	});
 	
-	// surface
+	// when a surface is selected, display it in the button and store its value in a variable for calculation
 	$('a[class=surface_a]').on('click', function(){
 		surface = parseInt($(this).attr('data-surface'));
-		console.log(parseInt(surface));
-		calculation(orientation, angle, surface, panel, coefficient, usage);
+		$("button.button_width_surface").text($(this).text());
+		calculation(orientation, angle, surface, panel, coefficient, cost, usage);
 	});
 	
-	// panel characteristics
+	// when a panel is selected, display it in the button and store its value in a variable for calculation
 	$('a[class=panel_a]').on('click', function(){
 		panel = parseFloat($(this).attr('data-panel'));
-		coefficient = parseFloat($(this).attr('data-coefficient'));		
-		calculation(orientation, angle, surface, panel, coefficient, usage);
-		console.log(panel);
-		console.log(coefficient);
+		$("button.button_width_panel").text($(this).text());
+		coefficient = parseFloat($(this).attr('data-coefficient'));
+		cost = parseInt($(this).attr('data-price'));
+		calculation(orientation, angle, surface, panel, coefficient, cost, usage);		
 	});
 	
-	// usage
+	// when a usage is selected, display it in the button and store its value in a variable for calculation
 	$('a[class=usage_a]').on('click', function(){
 		usage = parseInt($(this).attr('data-usage'));
-		console.log(usage);
-		calculation(orientation, angle, surface, panel, coefficient, usage);
+		$("button.button_width_usage").text($(this).text());
+		calculation(orientation, angle, surface, panel, coefficient, cost, usage);
 	});
 	
 	// map scale and position
@@ -159,13 +196,23 @@ function ready(error, data, nld, percentages) {
     svg.selectAll("circle")
 		.data(dots).enter()
 		.append("circle")
+		.attr("id", function(d){ return 'name' + d[2]; })
 		.attr("cx", function (d) { return projection(d)[0]; })
 		.attr("cy", function (d) { return projection(d)[1]; })
 		.attr("r", "8px")
 		.attr("fill", "red")
-		.on("click", function (d) { 		
-			console.log(d[2])
+		.on("click", function (d) { 
+			// display the name of the clicked station in the button
+			$("button.button_width_location").text(d[2]);
 			
+			// select corresponding station data from json
+			for (var i = 0; i < data.length; i++) {
+				if (data[i].name == d[2]) {
+					console.log(data[i]);
+				}					
+			};
+						
+			// highlight the clicked dot and make all other dots red
 			d3.selectAll("circle")
 				.style("fill","red")
 				.attr("r", 8);
@@ -173,4 +220,8 @@ function ready(error, data, nld, percentages) {
 				.style("fill", "#FFB6C1")
 				.attr("r", 8);
 		});
+
+	// add slider
+	d3.select('#slider').call(d3.slider());
+		
 };

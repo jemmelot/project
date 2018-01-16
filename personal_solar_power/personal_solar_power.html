@@ -21,7 +21,7 @@
 		<div class="buttons">
 		<p>Voer gegevens in</p>
 		<div class="btn-group" id="location">
-			<button type="button" class="btn btn-default button_width">Locatie</button>
+			<button type="button" data-toggle="dropdown" class="btn btn-default button_width_location">Locatie</button>
 			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
 			<ul class="dropdown-menu scrollable">												
 			</ul>
@@ -30,7 +30,7 @@
 		<p></p>
 		
 		<div class="btn-group" id="orientation">
-			<button type="button" class="btn btn-default button_width">Oriëntatie</button>
+			<button type="button" data-toggle="dropdown" class="btn btn-default button_width_orientation">Oriëntatie</button>
 			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
 			<ul class="dropdown-menu">
 				<li><a href="#" class="orientation_a" data-orientation="oost_west">Oost</a></li>
@@ -44,7 +44,7 @@
 		<p></p>
 		
 		<div class="btn-group">
-			<button type="button" class="btn btn-default button_width">Dakhoek</button>
+			<button type="button" data-toggle="dropdown" class="btn btn-default button_width_angle">Dakhoek</button>
 			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
 			<ul class="dropdown-menu">
 				<li><a href="#" class="angle_a" data-angle="0">0 graden</a></li>
@@ -60,7 +60,7 @@
 		<p></p>
 		
 		<div class="btn-group">
-			<button type="button" class="btn btn-default button_width">Oppervlak</button>
+			<button type="button" data-toggle="dropdown" class="btn btn-default button_width_surface">Oppervlak</button>
 			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
 			<ul class="dropdown-menu">
 				<li><a href="#" class="surface_a" data-surface="5">5 m2</a></li>
@@ -74,20 +74,20 @@
 		<p></p>
 		
 		<div class="btn-group">
-			<button type="button" class="btn btn-default button_width">Type paneel</button>
+			<button type="button" data-toggle="dropdown" class="btn btn-default button_width_panel">Type paneel</button>
 			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
 			<ul class="dropdown-menu">
-				<li><a href="#" class="panel_a" data-panel="0.17" data-coefficient="0.43">Mono-kristallijn</a></li>
-				<li><a href="#" class="panel_a" data-panel="0.14" data-coefficient="0.45">Poly-kristallijn</a></li>
-				<li><a href="#" class="panel_a" data-panel="0.08" data-coefficient="0.20">Amorf/Dunne lijn</a></li>
-				<li><a href="#" class="panel_a" data-panel="0.14" data-coefficient="0.36">CIGS</a></li>				
+				<li><a href="#" class="panel_a" data-panel="0.17" data-coefficient="0.43" data-price="300">Mono-kristallijn</a></li>
+				<li><a href="#" class="panel_a" data-panel="0.14" data-coefficient="0.45" data-price="225">Poly-kristallijn</a></li>
+				<li><a href="#" class="panel_a" data-panel="0.08" data-coefficient="0.20" data-price="150">Amorf/Dunne lijn</a></li>
+				<li><a href="#" class="panel_a" data-panel="0.14" data-coefficient="0.36" data-price="180">CIGS</a></li>				
 			</ul>
 		</div>
 
 		<p></p>
 		
 		<div class="btn-group">
-			<button type="button" class="btn btn-default button_width">Verbruik</button>
+			<button type="button" data-toggle="dropdown" class="btn btn-default button_width_usage">Verbruik</button>
 			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
 			<ul class="dropdown-menu">
 				<li><a href="#" class="usage_a" data-usage="1000">1000 kWh</a></li>
@@ -97,21 +97,42 @@
 				<li><a href="#" class="usage_a" data-usage="5000">5000 kWh</a></li>					
 			</ul>
 		</div>
-			<p><br>	This prototype allows selecting options from the dropdown menus <br>
-					which are then logged on the console. Once all calculation formulas <br> 
-					are implemented	these user selected options will be used as input values. <br>
-					Also in this prototype are the plotted locations of all weather stations. <br>
-					These are currently not interactive, but ultimately will get highlighted <br>
-					on hover, show a tooltip and be clickable. This will then change the location <br>
-					in the dropdown menu and update the weather data, there by all visualizations <br>
-					and resulting numbers. Some weather stations are missing data (see the json <br>
-					logged on the console) and will therefore not be suitable for some calculations.					
-			</p>
+		
+		<!--
+		<p><br>	This prototype allows selecting options from the dropdown menus <br>
+				which are then logged on the console. Once all calculation formulas <br> 
+				are implemented	these user selected options will be used as input values. <br>
+				Also in this prototype are the plotted locations of all weather stations. <br>
+				These are currently not interactive, but ultimately will get highlighted <br>
+				on hover, show a tooltip and be clickable. This will then change the location <br>
+				in the dropdown menu and update the weather data, there by all visualizations <br>
+				and resulting numbers. Some weather stations are missing data (see the json <br>
+				logged on the console) and will therefore not be suitable for some calculations.					
+		</p>
+		-->
+		
+		</div>
+		
+		<div class="results" id="results">
+			<span class="production"><p class="p_production">Test</p></span>
+			<span class="profit"><p class="p_profit">Test</p></span>
+			<span class="payback"><p class="p_payback">Test</p></span>
+		</div>
+		
+		<div class="results_units" id="results_units">
+			<span class="production_unit">kWh</span>
+			<span class="profit_unit">Euro</span>
+			<span class="payback_unit">Jaar</span>
+		</div>
+				
+		<div class="wrapper">
+			<div id="slider"></div>
 		</div>
 		
 		<div class="name">Jesse Emmelot, 11963522</div>
 		
 		<script src="https://d3js.org/d3-queue.v3.min.js"></script>		
+		<script src="javascript/slider.js"></script>		
 		<script src="javascript/main.js"></script>
 	</body>
 </html>
