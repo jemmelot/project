@@ -121,9 +121,9 @@
 */
 .wrapper{
 	position: absolute;
-	bottom: 200px;
+	bottom: 40px;
 	left: 40px;
-	width: 580px;
+	width: 800px;
 }
 
 .d3-slider {

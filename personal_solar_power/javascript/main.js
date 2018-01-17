@@ -16,8 +16,15 @@
 */
 
 // define map size
-var width = 450;
-var height = 520;
+var mapWidth = 450;
+var mapHeight = 520;
+
+// define chart size
+var	chartMargin = {top: 10, right: 20, bottom: 30, left: 40},
+	chartWidth = 800 - chartMargin.left - chartMargin.right,
+	chartHeight = 165 - chartMargin.top - chartMargin.bottom;
+
+var parseTime = d3.timeParse("%Y-%m-%d");
 
 // set map projection type
 var projection = d3.geo.mercator()
@@ -29,10 +36,38 @@ var path = d3.geo.path()
 	.projection(projection);
 
 // add an svg element to put the map into	
-var svg = d3.select("body").append("svg")
-	.attr("width", width)
-	.attr("height", height)
+var svgNL = d3.select("body").append("svg")
+	.attr("width", mapWidth)
+	.attr("height", mapHeight)
 
+// add an svg element to put the chart into	
+var svgChart = 	d3.select("body").append("svg")
+	.attr("width", chartWidth + chartMargin.left + chartMargin.right)
+	.attr("height", chartHeight + chartMargin.top + chartMargin.bottom)
+	.append("g")
+		.attr("transform", "translate(" + chartMargin.left + "," + chartMargin.top + ")");
+
+$("svgChart").css({bottom: 60, left: 40, position:'absolute'});
+		
+var chartX = d3.scale.linear()
+	.range([0, chartWidth]);
+	
+var chartY = d3.scale.linear()
+	.range([chartHeight, 0]);
+
+var	xAxis = d3.svg.axis()
+	.scale(chartX)
+	.orient("bottom");
+
+//var line = d3.line()
+    //.x(function(d) { return chartX(d[0].); })
+    //.y(function(d) { return chartY(data[i]); });
+	
+// y-axis properties
+var yAxis = d3.svg.axis()
+	.scale(chartY)
+	.orient("left");		
+		
 // queue weather station data and map data
 d3.queue()
 	.defer(d3.json, "datasets/data.json")
@@ -43,7 +78,7 @@ d3.queue()
 function ready(error, data, nld, percentages) {
 	console.log(data);
 	console.log(percentages);
-		
+			
 	// add weather station names to dropdown menu
 	for(index in data)
 	{
@@ -111,7 +146,7 @@ function ready(error, data, nld, percentages) {
 	// when a location is selected, display it in the button and store its value in a variable for calculation
 	$('a[class=location_a]').on('click', function(){
 		station = $(this).attr('data-location');
-		console.log(station);
+		
 		$("button.button_width_location").text($(this).text());	
 		
 		// highlight the selected weather station dot and make all other dots red
@@ -175,7 +210,7 @@ function ready(error, data, nld, percentages) {
 		.translate([-320, 6690]);
 
 	// draw the map
-	svg.selectAll("path")
+	svgNL.selectAll("path")
 		.data(topojson.feature(nld, nld.objects.subunits).features).enter()
 		.append("path")
 		.attr("d", path)
@@ -193,7 +228,7 @@ function ready(error, data, nld, percentages) {
 	}
 			
 	// add circles to svg
-    svg.selectAll("circle")
+    svgNL.selectAll("circle")
 		.data(dots).enter()
 		.append("circle")
 		.attr("id", function(d){ return 'name' + d[2]; })
@@ -202,16 +237,11 @@ function ready(error, data, nld, percentages) {
 		.attr("r", "8px")
 		.attr("fill", "red")
 		.on("click", function (d) { 
+			station = d[2];
+						
 			// display the name of the clicked station in the button
 			$("button.button_width_location").text(d[2]);
-			
-			// select corresponding station data from json
-			for (var i = 0; i < data.length; i++) {
-				if (data[i].name == d[2]) {
-					console.log(data[i]);
-				}					
-			};
-						
+									
 			// highlight the clicked dot and make all other dots red
 			d3.selectAll("circle")
 				.style("fill","red")
@@ -221,7 +251,47 @@ function ready(error, data, nld, percentages) {
 				.attr("r", 8);
 		});
 
+	var months = ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December", "Jaar"]	
+	var months_short = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec", "Jaar"];	
+	
 	// add slider
-	d3.select('#slider').call(d3.slider());
+	slider = d3.slider()
+		.scale(d3.scale.ordinal()
+		.domain(months)
+		.rangePoints([0, 1], 0.5))
+		.axis(d3.svg.axis())
+		.snap(true)
+		.value("Jaar")
+		.on("slide", function(evt, value) {
+			if (value == "Jaar") {
+				for (var i = 0; i < data.length; i++) {
+					if (data[i].name == station) {
+						console.log(data[i].dates);
+					}
+				}
+			}
+			
+			else {
+				for (var i = 0; i < data.length; i++) {
+					if (data[i].name == station) {
+						for (var key in data[i].dates) {
+							if (key.includes(months_short[months.indexOf(value)]) == true) {
+								console.log(data[i].dates[key])
+							}						
+						}	
+					}						
+				}
+			}
+		});
+    
+	d3.select('#slider').call(slider);
 		
+	svgChart.append("g")
+		.attr("class", "x axis")
+		.attr("transform", "translate(0," + chartHeight + ")")
+		.call(xAxis);
+		
+	svgChart.append("g")
+		.attr("class", "y axis")
+		.call(yAxis);	
 };
