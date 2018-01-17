@@ -44,6 +44,8 @@ http://projects.knmi.nl/klimatologie/daggegevens/selectie.cgi
 - datamaps
 - d3.slider
 - bootstrap
+- d3-time-format
+- jQuery
 
 ### Similar visualizations
 - https://www.comparemysolar.nl/calculator-zonnepanelen/ <br><br>
