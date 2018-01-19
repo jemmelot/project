@@ -7,13 +7,40 @@
 	- http://bl.ocks.org/phil-pedruco/7745589
 	- https://www.w3schools.com/
 	- https://www.bootply.com/113296
+	- https://github.com/MasterMaps/d3-slider
+	- http://bl.ocks.org/tpreusse/2bc99d74a461b8c0acb1
 	
 	Data sources:
 	- http://projects.knmi.nl/klimatologie/daggegevens/selectie.cgi
 	- https://thegrid.rexel.com/en-us/energy_efficiency/w/solar_renewable_and_energy_efficiency/72/how-to-calculate-the-output-of-a-solar-photovoltaic-system---a-detailed-guide#
 	- https://mijnhernieuwbareenergie.be/cfs-file/__key/communityserver-blogs-components-weblogfiles/00-00-00-00-01/Tabel-PV-ori_EB00_ntatie-_2D00_-rendement.jpg
 	- https://woonbewust.nl/blog/soorten-zonnepanelen
+	- https://www.zonne-paneel.net/prijs-zonnepanelen/
+	- http://www.sun-solar.nl/index.php/product/solar-frontier-sf175-s-paneel-135-euro-incl-btw-sunsolar/
 */
+
+// radar specifications
+RadarChart.defaultConfig.color = function() {};
+RadarChart.defaultConfig.radius = 3;
+RadarChart.defaultConfig.w = 600;
+RadarChart.defaultConfig.h = 600;
+
+// radarplot parameter data
+var radarData = [
+	{
+		className: "house",
+		axes: [
+			{axis: "Oriëntatie", value: 0}, 
+			{axis: "Verbruik", value: 0}, 
+			{axis: "Rendement", value: 0},  
+			{axis: "Dakoppervlak", value: 0},  
+			{axis: "Dakhoek", value: 0.1}
+		]
+	}
+];
+
+var radar = RadarChart.chart();
+var cfg = radar.config();
 
 // define map size
 var mapWidth = 450;
@@ -22,9 +49,9 @@ var mapHeight = 520;
 // define chart size
 var	chartMargin = {top: 10, right: 20, bottom: 30, left: 40},
 	chartWidth = 800 - chartMargin.left - chartMargin.right,
-	chartHeight = 165 - chartMargin.top - chartMargin.bottom;
+	chartHeight = 190 - chartMargin.top - chartMargin.bottom;
 
-var parseTime = d3.timeParse("%Y-%m-%d");
+//var format = d3.time.format("%Y-%b-%d");
 
 // set map projection type
 var projection = d3.geo.mercator()
@@ -40,32 +67,35 @@ var svgNL = d3.select("body").append("svg")
 	.attr("width", mapWidth)
 	.attr("height", mapHeight)
 
-// add an svg element to put the chart into	
-var svgChart = 	d3.select("body").append("svg")
+// add an svg element to put the line chart into	
+var svgChart = 	d3.select("#chart").append("svg")
 	.attr("width", chartWidth + chartMargin.left + chartMargin.right)
 	.attr("height", chartHeight + chartMargin.top + chartMargin.bottom)
 	.append("g")
 		.attr("transform", "translate(" + chartMargin.left + "," + chartMargin.top + ")");
 
-$("svgChart").css({bottom: 60, left: 40, position:'absolute'});
-		
-var chartX = d3.scale.linear()
+// add an svg element to put the radar chart into		
+var svgRadar = d3.select("#radar").append("svg")
+	.attr("width", cfg.w + cfg.w + 50)
+	.attr("height", cfg.h + cfg.h / 4);
+	svgRadar.append("g").classed("single", 1).datum(radarData).call(radar);
+
+// line chart x axis properties	
+var x = d3.scale.linear()
 	.range([0, chartWidth]);
 	
-var chartY = d3.scale.linear()
+// line chart y axis properties		
+var y = d3.scale.linear()
 	.range([chartHeight, 0]);
 
+// line chart x axis properties		
 var	xAxis = d3.svg.axis()
-	.scale(chartX)
+	.scale(x)
 	.orient("bottom");
-
-//var line = d3.line()
-    //.x(function(d) { return chartX(d[0].); })
-    //.y(function(d) { return chartY(data[i]); });
 	
-// y-axis properties
+// line chart y axis properties	
 var yAxis = d3.svg.axis()
-	.scale(chartY)
+	.scale(y)
 	.orient("left");		
 		
 // queue weather station data and map data
@@ -82,7 +112,7 @@ function ready(error, data, nld, percentages) {
 	// add weather station names to dropdown menu
 	for(index in data)
 	{
-		$('#location ul').append('<li><a href="#" class="location_a" data-location="'+data[index].name+'"</a>'+data[index].name+'</li>');   
+		$("#location ul").append('<li><a href="#" class="location-a" data-location="'+index+'"</a>'+index+'</li>');   
 	}
 	
 	// instantiate variables for calculations
@@ -94,6 +124,11 @@ function ready(error, data, nld, percentages) {
 	var coefficient = 0;
 	var cost = 0;
 	var usage = 0;
+	var orientationScore = 0;
+	var angleScore = 0;
+	var surfaceScore = 0;
+	var panelScore = 0;
+	var usageScore = 0;
 	
 	// placeholder variables for testing
 	var radiation = 1000;
@@ -101,10 +136,10 @@ function ready(error, data, nld, percentages) {
 	
 	// instantiate other calculation variables
 	var capacity = 0;
-	var inverter_efficiency = 0.95;
+	var inverterEfficiency = 0.95;
 	var insolation = 0;
 	var reference = 25;
-	var temperature_factor = 0;
+	var temperatureFactor = 0;
 	
 	// cost per kWh
 	var energy = 0.20;
@@ -113,44 +148,60 @@ function ready(error, data, nld, percentages) {
 	var size = 1.65
 			
 	// calculation function
-	function calculation(orientation, angle, surface, panel, coefficient, cost, usage) {
+	function calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore) {
 		if (orientation.length != 0 && angle.length != 0 && surface !=0 && panel != 0 && usage != 0) {
-			insolation_efficiency = percentages[orientation]["angle"][angle];
+			
+			// redefine scatterplot data every time house values are changed
+			var radarData = [
+				{
+					className: "house",
+					axes: [
+						{axis: "Oriëntatie", value: angleScore}, 
+						{axis: "Verbruik", value: usageScore}, 
+						{axis: "Rendement", value: panelScore},  
+						{axis: "Dakoppervlak", value: surfaceScore},  
+						{axis: "Dakhoek", value: angleScore}
+					]
+				}
+			];
+						
+			svgRadar.append("g").classed("single", 1).datum(radarData).call(radar);
+			
+			insolationEfficiency = percentages[orientation]["angle"][angle];
 									
-			ideal_insolation = (radiation*10000)/3600000;
+			idealInsolation = (radiation*10000)/3600000;
 			
-			true_insolation = ideal_insolation*insolation_efficiency;
+			trueInsolation = idealInsolation*insolationEfficiency;
 			
-			capacity = surface*panel*inverter_efficiency;
+			capacity = surface*panel*inverterEfficiency;
 			
-			basic_output = true_insolation*capacity;
+			basicOutput = trueInsolation*capacity;
 						
-			production_day = basic_output*(1-(((temperature - 25)*coefficient))/100);
-			production_year = production_day*365;
+			productionDay = basicOutput*(1-(((temperature - 25)*coefficient))/100);
+			productionYear = productionDay*365;
 			
-			total_cost = (surface/size)*cost;
-			console.log(total_cost);
+			totalCost = (surface/size)*cost;
+									
+			profit = productionYear*energy;
+			
+			payback = totalCost/profit;
 						
-			profit = production_year*energy;
-			
-			payback = total_cost/profit;
-			console.log(payback);
-			
-			// update span values when a new calculation is made
-			$("span.production").find("p.p_production").text(parseInt(production_year));
-			$("span.profit").find("p.p_profit").text(parseInt(profit));
-			$("span.payback").find("p.p_payback").text(parseInt(payback));					
+			// update result div values when a new calculation is made
+			$(".results > .production").text(parseInt(productionYear));
+			$(".results > .profit").text(parseInt(profit));
+			$(".results > .payback").text(parseInt(payback));					
 		}
 	};
 	
 	// when a location is selected, display it in the button and store its value in a variable for calculation
-	$('a[class=location_a]').on('click', function(){
-		station = $(this).attr('data-location');
+	$("a[class=location-a]").on("click", function(){
+		station = $(this).attr("data-location");
 		
-		$("button.button_width_location").text($(this).text());	
+		// when a new weather station is selected, display its name in the text box
+		$("button.button-width-location").text($(this).text());	
 		
 		// highlight the selected weather station dot and make all other dots red
-		d3.selectAll("circle")
+		svgNL.selectAll("circle")
 			.style("fill","red")
 			.attr("r", 8);
 		d3.select("#name" + station)
@@ -164,44 +215,49 @@ function ready(error, data, nld, percentages) {
 			}					
 		};
 		
-		calculation(orientation, angle, surface, panel, coefficient, cost, usage);
+		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore);
 	});
 	
 	// when an orientation is selected, display it in the button and store its value in a variable for calculation
-	$('a[class=orientation_a]').on('click', function(){
-		orientation = $(this).attr('data-orientation');
-		$("button.button_width_orientation").text($(this).text());	
-		calculation(orientation, angle, surface, panel, coefficient, cost, usage);		
+	$("a[class=orientation-a]").on("click", function(){
+		orientation = $(this).attr("data-orientation");
+		orientationScore = parseInt($(this).attr("orientation-score"));
+		$("button.button-width-orientation").text($(this).text());	
+		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore);		
 	});
 	
 	// when an angle is selected, display it in the button and store its value in a variable for calculation
-	$('a[class=angle_a]').on('click', function(){
-		angle = $(this).attr('data-angle');
-		$("button.button_width_angle").text($(this).text());
-		calculation(orientation, angle, surface, panel, coefficient, cost, usage);
+	$("a[class=angle-a]").on("click", function(){
+		angle = $(this).attr("data-angle");
+		angleScore = parseInt($(this).attr("angle-score"));
+		$("button.button-width-angle").text($(this).text());
+		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore);
 	});
 	
 	// when a surface is selected, display it in the button and store its value in a variable for calculation
-	$('a[class=surface_a]').on('click', function(){
-		surface = parseInt($(this).attr('data-surface'));
-		$("button.button_width_surface").text($(this).text());
-		calculation(orientation, angle, surface, panel, coefficient, cost, usage);
+	$("a[class=surface-a]").on("click", function(){
+		surface = parseInt($(this).attr("data-surface"));
+		surfaceScore = parseInt($(this).attr("surface-score"));
+		$("button.button-width-surface").text($(this).text());
+		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore);
 	});
 	
 	// when a panel is selected, display it in the button and store its value in a variable for calculation
-	$('a[class=panel_a]').on('click', function(){
-		panel = parseFloat($(this).attr('data-panel'));
-		$("button.button_width_panel").text($(this).text());
-		coefficient = parseFloat($(this).attr('data-coefficient'));
-		cost = parseInt($(this).attr('data-price'));
-		calculation(orientation, angle, surface, panel, coefficient, cost, usage);		
+	$("a[class=panel-a]").on("click", function(){
+		panel = parseFloat($(this).attr("data-panel"));
+		panelScore = parseInt($(this).attr("panel-score"));
+		$("button.button-width-panel").text($(this).text());
+		coefficient = parseFloat($(this).attr("data-coefficient"));
+		cost = parseInt($(this).attr("data-price"));
+		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore);		
 	});
 	
 	// when a usage is selected, display it in the button and store its value in a variable for calculation
-	$('a[class=usage_a]').on('click', function(){
-		usage = parseInt($(this).attr('data-usage'));
-		$("button.button_width_usage").text($(this).text());
-		calculation(orientation, angle, surface, panel, coefficient, cost, usage);
+	$("a[class=usage-a]").on("click", function(){
+		usage = parseInt($(this).attr("data-usage"));
+		usageScore = parseInt($(this).attr("usage-score"));
+		$("button.button-width-usage").text($(this).text());
+		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore);
 	});
 	
 	// map scale and position
@@ -219,19 +275,18 @@ function ready(error, data, nld, percentages) {
 			return d.properties.name;
 		});
 	
-	dots = [];
-		
-	// make an array with weather station coordinates
-	for (var i = 0; i < data.length; i++) {
-		dot = [data[i].lon, data[i].lat, data[i].name];
-		dots.push(dot)		
-	}
-			
+	// make an array with parts of the json data to determine placement of the dots on the map
+	dots = [];	
+	Object.keys(data).forEach(function(key,index) {
+		dot = [data[key].lon, data[key].lat, key];
+		dots.push(dot);
+	});
+				
 	// add circles to svg
     svgNL.selectAll("circle")
 		.data(dots).enter()
 		.append("circle")
-		.attr("id", function(d){ return 'name' + d[2]; })
+		.attr("id", function(d){ return "name" + d[2]; })
 		.attr("cx", function (d) { return projection(d)[0]; })
 		.attr("cy", function (d) { return projection(d)[1]; })
 		.attr("r", "8px")
@@ -240,21 +295,25 @@ function ready(error, data, nld, percentages) {
 			station = d[2];
 						
 			// display the name of the clicked station in the button
-			$("button.button_width_location").text(d[2]);
+			$("button.button-width-location").text(d[2]);
 									
 			// highlight the clicked dot and make all other dots red
-			d3.selectAll("circle")
+			svgNL.selectAll("circle")
 				.style("fill","red")
 				.attr("r", 8);
 			d3.select(this)
 				.style("fill", "#FFB6C1")
 				.attr("r", 8);
 		});
-
-	var months = ["Januari", "Februari", "Maart", "April", "Mei", "Juni", "Juli", "Augustus", "September", "Oktober", "November", "December", "Jaar"]	
-	var months_short = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec", "Jaar"];	
 	
-	// add slider
+	// array of month abbreviations to check which array within a station object to load data from
+	var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jaar"];	
+	
+	/* 
+		add a slider to select which month the weather station data should be
+		picked from. Sliding it will re-check weather the station has been changed
+		and if so, loads the month data from the new station.
+	*/
 	slider = d3.slider()
 		.scale(d3.scale.ordinal()
 		.domain(months)
@@ -264,34 +323,59 @@ function ready(error, data, nld, percentages) {
 		.value("Jaar")
 		.on("slide", function(evt, value) {
 			if (value == "Jaar") {
-				for (var i = 0; i < data.length; i++) {
-					if (data[i].name == station) {
-						console.log(data[i].dates);
-					}
-				}
+				console.log(data[station].dates);
 			}
 			
 			else {
-				for (var i = 0; i < data.length; i++) {
-					if (data[i].name == station) {
-						for (var key in data[i].dates) {
-							if (key.includes(months_short[months.indexOf(value)]) == true) {
-								console.log(data[i].dates[key])
-							}						
-						}	
-					}						
-				}
+				// put the required line graph data in an array to shorten data calls
+				lineData = data[station].dates[value]
+				console.log(lineData);
+												
+				lineData.forEach(function(d) {
+					d.date = new Date(d.date);
+					d.radiation = +d.radiation;
+					d.temperature = +d.temperature;
+				});
+				
+				// define line variable
+				var line = d3.svg.line()
+					.x(function(d) { return x(d.date);})
+					.y(function(d) { return y(d.radiation);});
+				
+				// line chart domains
+				x.domain(d3.extent(data, function(d) { return d.date; }));
+				y.domain([0, d3.max(data, function(d) { return d.radiation;})]);
+								
+				// add x-axis	
+				svgChart.append("g")
+					.attr("class", "x axis")
+					.attr("transform", "translate(0," + chartHeight + ")")
+					.call(xAxis);
+				
+				// add y-axis
+				svgChart.append("g")
+					.attr("class", "y axis")
+					.call(yAxis);	
+				
+				// Add the valueline path.
+					//svgChart.append("path")
+						//.datum(lineData)
+						//.attr("class", "line")
+						//.attr("d", line);				
 			}
 		});
-    
-	d3.select('#slider').call(slider);
 		
+	// add x-axis	
 	svgChart.append("g")
 		.attr("class", "x axis")
 		.attr("transform", "translate(0," + chartHeight + ")")
 		.call(xAxis);
-		
+	
+	// add y-axis
 	svgChart.append("g")
 		.attr("class", "y axis")
-		.call(yAxis);	
+		.call(yAxis);		
+    
+	// call the slider to display it on the page
+	d3.select("#slider").call(slider);	
 };

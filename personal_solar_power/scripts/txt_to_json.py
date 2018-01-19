@@ -12,32 +12,43 @@ locations = 'locations.txt'
 
 combined_json = 'data.json'
 
-all_data = []
+all_data = {}
+months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 with open(locations, 'rb') as infile:
 	reader = csv.reader(infile)
 	for row in reader:
-		data = {}
-		data['name'] = row[3]
-		data['id'] = row[0]
-		data['lon'] = float(row[1])
-		data['lat'] = float(row[2])
-		data['dates'] = {}
-		all_data.append(data)
-
+		all_data[row[3]] = {}
+		all_data[row[3]]['id'] = row[0]
+		all_data[row[3]]['lon'] = float(row[1])
+		all_data[row[3]]['lat'] = float(row[2])
+		all_data[row[3]]['dates'] = {}
+		
+		for month in months:
+			all_data[row[3]]['dates'][month] = []
+		
 with open(radiation_txt, 'rb') as infile:
 	reader = csv.reader(infile)
 	for row in reader:
 		for line in all_data:
-			if line['id'] == row[0]:
-				line['dates'][row[1]] = {'radiation': int(row[2])}
-
+			temp = all_data.get(line, '')
+			if temp['id'] == row[0]:
+				for month in months:
+					if month in row[1]:
+						temp['dates'][month].append({'date': row[1], 'radiation': int(row[2])}) 
+						
 with open(temperature_txt, 'rb') as infile:
 	reader = csv.reader(infile)
 	for row in reader:
 		for line in all_data:
-			if line['id'] == row[0]:
-				line['dates'][row[1]]['temperature'] = int(row[2])
-				
+			temp = all_data.get(line, '')
+			if temp['id'] == row[0]:
+				for month in months:
+					if month in row[1]:
+						for info in temp['dates'][month]:
+							temp2 = info.get('date')
+							if temp2 == row[1]:
+								info['temperature'] = int(row[2]) 
+										
 with open(combined_json, 'w') as outfile:
 	json.dump(all_data, outfile)

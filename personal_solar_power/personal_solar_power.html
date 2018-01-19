@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<!-- Jesse Emmelot, 11963522 -->
 
 	<head>
 		<meta charset="UTF-8">
 		<title> Personal Solar Power </title>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+		<link rel="stylesheet" href="https://rawgit.com/tpreusse/radar-chart-d3/master/src/radar-chart.css">
 		<style>
 			@import url('css/style.css');
 		</style>
@@ -18,113 +20,105 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 		<script src="https://d3js.org/d3-time.v1.min.js"></script>
-		<script src="https://d3js.org/d3-time-format.v2.min.js"></script>						
-				
+		<script src="https://d3js.org/d3-time-format.v2.min.js"></script>
+		<script src="https://rawgit.com/tpreusse/radar-chart-d3/master/src/radar-chart.js"></script>		
+		
+		<div id="chart" class="chart" width="850px" height="200px"></div>
+		<div id="radar" class="radar" width="500px" height="500px"></div>
+		
+		<div class="title">Zonnepanelen Calculator</div>
+		
 		<div class="buttons">
-		<p>Voer gegevens in</p>
-		<div class="btn-group" id="location">
-			<button type="button" data-toggle="dropdown" class="btn btn-default button_width_location">Locatie</button>
-			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
-			<ul class="dropdown-menu scrollable">												
-			</ul>
-		</div>
-		
-		<p></p>
-		
-		<div class="btn-group" id="orientation">
-			<button type="button" data-toggle="dropdown" class="btn btn-default button_width_orientation">Oriëntatie</button>
-			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
-			<ul class="dropdown-menu">
-				<li><a href="#" class="orientation_a" data-orientation="oost_west">Oost</a></li>
-				<li><a href="#" class="orientation_a" data-orientation="zuid_oost_west">Zuid-Oost</a></li>
-				<li><a href="#" class="orientation_a" data-orientation="zuid">Zuid</a></li>
-				<li><a href="#" class="orientation_a" data-orientation="zuid_oost_west">Zuid-West</a></li>
-				<li><a href="#" class="orientation_a" data-orientation="oost_west">West</a></li>				
-			</ul>
-		</div>
-		
-		<p></p>
-		
-		<div class="btn-group">
-			<button type="button" data-toggle="dropdown" class="btn btn-default button_width_angle">Dakhoek</button>
-			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
-			<ul class="dropdown-menu">
-				<li><a href="#" class="angle_a" data-angle="0">0 graden</a></li>
-				<li><a href="#" class="angle_a" data-angle="15">15 graden</a></li>
-				<li><a href="#" class="angle_a" data-angle="30">30 graden</a></li>
-				<li><a href="#" class="angle_a" data-angle="45">45 graden</a></li>
-				<li><a href="#" class="angle_a" data-angle="60">60 graden</a></li>
-				<li><a href="#" class="angle_a" data-angle="75">75 graden</a></li>
-				<li><a href="#" class="angle_a" data-angle="90">90 graden</a></li>				
-			</ul>
-		</div>
-		
-		<p></p>
-		
-		<div class="btn-group">
-			<button type="button" data-toggle="dropdown" class="btn btn-default button_width_surface">Oppervlak</button>
-			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
-			<ul class="dropdown-menu">
-				<li><a href="#" class="surface_a" data-surface="5">5 m2</a></li>
-				<li><a href="#" class="surface_a" data-surface="10">10 m2</a></li>
-				<li><a href="#" class="surface_a" data-surface="15">15 m2</a></li>
-				<li><a href="#" class="surface_a" data-surface="20">20 m2</a></li>
-				<li><a href="#" class="surface_a" data-surface="25">25 m2</a></li>						
-			</ul>
-		</div>
-		
-		<p></p>
-		
-		<div class="btn-group">
-			<button type="button" data-toggle="dropdown" class="btn btn-default button_width_panel">Type paneel</button>
-			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
-			<ul class="dropdown-menu">
-				<li><a href="#" class="panel_a" data-panel="0.17" data-coefficient="0.43" data-price="300">Mono-kristallijn</a></li>
-				<li><a href="#" class="panel_a" data-panel="0.14" data-coefficient="0.45" data-price="225">Poly-kristallijn</a></li>
-				<li><a href="#" class="panel_a" data-panel="0.08" data-coefficient="0.20" data-price="150">Amorf/Dunne lijn</a></li>
-				<li><a href="#" class="panel_a" data-panel="0.14" data-coefficient="0.36" data-price="180">CIGS</a></li>				
-			</ul>
-		</div>
+			<p class="enter">Voer gegevens in</p>
+			<div class="btn-group" id="location">
+				<button type="button" data-toggle="dropdown" class="btn btn-default button-width-location">Locatie</button>
+				<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
+				<ul class="dropdown-menu scrollable">												
+				</ul>
+			</div>
+			
+			<p class="enter"></p>
+			
+			<div class="btn-group" id="orientation">
+				<button type="button" data-toggle="dropdown" class="btn btn-default button-width-orientation">Oriëntatie</button>
+				<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
+				<ul class="dropdown-menu">
+					<li><a href="#" class="orientation-a" data-orientation="oost-west" orientation-score="1">Oost</a></li>
+					<li><a href="#" class="orientation-a" data-orientation="zuid-oost-west" orientation-score="5">Zuid-Oost</a></li>
+					<li><a href="#" class="orientation-a" data-orientation="zuid" orientation-score="10">Zuid</a></li>
+					<li><a href="#" class="orientation-a" data-orientation="zuid-oost-west"orientation-score="5">Zuid-West</a></li>
+					<li><a href="#" class="orientation-a" data-orientation="oost-west" orientation-score="1">West</a></li>				
+				</ul>
+			</div>
+			
+			<p class="enter"></p>
+			
+			<div class="btn-group">
+				<button type="button" data-toggle="dropdown" class="btn btn-default button-width-angle">Dakhoek</button>
+				<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
+				<ul class="dropdown-menu">
+					<li><a href="#" class="angle-a" data-angle="0" angle-score="5">0 graden</a></li>
+					<li><a href="#" class="angle-a" data-angle="15" angle-score="8">15 graden</a></li>
+					<li><a href="#" class="angle-a" data-angle="30" angle-score="10">30 graden</a></li>
+					<li><a href="#" class="angle-a" data-angle="45" angle-score="7">45 graden</a></li>
+					<li><a href="#" class="angle-a" data-angle="60" angle-score="3">60 graden</a></li>
+					<li><a href="#" class="angle-a" data-angle="75" angle-score="2">75 graden</a></li>
+					<li><a href="#" class="angle-a" data-angle="90" angle-score="1">90 graden</a></li>				
+				</ul>
+			</div>
+			
+			<p class="enter"></p>
+			
+			<div class="btn-group">
+				<button type="button" data-toggle="dropdown" class="btn btn-default button-width-surface">Oppervlak</button>
+				<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
+				<ul class="dropdown-menu">
+					<li><a href="#" class="surface-a" data-surface="5" surface-score="2">5 m2</a></li>
+					<li><a href="#" class="surface-a" data-surface="10" surface-score="4">10 m2</a></li>
+					<li><a href="#" class="surface-a" data-surface="15" surface-score="6">15 m2</a></li>
+					<li><a href="#" class="surface-a" data-surface="20" surface-score="8">20 m2</a></li>
+					<li><a href="#" class="surface-a" data-surface="25" surface-score="10">25 m2</a></li>						
+				</ul>
+			</div>
+			
+			<p class="enter"></p>
+			
+			<div class="btn-group">
+				<button type="button" data-toggle="dropdown" class="btn btn-default button-width-panel">Type paneel</button>
+				<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
+				<ul class="dropdown-menu">
+					<li><a href="#" class="panel-a" data-panel="0.17" data-coefficient="0.43" data-price="300" panel-score="10">Mono-kristallijn</a></li>
+					<li><a href="#" class="panel-a" data-panel="0.14" data-coefficient="0.45" data-price="225" panel-score="4">Poly-kristallijn</a></li>
+					<li><a href="#" class="panel-a" data-panel="0.08" data-coefficient="0.20" data-price="150" panel-score="1">Amorf/Dunne lijn</a></li>
+					<li><a href="#" class="panel-a" data-panel="0.14" data-coefficient="0.36" data-price="180" panel-score="7">CIGS</a></li>				
+				</ul>
+			</div>
 
-		<p></p>
-		
-		<div class="btn-group">
-			<button type="button" data-toggle="dropdown" class="btn btn-default button_width_usage">Verbruik</button>
-			<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
-			<ul class="dropdown-menu">
-				<li><a href="#" class="usage_a" data-usage="1000">1000 kWh</a></li>
-				<li><a href="#" class="usage_a" data-usage="2000">2000 kWh</a></li>
-				<li><a href="#" class="usage_a" data-usage="3000">3000 kWh</a></li>
-				<li><a href="#" class="usage_a" data-usage="4000">4000 kWh</a></li>
-				<li><a href="#" class="usage_a" data-usage="5000">5000 kWh</a></li>					
-			</ul>
-		</div>
-		
-		<!--
-		<p><br>	This prototype allows selecting options from the dropdown menus <br>
-				which are then logged on the console. Once all calculation formulas <br> 
-				are implemented	these user selected options will be used as input values. <br>
-				Also in this prototype are the plotted locations of all weather stations. <br>
-				These are currently not interactive, but ultimately will get highlighted <br>
-				on hover, show a tooltip and be clickable. This will then change the location <br>
-				in the dropdown menu and update the weather data, there by all visualizations <br>
-				and resulting numbers. Some weather stations are missing data (see the json <br>
-				logged on the console) and will therefore not be suitable for some calculations.					
-		</p>
-		-->
-		
+			<p class="enter"></p>
+			
+			<div class="btn-group">
+				<button type="button" data-toggle="dropdown" class="btn btn-default button-width-usage">Verbruik</button>
+				<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
+				<ul class="dropdown-menu">
+					<li><a href="#" class="usage-a" data-usage="1000" usage-score="10">1000 kWh</a></li>
+					<li><a href="#" class="usage-a" data-usage="2000" usage-score="8">2000 kWh</a></li>
+					<li><a href="#" class="usage-a" data-usage="3000" usage-score="6">3000 kWh</a></li>
+					<li><a href="#" class="usage-a" data-usage="4000" usage-score="4">4000 kWh</a></li>
+					<li><a href="#" class="usage-a" data-usage="5000" usage-score="2">5000 kWh</a></li>					
+				</ul>
+			</div>				
 		</div>
 		
 		<div class="results" id="results">
-			<span class="production"><p class="p_production">Test</p></span>
-			<span class="profit"><p class="p_profit">Test</p></span>
-			<span class="payback"><p class="p_payback">Test</p></span>
+			<div class="production" align="center">0</div>
+			<div class="profit" align="center">0</div>
+			<div class="payback" align="center">0</div>			
 		</div>
 		
-		<div class="results_units" id="results_units">
-			<span class="production_unit">kWh</span>
-			<span class="profit_unit">Euro</span>
-			<span class="payback_unit">Jaar</span>
+		<div class="results-units" id="results-units">
+			<span class="production-unit">kWh</span>
+			<span class="profit-unit">Euro</span>
+			<span class="payback-unit">Jaar</span>
 		</div>
 				
 		<div class="wrapper" id="wrapper">

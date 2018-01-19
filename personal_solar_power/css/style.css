@@ -1,40 +1,99 @@
 /* Jesse Emmelot, 11963522 */
 
+/* style attributes for the axis */
+.axis path,
+.axis line {
+	fill: none;
+	stroke: #000;
+	shape-rendering: crispEdges;
+}
+
+/* below are the radar chart attributes */
+.radar-chart .area {
+  fill-opacity: 0.7;
+}
+.radar-chart.focus .area {
+  fill-opacity: 0.3;
+}
+.radar-chart.focus .area.focused {
+  fill-opacity: 0.9;
+}
+
+.area.house, .house {
+  fill: orange;
+  stroke: none;
+}
+
+.radar {
+	position: absolute;
+	bottom: -180px;
+	right: -580px;
+}
+
+/* line chart attributes */
+.chart {
+	position: absolute;
+	bottom: 45px;
+	left: 20px;
+}
+
+.title {
+	position: absolute;
+	top: 20px;
+	left: 470px;
+	font-size: 30px;
+	text-decoration: underline;
+}
+
+.btn {
+	font-size: 20px;
+}
+
 /* location button width */
-.button_width_location{
-	width: 100px;
+.button-width-location{
+	width: 250px;
 }
 
 /* orientation button width */
-.button_width_orientation{
-	width: 100px;
+.button-width-orientation{
+	width: 250px;
 }
 
 /* angle button width */
-.button_width_angle{
-	width: 100px;
+.button-width-angle{
+	width: 250px;
 }
 
 /* surface button width */
-.button_width_surface{
-	width: 100px;
+.button-width-surface{
+	width: 250px;
 }
 
 /* panel button width */
-.button_width_panel{
-	width: 100px;
+.button-width-panel{
+	width: 250px;
 }
 
 /* width button width */
-.button_width_usage{
-	width: 100px;
+.button-width-usage{
+	width: 250px;
 }
 
 /* button group position */
 .buttons {
 	position: absolute;
 	left: 490px;
-	top: 30px;
+	top: 45px;
+	font-size: 29px;
+}
+
+.dropdown-menu {
+	width: 250px;
+}
+
+.enter {
+	display: block;
+	margin: 22px 0;
 }
 
 /* student credentials */
@@ -54,64 +113,55 @@
 /* results group properties */
 .results {
 	position: absolute;
-	top: 30px;
-	left: 800px;	
+	top: 25px;
+	left: 850px;	
 	font-size: 70px;
 }
 
 /* production result position */
 .production {
-	position: absolute;	
+	position: absolute;
+	width: 200px;
+	height: 80px;
 }
 
 /* profit result position */
 .profit {
 	position: absolute;
-	left: 200px;	
+	left: 200px;
+	width: 200px;
+	height: 80px;
 }
 
 /* payback result position */
 .payback {
 	position: absolute;
 	left: 400px;
-}
-
-/* production result position */
-.p_production {
-	text-align: center;
-}
-
-/* profit result position */
-.p_profit {
-	text-align: center;
-}
-
-/* profit result position */
-.p_payback {
-	text-align: center;
+	width: 200px;
+	height: 80px;
 }
 
 /* results units group properties */
-.results_units {
+.results-units {
 	position: absolute;
 	top: 110px;
-	left: 840px;	
+	left: 919px;	
 	font-size: 30px;
 }
 
 /* production result unit position */
-.production_unit {
+.production-unit {
 	position: absolute;	
 }
 
 /* profit result unit position */
-.profit_unit {
+.profit-unit {
 	position: absolute;
 	left: 200px;
 }
 
 /* payback result unit position */
-.payback_unit {
+.payback-unit {
 	position: absolute;
 	left: 400px;
 }
@@ -122,8 +172,8 @@
 .wrapper{
 	position: absolute;
 	bottom: 40px;
-	left: 40px;
-	width: 800px;
+	left: 30px;
+	width: 785px;
 }
 
 .d3-slider {
