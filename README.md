@@ -1,4 +1,4 @@
-# Visualization Proposal
+# Personal Solar Power
 ###### Jesse Emmelot <br> 11963522
 
 ### Summary
