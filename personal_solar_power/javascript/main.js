@@ -167,6 +167,7 @@ function ready(error, data, nld, percentages) {
 						
 			svgRadar.append("g").classed("single", 1).datum(radarData).call(radar);
 			
+			console.log(orientation);
 			insolationEfficiency = percentages[orientation]["angle"][angle];
 									
 			idealInsolation = (radiation*10000)/3600000;

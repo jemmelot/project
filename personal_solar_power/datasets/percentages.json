@@ -1,5 +1,5 @@
 {
-	"oost_west":{
+	"oost-west":{
 		"angle":{
 			"0": 0.90,
 			"15": 0.88,
@@ -10,7 +10,7 @@
 			"90": 0.52
 		}
 	},
-	"zuid_oost_west":{
+	"zuid-oost-west":{
 		"angle":{
 			"0": 0.90,
 			"15": 0.95,
