@@ -47,6 +47,13 @@ To switch between showing temperature/radiation and energy/profit potential next
 - ###### Radar plot
 Plotting the colored lines on the radarplot can be done by connecting the five radial points of data together. 
 
+### Functions
+###### calculation
+This functions takes all user inputs, combined with the temperature/radiation data from the dataset to calculate the results and be able to plot all visualizations. This functions is defined right after all json data is loaden in and all variables have been instantiated.
+
+###### on click functions
+Defined right after the calculation function, used to register all user inputs into variables.
+
 ### D3 plugins
 ###### d3-tip
 This plugin will be used to display most text and information on hover.
@@ -59,3 +66,6 @@ This could be used to format and style the country map.
 
 ###### d3.slider
 This offers simple and effective methods to make a slider.
+
+###### d3.time.format
+Used to convert dates from the dataset to proper date values.
