@@ -22,13 +22,13 @@
 		<script src="https://d3js.org/d3-time-format.v2.min.js"></script>
 		<script src="https://rawgit.com/tpreusse/radar-chart-d3/master/src/radar-chart.js"></script>		
 		
-		<div id="chart" class="chart" width="850px" height="200px"></div>
-		<div id="radar" class="radar" width="500px" height="500px"></div>
+		<svg id="chart" class="chart" width="850" height="270"></div>
+		<div id="radar" class="radar" width="450" height="450"></div>
 		
 		<div class="title">Zonnepanelen Calculator</div>
-		
+		<p></p>
 		<div class="buttons">
-			<p class="enter">Voer gegevens in</p>
+			<p class="enter">Voer gegevens in</p>			
 			<div class="btn-group" id="location">
 				<button type="button" data-toggle="dropdown" class="btn btn-default button-width-location">Locatie</button>
 				<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
@@ -124,6 +124,27 @@
 			<div id="slider"></div>
 		</div>
 		
+		<div id="progress" 
+			data-percentage="90" 
+			data-track-width="20" 
+			data-track-colour="ffffff" 
+			data-fill-colour="ff9933" 
+			data-text-colour="00c0ff" 
+			data-stroke-colour="ffffff" 
+			data-stroke-spacing="0"> 
+		</div> 
+		
+		<div class="progress-wrapper">
+		</div>
+		
+		<div class="radio-radiation">
+			<label><input type="radio" name="optradio">Straling</label>
+		</div>
+		<div class="radio-temperature">
+			<label><input type="radio" name="optradio">Temperatuur</label>
+		</div>
+		
+		<div class="map-text">Selecteer meetstation</div>
 		<div class="name">Jesse Emmelot, 11963522</div>
 		
 		<script src="https://d3js.org/d3-queue.v3.min.js"></script>		

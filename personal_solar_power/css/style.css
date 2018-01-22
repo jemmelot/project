@@ -1,11 +1,13 @@
 /* Jesse Emmelot, 11963522 */
 
 /* style attributes for the axis */
-.axis path,
-.axis line {
+.lines {
 	fill: none;
-	stroke: #000;
-	shape-rendering: crispEdges;
+	stroke-width: 2.5px;	
+}
+
+.radar-chart.axis {
+	font-size: 30px;
 }
 
 /* below are the radar chart attributes */
@@ -19,6 +21,10 @@
   fill-opacity: 0.9;
 }
 
+.legend {
+	font-size: 50px;
+}
+
 .area.house, .house {
   fill: orange;
   stroke: none;
@@ -26,8 +32,8 @@
 
 .radar {
 	position: absolute;
-	bottom: -180px;
-	right: -580px;
+	bottom: 20px;
+	right: 95px;
 }
 
 /* line chart attributes */
@@ -35,6 +41,33 @@
 	position: absolute;
 	bottom: 45px;
 	left: 20px;
+	fill: none;
+	stroke: #000;
+	shape-rendering: crispEdges;
+}
+
+.overlay {
+	fill: none;
+	stroke: none;
+	pointer-events: all;
+}
+
+.radio-temperature {
+	position: absolute;
+	bottom: 260px;
+	left: 80px;
+}
+
+.radio-radiation {
+	position: absolute;
+	bottom: 235px;
+	left: 80px;
+}
+
+.progress-wrapper {
+	position: absolute;
+	top: 300px;
+	right: 500px;
 }
 
 .title {
@@ -45,38 +78,45 @@
 	text-decoration: underline;
 }
 
+.map-text {
+	position: absolute;
+	font-size: 16px;
+	bottom: 340px;
+	left: 60px;
+}
+
 .btn {
-	font-size: 20px;
+	font-size: 17px;
 }
 
 /* location button width */
 .button-width-location{
-	width: 250px;
+	width: 200px;
 }
 
 /* orientation button width */
 .button-width-orientation{
-	width: 250px;
+	width: 200px;
 }
 
 /* angle button width */
 .button-width-angle{
-	width: 250px;
+	width: 200px;
 }
 
 /* surface button width */
 .button-width-surface{
-	width: 250px;
+	width: 200px;
 }
 
 /* panel button width */
 .button-width-panel{
-	width: 250px;
+	width: 200px;
 }
 
 /* width button width */
 .button-width-usage{
-	width: 250px;
+	width: 200px;
 }
 
 /* button group position */
@@ -84,7 +124,7 @@
 	position: absolute;
 	left: 490px;
 	top: 45px;
-	font-size: 29px;
+	font-size: 20px;
 }
 
 .dropdown-menu {
@@ -93,7 +133,7 @@
 
 .enter {
 	display: block;
-	margin: 22px 0;
+	margin: 15px 0;
 }
 
 /* student credentials */
@@ -113,9 +153,9 @@
 /* results group properties */
 .results {
 	position: absolute;
-	top: 25px;
+	top: 70px;
 	left: 850px;	
-	font-size: 70px;
+	font-size: 55px;
 }
 
 /* production result position */
@@ -128,7 +168,7 @@
 /* profit result position */
 .profit {
 	position: absolute;
-	left: 200px;
+	left: 215px;
 	width: 200px;
 	height: 80px;
 }
@@ -136,7 +176,7 @@
 /* payback result position */
 .payback {
 	position: absolute;
-	left: 400px;
+	left: 430px;
 	width: 200px;
 	height: 80px;
 }
@@ -144,8 +184,8 @@
 /* results units group properties */
 .results-units {
 	position: absolute;
-	top: 110px;
-	left: 919px;	
+	top: 135px;
+	left: 920px;	
 	font-size: 30px;
 }
 
@@ -157,13 +197,13 @@
 /* profit result unit position */
 .profit-unit {
 	position: absolute;
-	left: 200px;
+	left: 213px;
 }
 
 /* payback result unit position */
 .payback-unit {
 	position: absolute;
-	left: 400px;
+	left: 430px;
 }
 
 /* 
@@ -236,6 +276,7 @@
 
 .d3-slider-axis-bottom {
     top: .8em;
+	height: 30px;
 }
 
 .d3-slider-axis-right {
@@ -261,4 +302,16 @@
     left: -.25em;
     margin-left: 0;
     margin-bottom: -.6em;      
+}
+
+.radial-progress { 
+	&__text {
+		font-family: Arial, sans-serif;
+		font-size: 2rem;
+		font-weight: bold;
+	}  
+}
+
+#progress {
+ position: absolute
 }
