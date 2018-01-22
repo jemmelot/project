@@ -1,6 +1,9 @@
 # Personal Solar Power
 ###### Jesse Emmelot <br> 11963522
 
+### Link to visualization
+https://jemmelot.github.io/project/personal_solar_power/personal_solar_power.html
+
 ### Summary
 This visualization will be made to inform people who are interested in personal solar energy, about the potential energy gains and financial gains for their house. It will offer charts to show relevant data of their local weather station as well as results for potential gains, based on their own input values.
 
