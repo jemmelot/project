@@ -20,8 +20,11 @@
 	- http://www.sun-solar.nl/index.php/product/solar-frontier-sf175-s-paneel-135-euro-incl-btw-sunsolar/
 */
 
-var monthValue = "";
+var monthValue = "Jaar";
 var station = "";
+
+// array of month abbreviations to check which array within a station object to load data from
+var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jaar"];	
 
 var yDomainMin;
 var yDomainMax;
@@ -123,7 +126,7 @@ function ready(error, data, nld, percentages) {
 		Object.keys(data[key].dates).forEach(function(part,index) {
 			data[key].dates[part].forEach(function(d) {
 				d.date = format(d.date);
-				d.temperature = +d.temperature;
+				d.temperature = (+d.temperature)/10;
 				d.radiation = +d.radiation;
 			});			
 		})
@@ -196,9 +199,11 @@ function ready(error, data, nld, percentages) {
 		if (monthValue == "Jaar") {
 			lineData = [];
 			
-			Object.keys(data[station].dates).forEach(function(key,index) {
-				lineData.push(data[station].dates[key]);
-			} );
+			for (var i = 0; i < ((months.length) - 1); i++) {
+				for (var j = 0; j < data[station].dates[months[i]].length; j++) {
+					lineData.push(data[station].dates[months[i]][j]);
+				}
+			}			
 		}
 		
 		else {
@@ -295,14 +300,25 @@ function ready(error, data, nld, percentages) {
 					.attr('x1', crossX).attr('y1', y(yDomainMin))
 					.attr('x2', crossX).attr('y2', y(yDomainMax));
 				focus.select('#focusLineY')
-					.attr('x1', x(xDomainMin)).attr('y1', crossY)
-					.attr('x2', x(xDomainMax)).attr('y2', crossY);
+					.attr('x1', 0).attr('y1', crossY)
+					.attr('x2', 750).attr('y2', crossY);
 				focus.select("#focusTextY")
-					.attr("transform", "translate(" + x(xDomainMin) + "," + (crossY - 10) + ")")
-					.text(d.stats);					
+					.attr("transform", "translate(" + 0 + "," + (crossY - 10) + ")")
+					.text(function() {
+						if (radioStatus == 0) {
+							return (d.stats + " °C");
+						}
+						
+						if (radioStatus == 1) {
+							return (d.stats + " J/cm2");
+						}						
+					});						
 				focus.select("#focusTextX")
-					.attr("transform", "translate(" + textX + "," + (y(yDomainMax) - 15) + ")")
-					.text(d.date);
+					.attr("transform", "translate(" + (textX + 45) + "," + (y(yDomainMax) - 15) + ")")
+					.text(d.date.toString()
+							.replace('0100', '0200')
+							.replace('standaardtijd', 'zomertijd')
+							.replace('00:00:00 GMT+0200 (West-Europa (zomertijd))', ''));
 			});
 	}	
 			
@@ -573,6 +589,7 @@ function ready(error, data, nld, percentages) {
 		.attr("fill", "red")
 		.on("click", function (d) { 
 			station = d[2];
+			updateLine(station, monthValue, radioStatus);
 						
 			// display the name of the clicked station in the button
 			$("button.button-width-location").text(d[2]);
@@ -591,10 +608,7 @@ function ready(error, data, nld, percentages) {
 		
 		updateLine(station, monthValue, radioStatus);
 	};	
-	
-	// array of month abbreviations to check which array within a station object to load data from
-	var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jaar"];	
-	
+		
 	/* 
 		add a slider to select which month the weather station data should be
 		picked from. Sliding it will re-check weather the station has been changed
