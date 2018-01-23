@@ -6,34 +6,19 @@
 	stroke-width: 2.5px;	
 }
 
-.radar-chart.axis {
-	font-size: 30px;
-}
-
-/* below are the radar chart attributes */
-.radar-chart .area {
-  fill-opacity: 0.7;
-}
-.radar-chart.focus .area {
-  fill-opacity: 0.3;
-}
-.radar-chart.focus .area.focused {
-  fill-opacity: 0.9;
-}
-
-.legend {
-	font-size: 50px;
-}
-
-.area.house, .house {
-  fill: orange;
-  stroke: none;
-}
-
 .radar {
 	position: absolute;
 	bottom: 20px;
-	right: 95px;
+	right: 20px;
+}
+
+.legend {
+	font-family: 'Raleway', sans-serif;
+	fill: #000;
+}
+
+.tooltip {
+	fill: #000;
 }
 
 /* line chart attributes */
@@ -154,7 +139,7 @@
 .results {
 	position: absolute;
 	top: 70px;
-	left: 850px;	
+	left: 815px;	
 	font-size: 55px;
 }
 
@@ -168,7 +153,7 @@
 /* profit result position */
 .profit {
 	position: absolute;
-	left: 215px;
+	left: 460px;
 	width: 200px;
 	height: 80px;
 }
@@ -176,8 +161,9 @@
 /* payback result position */
 .payback {
 	position: absolute;
-	left: 430px;
+	left: 231px;
 	width: 200px;
+	top: -20px;
 	height: 80px;
 }
 
@@ -185,7 +171,7 @@
 .results-units {
 	position: absolute;
 	top: 135px;
-	left: 920px;	
+	left: 885px;	
 	font-size: 30px;
 }
 
@@ -197,13 +183,14 @@
 /* profit result unit position */
 .profit-unit {
 	position: absolute;
-	left: 213px;
+	left: 458px;
 }
 
 /* payback result unit position */
 .payback-unit {
 	position: absolute;
-	left: 430px;
+	left: 232px;
+	top: -20px;
 }
 
 /* 

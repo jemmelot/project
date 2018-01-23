@@ -13,6 +13,8 @@
 	</head>
 	
 	<body>
+		<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
+		<link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
 		<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
 		<script src="https://d3js.org/topojson.v1.min.js"></script>
 		<script src="https://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
@@ -22,8 +24,8 @@
 		<script src="https://d3js.org/d3-time-format.v2.min.js"></script>
 		<script src="https://rawgit.com/tpreusse/radar-chart-d3/master/src/radar-chart.js"></script>		
 		
-		<svg id="chart" class="chart" width="850" height="270"></div>
-		<div id="radar" class="radar" width="450" height="450"></div>
+		<svg id="chart" class="chart" width="850" height="270"></svg>
+		<svg id="radar" class="radar" width="710" height="600"></svg>
 		
 		<div class="title">Zonnepanelen Calculator</div>
 		<p></p>
@@ -42,11 +44,11 @@
 				<button type="button" data-toggle="dropdown" class="btn btn-default button-width-orientation">Oriëntatie</button>
 				<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
 				<ul class="dropdown-menu">
-					<li><a href="#" class="orientation-a" data-orientation="oost-west" orientation-score="1">Oost</a></li>
-					<li><a href="#" class="orientation-a" data-orientation="zuid-oost-west" orientation-score="5">Zuid-Oost</a></li>
-					<li><a href="#" class="orientation-a" data-orientation="zuid" orientation-score="10">Zuid</a></li>
-					<li><a href="#" class="orientation-a" data-orientation="zuid-oost-west"orientation-score="5">Zuid-West</a></li>
-					<li><a href="#" class="orientation-a" data-orientation="oost-west" orientation-score="1">West</a></li>				
+					<li><a href="#" class="orientation-a" data-orientation="oost-west" orientation-score="0.1">Oost</a></li>
+					<li><a href="#" class="orientation-a" data-orientation="zuid-oost-west" orientation-score="0.5">Zuid-Oost</a></li>
+					<li><a href="#" class="orientation-a" data-orientation="zuid" orientation-score="1">Zuid</a></li>
+					<li><a href="#" class="orientation-a" data-orientation="zuid-oost-west"orientation-score="0.5">Zuid-West</a></li>
+					<li><a href="#" class="orientation-a" data-orientation="oost-west" orientation-score="0.1">West</a></li>				
 				</ul>
 			</div>
 			
@@ -56,13 +58,13 @@
 				<button type="button" data-toggle="dropdown" class="btn btn-default button-width-angle">Dakhoek</button>
 				<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
 				<ul class="dropdown-menu">
-					<li><a href="#" class="angle-a" data-angle="0" angle-score="5">0 graden</a></li>
-					<li><a href="#" class="angle-a" data-angle="15" angle-score="8">15 graden</a></li>
-					<li><a href="#" class="angle-a" data-angle="30" angle-score="10">30 graden</a></li>
-					<li><a href="#" class="angle-a" data-angle="45" angle-score="7">45 graden</a></li>
-					<li><a href="#" class="angle-a" data-angle="60" angle-score="3">60 graden</a></li>
-					<li><a href="#" class="angle-a" data-angle="75" angle-score="2">75 graden</a></li>
-					<li><a href="#" class="angle-a" data-angle="90" angle-score="1">90 graden</a></li>				
+					<li><a href="#" class="angle-a" data-angle="0" angle-score="0.5">0 graden</a></li>
+					<li><a href="#" class="angle-a" data-angle="15" angle-score="0.8">15 graden</a></li>
+					<li><a href="#" class="angle-a" data-angle="30" angle-score="0.1">30 graden</a></li>
+					<li><a href="#" class="angle-a" data-angle="45" angle-score="0.7">45 graden</a></li>
+					<li><a href="#" class="angle-a" data-angle="60" angle-score="0.3">60 graden</a></li>
+					<li><a href="#" class="angle-a" data-angle="75" angle-score="0.2">75 graden</a></li>
+					<li><a href="#" class="angle-a" data-angle="90" angle-score="0.1">90 graden</a></li>				
 				</ul>
 			</div>
 			
@@ -72,11 +74,11 @@
 				<button type="button" data-toggle="dropdown" class="btn btn-default button-width-surface">Oppervlak</button>
 				<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
 				<ul class="dropdown-menu">
-					<li><a href="#" class="surface-a" data-surface="5" surface-score="2">5 m2</a></li>
-					<li><a href="#" class="surface-a" data-surface="10" surface-score="4">10 m2</a></li>
-					<li><a href="#" class="surface-a" data-surface="15" surface-score="6">15 m2</a></li>
-					<li><a href="#" class="surface-a" data-surface="20" surface-score="8">20 m2</a></li>
-					<li><a href="#" class="surface-a" data-surface="25" surface-score="10">25 m2</a></li>						
+					<li><a href="#" class="surface-a" data-surface="5" surface-score="0.2">5 m2</a></li>
+					<li><a href="#" class="surface-a" data-surface="10" surface-score="0.4">10 m2</a></li>
+					<li><a href="#" class="surface-a" data-surface="15" surface-score="0.6">15 m2</a></li>
+					<li><a href="#" class="surface-a" data-surface="20" surface-score="0.8">20 m2</a></li>
+					<li><a href="#" class="surface-a" data-surface="25" surface-score="1">25 m2</a></li>						
 				</ul>
 			</div>
 			
@@ -86,10 +88,10 @@
 				<button type="button" data-toggle="dropdown" class="btn btn-default button-width-panel">Type paneel</button>
 				<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
 				<ul class="dropdown-menu">
-					<li><a href="#" class="panel-a" data-panel="0.17" data-coefficient="0.43" data-price="300" panel-score="10">Mono-kristallijn</a></li>
-					<li><a href="#" class="panel-a" data-panel="0.14" data-coefficient="0.45" data-price="225" panel-score="4">Poly-kristallijn</a></li>
-					<li><a href="#" class="panel-a" data-panel="0.08" data-coefficient="0.20" data-price="150" panel-score="1">Amorf/Dunne lijn</a></li>
-					<li><a href="#" class="panel-a" data-panel="0.14" data-coefficient="0.36" data-price="180" panel-score="7">CIGS</a></li>				
+					<li><a href="#" class="panel-a" data-panel="0.17" data-coefficient="0.43" data-price="300" panel-score="1">Mono-kristallijn</a></li>
+					<li><a href="#" class="panel-a" data-panel="0.14" data-coefficient="0.45" data-price="225" panel-score="0.4">Poly-kristallijn</a></li>
+					<li><a href="#" class="panel-a" data-panel="0.08" data-coefficient="0.20" data-price="150" panel-score="0.1">Amorf/Dunne lijn</a></li>
+					<li><a href="#" class="panel-a" data-panel="0.14" data-coefficient="0.36" data-price="180" panel-score="0.7">CIGS</a></li>				
 				</ul>
 			</div>
 
@@ -99,11 +101,11 @@
 				<button type="button" data-toggle="dropdown" class="btn btn-default button-width-usage">Verbruik</button>
 				<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
 				<ul class="dropdown-menu">
-					<li><a href="#" class="usage-a" data-usage="1000" usage-score="10">1000 kWh</a></li>
-					<li><a href="#" class="usage-a" data-usage="2000" usage-score="8">2000 kWh</a></li>
-					<li><a href="#" class="usage-a" data-usage="3000" usage-score="6">3000 kWh</a></li>
-					<li><a href="#" class="usage-a" data-usage="4000" usage-score="4">4000 kWh</a></li>
-					<li><a href="#" class="usage-a" data-usage="5000" usage-score="2">5000 kWh</a></li>					
+					<li><a href="#" class="usage-a" data-usage="1000" usage-score="1">1000 kWh</a></li>
+					<li><a href="#" class="usage-a" data-usage="2000" usage-score="0.8">2000 kWh</a></li>
+					<li><a href="#" class="usage-a" data-usage="3000" usage-score="0.6">3000 kWh</a></li>
+					<li><a href="#" class="usage-a" data-usage="4000" usage-score="0.4">4000 kWh</a></li>
+					<li><a href="#" class="usage-a" data-usage="5000" usage-score="0.2">5000 kWh</a></li>					
 				</ul>
 			</div>				
 		</div>
@@ -145,7 +147,7 @@
 		</div>
 		
 		<div class="map-text">Selecteer meetstation</div>
-		<div class="name">Jesse Emmelot, 11963522</div>
+		<!-- <div class="name">Jesse Emmelot, 11963522</div> -->
 		
 		<script src="https://d3js.org/d3-queue.v3.min.js"></script>		
 		<script src="javascript/slider.js"></script>		
