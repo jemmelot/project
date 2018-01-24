@@ -25,6 +25,8 @@
 
 var monthValue = "Jaar";
 var station = "";
+var monthTotalTemp = 0;
+var monthTotalRad = 0;
 
 // array of month abbreviations to check which array within a station object to load data from
 var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jaar"];	
@@ -525,8 +527,8 @@ function ready(error, data, nld, percentages) {
 	var usageScore = 0;
 	
 	// placeholder variables for testing
-	var testRadiation = 1000;
-	var testTemperature = 100;
+	var calTemp = 0;
+	var calRad = 0;
 	
 	// instantiate other calculation variables
 	var capacity = 0;
@@ -540,10 +542,39 @@ function ready(error, data, nld, percentages) {
 	
 	// size of one panel in square meters
 	var size = 1.65
+	
+	function calFactors(monthValue, station) {
+		totalTemp = 0;
+		totalRad = 0;
+		
+		if (monthValue != "") {
+			if (monthValue == "Jaar") {
+				for (var i = 0; i < ((months.length) - 1); i++) {
+					for (var j = 0; j < data[station].dates[months[i]].length; j++) {
+						totalTemp += data[station].dates[months[i]][j].temperature;
+						totalRad += data[station].dates[months[i]][j].radiation;
+					}
+				}
+				
+				calTemp = totalTemp/365;
+				calRad = totalRad/365;				
+			} 
 			
+			else {
+				for (var i = 0; i < data[station].dates[monthValue].length; i++) {
+					totalTemp += data[station].dates[monthValue][i].temperature
+					totalRad += data[station].dates[monthValue][i].radiation
+				}
+				
+				calTemp = totalTemp/(data[station].dates[monthValue].length);
+				calRad = totalRad/(data[station].dates[monthValue].length);
+			}
+		}
+	}			
+	
 	// calculation function
-	function calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore) {
-		if (orientation.length != 0 && angle.length != 0 && surface !=0 && panel != 0 && usage != 0) {
+	function calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad) {
+		if (orientation.length != 0 && angle.length != 0 && surface !=0 && panel != 0 && usage != 0 && calTemp != 0 && calRad != 0) {
 			
 			radarData = [
 				[
@@ -565,7 +596,7 @@ function ready(error, data, nld, percentages) {
 									
 			insolationEfficiency = percentages[orientation]["angle"][angle];
 									
-			idealInsolation = (testRadiation*10000)/3600000;
+			idealInsolation = (calRad*10000)/3600000;
 			
 			trueInsolation = idealInsolation*insolationEfficiency;
 			
@@ -573,7 +604,7 @@ function ready(error, data, nld, percentages) {
 			
 			basicOutput = trueInsolation*capacity;
 						
-			productionDay = basicOutput*(1-(((testTemperature - 25)*coefficient))/100);
+			productionDay = basicOutput*(1-(((calTemp - 25)*coefficient))/100);
 			productionYear = productionDay*365;
 			
 			totalCost = (surface/size)*cost;
@@ -686,7 +717,9 @@ function ready(error, data, nld, percentages) {
 		
 		updateLine(station, monthValue, radioStatus);
 		
-		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore);
+		calFactors(monthValue, station);
+						
+		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);
 	});
 	
 	// when an orientation is selected, display it in the button and store its value in a variable for calculation
@@ -694,7 +727,7 @@ function ready(error, data, nld, percentages) {
 		orientation = $(this).attr("data-orientation");
 		orientationScore = parseInt($(this).attr("orientation-score"));
 		$("button.button-width-orientation").text($(this).text());	
-		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore);		
+		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);		
 	});
 	
 	// when an angle is selected, display it in the button and store its value in a variable for calculation
@@ -702,7 +735,7 @@ function ready(error, data, nld, percentages) {
 		angle = $(this).attr("data-angle");
 		angleScore = parseInt($(this).attr("angle-score"));
 		$("button.button-width-angle").text($(this).text());
-		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore);
+		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);
 	});
 	
 	// when a surface is selected, display it in the button and store its value in a variable for calculation
@@ -710,7 +743,7 @@ function ready(error, data, nld, percentages) {
 		surface = parseInt($(this).attr("data-surface"));
 		surfaceScore = parseInt($(this).attr("surface-score"));
 		$("button.button-width-surface").text($(this).text());
-		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore);
+		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);
 	});
 	
 	// when a panel is selected, display it in the button and store its value in a variable for calculation
@@ -720,7 +753,7 @@ function ready(error, data, nld, percentages) {
 		$("button.button-width-panel").text($(this).text());
 		coefficient = parseFloat($(this).attr("data-coefficient"));
 		cost = parseInt($(this).attr("data-price"));
-		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore);		
+		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);		
 	});
 	
 	// when a usage is selected, display it in the button and store its value in a variable for calculation
@@ -728,7 +761,7 @@ function ready(error, data, nld, percentages) {
 		usage = parseInt($(this).attr("data-usage"));
 		usageScore = parseInt($(this).attr("usage-score"));
 		$("button.button-width-usage").text($(this).text());
-		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore);
+		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);
 	});
 	
 	/*
@@ -785,6 +818,8 @@ function ready(error, data, nld, percentages) {
 			d3.select(this)
 				.style("fill", "#FFB6C1")
 				.attr("r", 8);
+			
+			calFactors(monthValue, station);			
 		});
 		
 	function chartPlot(station, value) {
@@ -807,6 +842,10 @@ function ready(error, data, nld, percentages) {
 		.value("Jaar")
 		.on("slide", function(evt, value) {
 			chartPlot(station, value)
+			
+			calFactors(value, station);
+			
+			calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad)
 		});
 	   
 	// call the slider to display it on the page

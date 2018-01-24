@@ -5,7 +5,6 @@
 251,5.346,53.392,Terschelling
 257,4.603,52.506,Wijk aan Zee
 260,5.180,52.100,De Bilt
-265,5.274,52.130,Soesterberg
 267,5.384,52.898,Stavoren
 269,5.520,52.458,Lelystad
 270,5.752,53.224,Leeuwarden
