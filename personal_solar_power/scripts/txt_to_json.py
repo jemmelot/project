@@ -48,7 +48,7 @@ with open(temperature_txt, 'rb') as infile:
 						for info in temp['dates'][month]:
 							temp2 = info.get('date')
 							if temp2 == row[1]:
-								info['temperature'] = int(row[2]) 
+								info['temperature'] = (float(row[2])/10)
 										
 with open(combined_json, 'w') as outfile:
 	json.dump(all_data, outfile)

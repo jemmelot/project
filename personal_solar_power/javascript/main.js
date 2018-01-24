@@ -308,7 +308,7 @@ function ready(error, data, nld, percentages) {
 		Object.keys(data[key].dates).forEach(function(part,index) {
 			data[key].dates[part].forEach(function(d) {
 				d.date = format(d.date);
-				d.temperature = (+d.temperature)/10;
+				d.temperature = +d.temperature;
 				d.radiation = +d.radiation;
 			});			
 		})
