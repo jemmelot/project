@@ -19,7 +19,6 @@
 290,6.891,52.274,Twenthe
 310,3.596,51.442,Vlissingen
 319,3.861,51.226,Westdorpe
-323,3.884,51.527,Wilhelminadorp
 330,4.122,51.992,Hoek van Holland
 344,4.447,51.962,Rotterdam
 348,4.926,51.970,Cabauw

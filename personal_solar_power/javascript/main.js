@@ -522,6 +522,91 @@ function ready(error, data, nld, percentages) {
 		$("#location ul").append('<li><a href="#" class="location-a" data-location="'+index+'"</a>'+index+'</li>');   
 	}
 	
+	var houseScore = 0; 
+	
+	function processBar(houseScore) {
+		var wrapper = document.getElementById('progress');
+		var start = 0;
+		var end = houseScore;
+
+		var colours = {
+			fill: function() {
+				if (end <= 50) {
+					return 'rgb(' + 255 + ',' + Math.round(5.1 * end) + ',' + 0 + ')'
+				}
+				
+				else {
+					return 'rgb(' + (255 - Math.round(5.1 * (end - 50))) + ',' + 255 + ',' + 0 + ')'
+				}
+			},
+			track: '#' + wrapper.dataset.trackColour,
+			text: '#' + wrapper.dataset.textColour,
+			stroke: '#' + wrapper.dataset.strokeColour,
+		}
+
+		var progressRadius = 100;
+		var border = wrapper.dataset.trackWidth;
+		var strokeSpacing = wrapper.dataset.strokeSpacing;
+		var endAngle = Math.PI * 2;
+		var formatText = d3.format('.0%');
+		var boxSize = radius * 2;
+		var count = end;
+		var progress = start;
+		var step = end < start ? -0.01 : 0.01;
+
+		//Define the circle
+		var circle = d3.svg.arc()
+			.startAngle(0)
+			.innerRadius(progressRadius)
+			.outerRadius(progressRadius - border);
+
+		//setup SVG wrapper
+		var svg = d3.select(wrapper)
+			.append('svg')
+			.attr("class", "progress_svg")
+			.attr('width', boxSize)
+			.attr('height', boxSize)
+			.attr('transform', 'translate(' + 20 + ',' + 20 + ')');
+
+		// add group container
+		var g = svg.append('g')
+			.attr('transform', 'translate(' + boxSize / 2 + ',' + boxSize / 2 + ')');
+
+		// setup track
+		var track = g.append('g').attr('class', 'radial-progress');
+		track.append('path')
+			.attr('class', 'radial-progress__background')
+			.attr('fill', colours.track)
+			.attr('stroke', colours.stroke)
+			.attr('stroke-width', strokeSpacing + 'px')
+			.attr('d', circle.endAngle(endAngle));
+
+		// add colour fill
+		var value = track.append('path')
+			.attr('class', 'radial-progress__value')
+			.attr('fill', colours.fill)
+			.attr('stroke', colours.stroke)
+			.attr('stroke-width', strokeSpacing + 'px');
+
+		function update(progress) {
+			//update position of endAngle
+			value.attr('d', circle.endAngle(endAngle * progress));
+		} 
+
+		(function iterate() {
+			// call update to begin animation
+			update(progress);
+			if (count > 0) {
+				// reduce count until it reaches 0
+				count--;
+				// increase progress
+				progress += step;
+				// control the speed of the fill
+				setTimeout(iterate, 10);
+			}
+		})();
+	}
+		
 	// instantiate variables for calculations
 	var orientation = "";
 	var angle = "";
@@ -535,7 +620,7 @@ function ready(error, data, nld, percentages) {
 	var surfaceScore = 0;
 	var panelScore = 0;
 	var usageScore = 0;
-	
+		
 	// placeholder variables for testing
 	var calTemp = 0;
 	var calRad = 0;
@@ -586,6 +671,8 @@ function ready(error, data, nld, percentages) {
 	function calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad) {
 		if (orientation.length != 0 && angle.length != 0 && surface !=0 && panel != 0 && usage != 0 && calTemp != 0 && calRad != 0) {
 			
+			houseScore = ((orientationScore + angleScore + surfaceScore + panelScore + usageScore)/5)*100; 
+									
 			radarData = [
 				[
 					{axis: "Oriëntatie", value: orientationScore},
@@ -626,85 +713,9 @@ function ready(error, data, nld, percentages) {
 			$(".results > .profit").text(parseInt(profit));
 			$(".results > .payback").text(parseInt(payback));
 			
-			/*
-			function processBar() {
-				var wrapper = document.getElementById('progress');
-				var start = 0;
-				var end = parseFloat(wrapper.dataset.percentage);
-
-				var colours = {
-					fill: '#' + wrapper.dataset.fillColour,
-					track: '#' + wrapper.dataset.trackColour,
-					text: '#' + wrapper.dataset.textColour,
-					stroke: '#' + wrapper.dataset.strokeColour,
-				}
-
-				var radius = 100;
-				var border = wrapper.dataset.trackWidth;
-				var strokeSpacing = wrapper.dataset.strokeSpacing;
-				var endAngle = Math.PI * 2;
-				var formatText = d3.format('.0%');
-				var boxSize = radius * 2;
-				var count = end;
-				var progress = start;
-				var step = end < start ? -0.01 : 0.01;
-
-				//Define the circle
-				var circle = d3.svg.arc()
-				.startAngle(0)
-				.innerRadius(radius)
-				.outerRadius(radius - border);
-
-				//setup SVG wrapper
-				var svg = d3.select(wrapper)
-					.append('svg')
-					.attr('width', boxSize)
-					.attr('height', boxSize)
-					.attr('transform', 'translate(' + 850 + ',' + 20 + ')');
-
-				// add group container
-				var g = svg.append('g')
-					.attr('transform', 'translate(' + boxSize / 2 + ',' + boxSize / 2 + ')');
-
-				// setup track
-				var track = g.append('g').attr('class', 'radial-progress');
-				track.append('path')
-					.attr('class', 'radial-progress__background')
-					.attr('fill', colours.track)
-					.attr('stroke', colours.stroke)
-					.attr('stroke-width', strokeSpacing + 'px')
-					.attr('d', circle.endAngle(endAngle));
-
-				// add colour fill
-				var value = track.append('path')
-					.attr('class', 'radial-progress__value')
-					.attr('fill', colours.fill)
-					.attr('stroke', colours.stroke)
-					.attr('stroke-width', strokeSpacing + 'px');
-
-				function update(progress) {
-					//update position of endAngle
-					value.attr('d', circle.endAngle(endAngle * progress));
-				} 
-
-				(function iterate() {
-					// call update to begin animation
-					update(progress);
-					if (count > 0) {
-						// reduce count until it reaches 0
-						count--;
-						// increase progress
-						progress += step;
-						// control the speed of the fill
-						setTimeout(iterate, 10);
-					}
-				})();
-			}
-			
-			for (var i = 0; i < 3; i++) {
-				processBar()
-			}
-			*/
+			d3.select("#progress").select(".radial-progress").remove();
+			d3.select("#progress").select("svg").remove();
+			processBar(houseScore);
 		}
 	};
 	
@@ -827,7 +838,8 @@ function ready(error, data, nld, percentages) {
 				.style("fill", "#FFB6C1")
 				.attr("r", 8);
 			
-			calFactors(monthValue, station);			
+			calFactors(monthValue, station);
+			calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);
 		});
 		
 	function chartPlot(station, value) {
