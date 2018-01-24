@@ -84,7 +84,7 @@ var svgRadar = d3.select("#radar")
 	radarHeight = 670 - radarMargin.top - radarMargin.bottom,
 	gRadar = svgRadar.append("g").attr("transform", "translate(" + (radarWidth/2 + radarMargin.left) + "," + (radarHeight/2 + radarMargin.top) + ")");	
 	
-var radarChartOptions = {
+var options = {
 	w: radarWidth,
 	h: radarHeight,
 	margin: radarMargin,
@@ -94,33 +94,94 @@ var radarChartOptions = {
 	color: "orange"
 };
 
-function RadarChart(radarData, options) {
-	var cfg = {
-		w: radarWidth,				//Width of the circle
-		h: radarHeight,				//Height of the circle
-		margin: {top: 20, right: 20, bottom: 20, left: 20}, //The margins of the SVG
-		levels: 3,				//How many levels or inner circles should there be drawn
-		maxValue: 0, 			//What is the value that the biggest circle will represent
-		labelFactor: 1.25, 	//How much farther than the radius of the outer circle should the labels be placed
-		wrapWidth: 60, 		//The number of pixels after which a label needs to be given a new line
-		opacityArea: 0.5, 	//The opacity of the area of the blob
-		dotRadius: 4, 			//The size of the colored circles of each blog
-		opacityCircles: 0.1, 	//The opacity of the circles of each blob
-		strokeWidth: 2, 		//The width of the stroke around each blob
-		roundStrokes: false,	//If true the area and stroke will follow a round path (cardinal-closed)
-		color: "orange"		//Color function
-	};
+var cfg = {
+	w: radarWidth,				//Width of the circle
+	h: radarHeight,				//Height of the circle
+	margin: {top: 20, right: 20, bottom: 20, left: 20}, //The margins of the SVG
+	levels: 3,				//How many levels or inner circles should there be drawn
+	maxValue: 0, 			//What is the value that the biggest circle will represent
+	labelFactor: 1.25, 	//How much farther than the radius of the outer circle should the labels be placed
+	wrapWidth: 60, 		//The number of pixels after which a label needs to be given a new line
+	opacityArea: 0.5, 	//The opacity of the area of the blob
+	dotRadius: 4, 			//The size of the colored circles of each blog
+	opacityCircles: 0.1, 	//The opacity of the circles of each blob
+	strokeWidth: 2, 		//The width of the stroke around each blob
+	roundStrokes: false,	//If true the area and stroke will follow a round path (cardinal-closed)
+	color: "orange"		//Color function
+};
+
+//Put all of the options into a variable called cfg
+if('undefined' !== typeof options){
+	for(var i in options){
+		if('undefined' !== typeof options[i]){ cfg[i] = options[i]; }
+	}//for i
+}//if
+
+//If the supplied maxValue is smaller than the actual one, replace by the max in the data
+var maxValue = Math.max(cfg.maxValue, d3.max(radarData, function(i){return d3.max(i.map(function(o){return o.value;}))}));
+
+var allAxis = (radarData[0].map(function(i, j){return i.axis})),	//Names of each axis
+	total = allAxis.length,					//The number of different axes
+	radius = Math.min(cfg.w/2, cfg.h/2), 	//Radius of the outermost circle
+	angleSlice = Math.PI * 2 / total;		//The width in radians of each "slice"
+		
+//Scale for the radius
+var rScale = d3.scale.linear()
+	.range([0, radius])
+	.domain([0, maxValue]);
 	
-	//Put all of the options into a variable called cfg
-	if('undefined' !== typeof options){
-		for(var i in options){
-			if('undefined' !== typeof options[i]){ cfg[i] = options[i]; }
-		}//for i
-	}//if
+//Wrapper for the grid & axes
+var axisGrid = gRadar.append("g").attr("class", "axisWrapper");
 	
+//Draw the background circles
+axisGrid.selectAll(".levels")
+	.data(d3.range(1,(cfg.levels+1)).reverse())
+	.enter()
+	.append("circle")
+		.attr("class", "gridCircle")
+		.attr("r", function(d, i){return radius/cfg.levels*d;})
+		.style("fill", "none")
+		.style("stroke", "black")
+		.style("stroke-width", function(d, i) { if ((radius/cfg.levels*d) == 260) {
+			return "3px";
+		}}); 
+				
+//Create the straight lines radiating outward from the center
+var axis = axisGrid.selectAll(".axis")
+	.data(allAxis)
+	.enter()
+	.append("g")
+	.attr("class", "axis");
+	
+//Append the lines
+axis.append("line")
+	.attr("x1", 0)
+	.attr("y1", 0)
+	.attr("x2", function(d, i){ return rScale(maxValue*1.1) * Math.cos(angleSlice*i - Math.PI/2); })
+	.attr("y2", function(d, i){ return rScale(maxValue*1.1) * Math.sin(angleSlice*i - Math.PI/2); })
+	.attr("class", "line")
+	.style("stroke", "black")
+	.style("stroke-width", "2px");
+
+//Append the labels at each axis
+axis.append("text")
+	.attr("class", "legend")
+	.style("font-size", "13px")
+	.attr("text-anchor", "middle")
+	.attr("dy", "0.35em")
+	.attr("x", function(d, i){ return rScale(maxValue * cfg.labelFactor) * Math.cos(angleSlice*i - Math.PI/2); })
+	.attr("y", function(d, i){ if (d == "Oriëntatie") {
+		return rScale(maxValue * 1.15) * Math.sin(angleSlice*i - Math.PI/2)
+	} 
+	else {
+		return rScale(maxValue * cfg.labelFactor) * Math.sin(angleSlice*i - Math.PI/2) }
+	})
+	.text(function(d) {return d});
+
+function updateRadar(radarData, cfg) {
 	//If the supplied maxValue is smaller than the actual one, replace by the max in the data
 	var maxValue = Math.max(cfg.maxValue, d3.max(radarData, function(i){return d3.max(i.map(function(o){return o.value;}))}));
-	
+
 	var allAxis = (radarData[0].map(function(i, j){return i.axis})),	//Names of each axis
 		total = allAxis.length,					//The number of different axes
 		radius = Math.min(cfg.w/2, cfg.h/2), 	//Radius of the outermost circle
@@ -131,60 +192,12 @@ function RadarChart(radarData, options) {
 		.range([0, radius])
 		.domain([0, maxValue]);
 		
-	//Wrapper for the grid & axes
-	var axisGrid = gRadar.append("g").attr("class", "axisWrapper");
-		
-	//Draw the background circles
-	axisGrid.selectAll(".levels")
-		.data(d3.range(1,(cfg.levels+1)).reverse())
-		.enter()
-		.append("circle")
-			.attr("class", "gridCircle")
-			.attr("r", function(d, i){return radius/cfg.levels*d;})
-			.style("fill", "none")
-			.style("stroke", "black")
-			.style("stroke-width", function(d, i) { if ((radius/cfg.levels*d) == 260) {
-				return "3px";
-			}}); 
-					
-	//Create the straight lines radiating outward from the center
-	var axis = axisGrid.selectAll(".axis")
-		.data(allAxis)
-		.enter()
-		.append("g")
-		.attr("class", "axis");
-		
-	//Append the lines
-	axis.append("line")
-		.attr("x1", 0)
-		.attr("y1", 0)
-		.attr("x2", function(d, i){ return rScale(maxValue*1.1) * Math.cos(angleSlice*i - Math.PI/2); })
-		.attr("y2", function(d, i){ return rScale(maxValue*1.1) * Math.sin(angleSlice*i - Math.PI/2); })
-		.attr("class", "line")
-		.style("stroke", "black")
-		.style("stroke-width", "2px");
-
-	//Append the labels at each axis
-	axis.append("text")
-		.attr("class", "legend")
-		.style("font-size", "13px")
-		.attr("text-anchor", "middle")
-		.attr("dy", "0.35em")
-		.attr("x", function(d, i){ return rScale(maxValue * cfg.labelFactor) * Math.cos(angleSlice*i - Math.PI/2); })
-		.attr("y", function(d, i){ if (d == "Oriëntatie") {
-			return rScale(maxValue * 1.15) * Math.sin(angleSlice*i - Math.PI/2)
-		} 
-		else {
-			return rScale(maxValue * cfg.labelFactor) * Math.sin(angleSlice*i - Math.PI/2) }
-		})
-		.text(function(d) {return d});
-		
 	//The radial line function
 	var radarLine = d3.svg.line.radial()
 		.interpolate("linear-closed")
 		.radius(function(d) { return rScale(d.value); })
-		.angle(function(d,i) {	return i*angleSlice; });
-		
+		.angle(function(d,i) {	return i*angleSlice; });	
+	
 	//Create a wrapper for the blobs	
 	var blobWrapper = gRadar.selectAll(".radarWrapper")
 		.data(radarData)
@@ -233,7 +246,7 @@ function RadarChart(radarData, options) {
 		.attr("cy", function(d,i){ return rScale(d.value) * Math.sin(angleSlice*i - Math.PI/2); })
 		.style("fill", "orange")
 		.style("fill-opacity", 0.8);
-	
+
 	//Wrapper for the invisible circles on top
 	var blobCircleWrapper = gRadar.selectAll(".radarCircleWrapper")
 		.data(radarData)
@@ -270,11 +283,8 @@ function RadarChart(radarData, options) {
 	var tooltip = gRadar.append("text")
 		.attr("class", "tooltip")
 		.style("opacity", 0);	
-}
-
-//Call function to draw the Radar chart
-RadarChart(radarData, radarChartOptions);
-
+};
+		
 var xDomain;
 var yDomain;	
 	
@@ -578,21 +588,19 @@ function ready(error, data, nld, percentages) {
 			
 			radarData = [
 				[
-					{axis: "Oriëntatie", value: angleScore},
-					{axis: "Dakhoek", value: usageScore},
-					{axis: "Dakoppervlak", value: panelScore},
-					{axis: "Rendement", value: surfaceScore},
-					{axis: "Verbruik", value: angleScore},								
+					{axis: "Oriëntatie", value: orientationScore},
+					{axis: "Dakhoek", value: angleScore},
+					{axis: "Dakoppervlak", value: surfaceScore},
+					{axis: "Rendement", value: panelScore},
+					{axis: "Verbruik", value: usageScore},								
 				]
 			];
-			
-			var newRadar = d3.select("#radar").transition();
-			
-			newRadar.select(".radarWrapper")
-				.duration(500);
-				//.data(radarData);
 						
-			RadarChart(radarData, radarChartOptions);
+			d3.select("#radar").select(".radarWrapper").remove();
+			d3.select("#radar").select(".radarCircleWrapper").remove();
+			d3.select("#radar").select(".tooltip").remove();
+							
+			updateRadar(radarData, cfg);
 									
 			insolationEfficiency = percentages[orientation]["angle"][angle];
 									
@@ -725,7 +733,7 @@ function ready(error, data, nld, percentages) {
 	// when an orientation is selected, display it in the button and store its value in a variable for calculation
 	$("a[class=orientation-a]").on("click", function(){
 		orientation = $(this).attr("data-orientation");
-		orientationScore = parseInt($(this).attr("orientation-score"));
+		orientationScore = parseFloat($(this).attr("orientation-score"));
 		$("button.button-width-orientation").text($(this).text());	
 		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);		
 	});
@@ -733,7 +741,7 @@ function ready(error, data, nld, percentages) {
 	// when an angle is selected, display it in the button and store its value in a variable for calculation
 	$("a[class=angle-a]").on("click", function(){
 		angle = $(this).attr("data-angle");
-		angleScore = parseInt($(this).attr("angle-score"));
+		angleScore = parseFloat($(this).attr("angle-score"));
 		$("button.button-width-angle").text($(this).text());
 		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);
 	});
@@ -741,7 +749,7 @@ function ready(error, data, nld, percentages) {
 	// when a surface is selected, display it in the button and store its value in a variable for calculation
 	$("a[class=surface-a]").on("click", function(){
 		surface = parseInt($(this).attr("data-surface"));
-		surfaceScore = parseInt($(this).attr("surface-score"));
+		surfaceScore = parseFloat($(this).attr("surface-score"));
 		$("button.button-width-surface").text($(this).text());
 		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);
 	});
@@ -749,7 +757,7 @@ function ready(error, data, nld, percentages) {
 	// when a panel is selected, display it in the button and store its value in a variable for calculation
 	$("a[class=panel-a]").on("click", function(){
 		panel = parseFloat($(this).attr("data-panel"));
-		panelScore = parseInt($(this).attr("panel-score"));
+		panelScore = parseFloat($(this).attr("panel-score"));
 		$("button.button-width-panel").text($(this).text());
 		coefficient = parseFloat($(this).attr("data-coefficient"));
 		cost = parseInt($(this).attr("data-price"));
@@ -759,7 +767,7 @@ function ready(error, data, nld, percentages) {
 	// when a usage is selected, display it in the button and store its value in a variable for calculation
 	$("a[class=usage-a]").on("click", function(){
 		usage = parseInt($(this).attr("data-usage"));
-		usageScore = parseInt($(this).attr("usage-score"));
+		usageScore = parseFloat($(this).attr("usage-score"));
 		$("button.button-width-usage").text($(this).text());
 		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);
 	});
