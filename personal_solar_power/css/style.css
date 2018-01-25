@@ -29,7 +29,7 @@
 	bottom: 45px;
 	left: 20px;
 	fill: none;
-	stroke: #000;
+    stroke: #000;
 	shape-rendering: crispEdges;
 }
 
@@ -39,13 +39,13 @@
 	pointer-events: all;
 }
 
-.radio-temperature {
+.check-temperature {
 	position: absolute;
 	bottom: 260px;
 	left: 80px;
 }
 
-.radio-radiation {
+.check-radiation {
 	position: absolute;
 	bottom: 235px;
 	left: 80px;
@@ -236,6 +236,28 @@
 	bottom: 40px;
 	left: 52px;
 	width: 814px;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+.axisTwo path,
+.axisTwo line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+.label {
+	font-size: 13px;
+	stroke: #000;
+	fill: #000;
 }
 
 .d3-slider {

@@ -32,13 +32,18 @@ var monthTotalRad = 0;
 var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jaar"];	
 
 var yDomainMin;
+var yDomainMinTwo;
 var yDomainMax;
+var yDomainMaxTwo;
 
 var xDomainMin;
 var xDomainMax;
 
 // variables to keep track of checkbox statuses
-var radioStatus = 0;
+var tempCheck = 1;
+var radCheck = 1;
+$('#check-temperature').prop('checked', true);
+$('#check-radiation').prop('checked', true);
 
 var radarData = [
 	[
@@ -310,16 +315,24 @@ function updateRadar(radarData, cfg) {
 		
 var xDomain;
 var yDomain;	
+var yDomainTwo;	
 	
 var x = d3.time.scale()
 	.rangeRound([0, chartWidth])
 	
 var y = d3.scale.linear()
 	.rangeRound([chartHeight, 0])
+	
+var yTwo = d3.scale.linear()
+	.rangeRound([chartHeight, 0])
 		
-var line = d3.svg.line()
+var tempLine = d3.svg.line()
 	.x(function(d) { return x(d.date); })
-	.y(function(d) { return y(d.stats); });
+	.y(function(d) { return y(d.temperature); });
+
+var radLine = d3.svg.line()
+	.x(function(d) { return x(d.date); })
+	.y(function(d) { return yTwo(d.radiation); });
 	
 // line chart x axis properties		
 var	xAxis = d3.svg.axis()
@@ -329,7 +342,12 @@ var	xAxis = d3.svg.axis()
 // line chart y axis properties	
 var yAxis = d3.svg.axis()
 	.scale(y)
-	.orient("left");		
+	.orient("left");
+	
+// line chart y axis properties	
+var yAxisTwo = d3.svg.axis()
+	.scale(yTwo)
+	.orient("right");		
 		
 // queue weather station data and map data
 d3.queue()
@@ -363,17 +381,50 @@ function ready(error, data, nld, percentages) {
 		
 	gChart.append("g")
 		.attr("class", "y axis")
+		.style("fill", "red")
+		.style("stroke", "red")
 		.call(yAxis)
-				
+		.append("text")
+		.attr("class", "label")
+		.attr("x", -28)
+		.attr("y", -25)
+		.attr("dy", ".71em")
+		.text("Temperatuur");
+		
+	gChart.append("g")
+		.attr("class", "y axisTwo")
+		.attr("transform", "translate(" + chartWidth + " ,0)")	
+		.style("fill", "yellow")
+		.style("stroke", "yellow")
+		.call(yAxisTwo)
+		.append("text")
+		.attr("class", "label")
+		.attr("x", -20)
+		.attr("y", -25)
+		.attr("dy", ".71em")
+		.text("Straling");
+						
 	gChart.append("path")
-		.attr("class", "lines")
+		.attr("class", "tempLines")
+		.attr("id", "tempLine")
 		.datum(lineData)
 		.attr("fill", "none")
-		.attr("stroke", "steelblue")
+		.attr("stroke", "red")
 		.attr("stroke-linejoin", "round")
 		.attr("stroke-linecap", "round")
 		.attr("stroke-width", 1.5)
-		.attr("d", line);
+		.attr("d", tempLine);
+		
+	gChart.append("path")
+		.attr("class", "radLines")
+		.attr("id", "radLine")
+		.datum(lineData)
+		.attr("fill", "none")
+		.attr("stroke", "yellow")
+		.attr("stroke-linejoin", "round")
+		.attr("stroke-linecap", "round")
+		.attr("stroke-width", 1.5)
+		.attr("d", radLine);
 		
 	var focus = gChart.append('g')
 		.style('display', 'none');
@@ -384,8 +435,15 @@ function ready(error, data, nld, percentages) {
 	focus.append('line')
 		.attr('id', 'focusLineY')
 		.attr('class', 'focusLine');
+	focus.append('line')
+		.attr('id', 'focusLineYTwo')
+		.attr('class', 'focusLine');
 	focus.append('circle')
 		.attr('id', 'focusCircle')
+		.attr('r', 5)
+		.attr('class', 'circle focusCircle');
+	focus.append('circle')
+		.attr('id', 'focusCircleTwo')
 		.attr('r', 5)
 		.attr('class', 'circle focusCircle');
 	focus.append('text')	
@@ -396,22 +454,37 @@ function ready(error, data, nld, percentages) {
 		.attr('id', 'focusTextY')
 		.attr("x", 9)
 		.attr("dy", ".35em");	
+	focus.append('text')	
+		.attr('id', 'focusTextYTwo')
+		.attr("x", 9)
+		.attr("dy", ".35em");	
 		
 	var bisectDate = d3.bisector(function(d) { return d.date; }).left;
 	
 	// functions on checkbox clicks
-	$(".radio-temperature").on("click", function() {
-		radioStatus = 0;
-		updateLine(station, monthValue, radioStatus);			
+	$(".check-temperature").on("click", function() {
+		var tempActive = tempLine.active ? false : true;
+		
+		newTempOpacity = tempActive ? 0 : 1;
+		
+		d3.select("#tempLine").style("opacity", newTempOpacity);
+		
+		tempLine.active = tempActive;
+					
 	})
 	
 	// functions on checkbox clicks
-	$(".radio-radiation").on("click", function() {
-		radioStatus = 1;
-		updateLine(station, monthValue, radioStatus);		
+	$(".check-radiation").on("click", function() {
+		var radActive = radLine.active ? false : true;
+		
+		newRadOpacity = radActive ? 0 : 1;
+		
+		d3.select("#radLine").style("opacity", newRadOpacity);
+		
+		radLine.active = radActive;	
 	})
 	
-	function updateLine(station, monthValue, radioStatus) {
+	function updateLine(station, monthValue) {
 		
 		if (monthValue == "Jaar") {
 			lineData = [];
@@ -428,65 +501,47 @@ function ready(error, data, nld, percentages) {
 		}
 						
 		var newLine = d3.select("#chart").transition();
+					
+		xDomain = x.domain(d3.extent(lineData, function(d) { return d.date; }));
+		yDomain = y.domain(d3.extent(lineData, function(d) { return d.temperature; }));
+					
+		xDomainMin = 0;
+		xDomainMax = lineData.length;
 		
-		if (radioStatus == 0) {	
-			var lineColor = "red";
-			
-			lineData.forEach(function(d) {
-				d.stats = d.temperature;				
-			});
-			
-			xDomain = x.domain(d3.extent(lineData, function(d) { return d.date; }));
-			yDomain = y.domain(d3.extent(lineData, function(d) { return d.stats; }));
-			
-			xDomainMin = 0;
-			xDomainMax = lineData.length;
-			
-			yDomainMin = d3.min(lineData, function(d) { return d.stats; });
-			yDomainMax = d3.max(lineData, function(d) { return d.stats; });
-			
-			newLine.select(".lines")
-				.duration(500)
-				.attr("d", line(lineData))
-				.attr("stroke", lineColor)
-				.attr("fill", "none");
-			newLine.select(".x.axis")
-				.duration(500)
-				.call(xAxis);
-			newLine.select(".y.axis")
-				.duration(500)
-				.call(yAxis);
-		};
+		yDomainMin = d3.min(lineData, function(d) { return d.temperature; });
+		yDomainMax = d3.max(lineData, function(d) { return d.temperature; });
 		
-		if (radioStatus == 1) {
-			var lineColor = "yellow";
-			
-			lineData.forEach(function(d) {
-				d.stats = d.radiation;				
-			});	
+		newLine.select(".tempLines")
+			.duration(500)
+			.attr("d", tempLine(lineData))
+			.attr("fill", "none");
+		newLine.select(".x.axis")
+			.duration(500)
+			.call(xAxis);
+		newLine.select(".y.axis")
+			.duration(500)
+			.call(yAxis);
+						
+		xDomain = x.domain(d3.extent(lineData, function(d) { return d.date; }));
+		yDomainTwo = yTwo.domain(d3.extent(lineData, function(d) { return d.radiation; }));
+	
+		xDomainMin = 0;
+		xDomainMax = lineData.length;
+	
+		yDomainMinTwo = d3.min(lineData, function(d) { return d.radiation; });
+		yDomainMaxTwo = d3.max(lineData, function(d) { return d.radiation; });
 				
-			xDomain = x.domain(d3.extent(lineData, function(d) { return d.date; }));
-			yDomain = y.domain(d3.extent(lineData, function(d) { return d.stats; }));
-		
-			xDomainMin = 0;
-			xDomainMax = lineData.length;
-		
-			yDomainMin = d3.min(lineData, function(d) { return d.stats; });
-			yDomainMax = d3.max(lineData, function(d) { return d.stats; });
-		
-			newLine.select(".lines")
-				.duration(500)
-				.attr("d", line(lineData))
-				.attr("stroke", lineColor)
-				.attr("fill", "none");
-			newLine.select(".x.axis")
-				.duration(500)
-				.call(xAxis);
-			newLine.select(".y.axis")
-				.duration(500)
-				.call(yAxis);	
-		};
-
+		newLine.select(".radLines")
+			.duration(500)
+			.attr("d", radLine(lineData))
+			.attr("fill", "none");
+		newLine.select(".x.axis")
+			.duration(500)
+			.call(xAxis);
+		newLine.select(".y.axisTwo")
+			.duration(500)
+			.call(yAxisTwo);	
+						
 		gChart.append('rect')
 			.attr('class', 'overlay')
 			.attr('width', chartWidth)
@@ -497,45 +552,59 @@ function ready(error, data, nld, percentages) {
 				var mouse = d3.mouse(this);
 				var mouseDate = x.invert(mouse[0]);
 				var i = bisectDate(lineData, mouseDate);
-								
-				var d0 = lineData[i - 1]
-				var d1 = lineData[i];
-								
-				var d = mouseDate - d0[0] > d1[0] - mouseDate ? d1 : d0;
+				
+				if (i != 0) {
+					var d0 = lineData[i - 1]
+					var d1 = lineData[i];
+									
+					var d = mouseDate - d0[0] > d1[0] - mouseDate ? d1 : d0;
 
-				var crossX = x(d.date);
-				var crossY = y(d.stats);
-								
-				var textX = crossX - focus.select("#focusTextX").node().getComputedTextLength();
+					var crossX = x(d.date);
+					var crossY = y(d.temperature);
+					var crossYTwo = yTwo(d.radiation);
+									
+					var textX = crossX - focus.select("#focusTextX").node().getComputedTextLength();
 
-				focus.select('#focusCircle')
-					.attr('cx', crossX)
-					.attr('cy', crossY)
-					.attr("stroke", lineColor)
-					.attr("fill", lineColor);
-				focus.select('#focusLineX')
-					.attr('x1', crossX).attr('y1', y(yDomainMin))
-					.attr('x2', crossX).attr('y2', y(yDomainMax));
-				focus.select('#focusLineY')
-					.attr('x1', 0).attr('y1', crossY)
-					.attr('x2', 750).attr('y2', crossY);
-				focus.select("#focusTextY")
-					.attr("transform", "translate(" + 0 + "," + (crossY - 10) + ")")
-					.text(function() {
-						if (radioStatus == 0) {
-							return (d.stats + " °C");
-						}
-						
-						if (radioStatus == 1) {
-							return (d.stats + " J/cm2");
-						}						
-					});						
-				focus.select("#focusTextX")
-					.attr("transform", "translate(" + (textX + 45) + "," + (y(yDomainMax) - 15) + ")")
-					.text(d.date.toString()
-							.replace('0100', '0200')
-							.replace('standaardtijd', 'zomertijd')
-							.replace('00:00:00 GMT+0200 (West-Europa (zomertijd))', ''));
+					focus.select('#focusCircle')
+						.attr('cx', crossX)
+						.attr('cy', crossY)
+						.attr("stroke", "red")
+						.attr("fill", "red");
+					focus.select('#focusCircleTwo')
+						.attr('cx', crossX)
+						.attr('cy', crossYTwo)
+						.attr("stroke", "yellow")
+						.attr("fill", "yellow");
+					focus.select('#focusLineX')
+						.attr('x1', crossX).attr('y1', y(yDomainMin))
+						.attr('x2', crossX).attr('y2', y(yDomainMax));
+					focus.select('#focusLineY')
+						.attr('x1', 0).attr('y1', crossY)
+						.attr('x2', 750).attr('y2', crossY);
+					focus.select('#focusLineYTwo')
+						.attr('x1', 0).attr('y1', crossYTwo)
+						.attr('x2', 750).attr('y2', crossYTwo);
+					focus.select("#focusTextY")
+						.attr("transform", "translate(" + 0 + "," + (crossY - 10) + ")")
+						.text(function() {
+							if (tempCheck == 1) {
+								return (d.temperature + " °C");
+							}
+						});
+					focus.select("#focusTextYTwo")
+						.attr("transform", "translate(" + 0 + "," + (crossYTwo - 10) + ")")
+						.text(function() {
+							if (radCheck == 1) {
+								return (d.radiation + " J/cm2");
+							};						
+						});						
+					focus.select("#focusTextX")
+						.attr("transform", "translate(" + (textX + 45) + "," + (y(yDomainMax) - 15) + ")")
+						.text(d.date.toString()
+								.replace('0100', '0200')
+								.replace('standaardtijd', 'zomertijd')
+								.replace('00:00:00 GMT+0200 (West-Europa (zomertijd))', ''));
+				};
 			});
 	}	
 			
@@ -661,24 +730,27 @@ function ready(error, data, nld, percentages) {
 	// size of one panel in square meters
 	var size = 1.65
 		
+	var pieColor = "";
+		
 	var monthFactors = 	[
-							{"month": "Jan", "value": 0.03, "color": "#98abc5"},
-							{"month": "Feb", "value": 0.05, "color": "#8a89a6"},
-							{"month": "Mar", "value": 0.08, "color": "#7b6888"},
-							{"month": "Apr", "value": 0.12, "color": "#6b486b"},
-							{"month": "May", "value": 0.13, "color": "#a05d56"},
-							{"month": "Jun", "value": 0.13, "color": "#d0743c"},
-							{"month": "Jul", "value": 0.13, "color": "#ff8c00"},
-							{"month": "Aug", "value": 0.13, "color": "#66ccff"},
-							{"month": "Sep", "value": 0.11, "color": "#ffcc66"},
-							{"month": "Oct", "value": 0.10, "color": "#66ff99"},
-							{"month": "Nov", "value": 0.07, "color": "#ff6666"},
-							{"month": "Dec", "value": 0.02, "color": "#66ffff"},
+							{"month": "Jan", "value": 0.03, "color": pieColor},
+							{"month": "Feb", "value": 0.05, "color": pieColor},
+							{"month": "Mar", "value": 0.08, "color": pieColor},
+							{"month": "Apr", "value": 0.12, "color": pieColor},
+							{"month": "May", "value": 0.13, "color": pieColor},
+							{"month": "Jun", "value": 0.13, "color": pieColor},
+							{"month": "Jul", "value": 0.13, "color": pieColor},
+							{"month": "Aug", "value": 0.13, "color": pieColor},
+							{"month": "Sep", "value": 0.11, "color": pieColor},
+							{"month": "Oct", "value": 0.10, "color": pieColor},
+							{"month": "Nov", "value": 0.07, "color": pieColor},
+							{"month": "Dec", "value": 0.02, "color": pieColor},
 						]
 						
 	function pieChart(pieData, piePath) {
 		pieData.forEach(function(d) {
 			d.value = +d.value;
+			d.color = "rgb(255," + parseInt(245 - (92 * ((d.value - 0.02)/0.11))) + "," + parseInt(230 - (230 * ((d.value - 0.02)/0.11))) + ")";	
 		});
 		
 		var arc = gPie.selectAll(".arc")
@@ -809,7 +881,7 @@ function ready(error, data, nld, percentages) {
 			.style("fill", "#FFB6C1")
 			.attr("r", 8);
 		
-		updateLine(station, monthValue, radioStatus);
+		updateLine(station, monthValue);		
 		
 		calFactors(monthValue, station);
 						
@@ -900,7 +972,7 @@ function ready(error, data, nld, percentages) {
 		.attr("fill", "red")
 		.on("click", function (d) { 
 			station = d[2];
-			updateLine(station, monthValue, radioStatus);
+			updateLine(station, monthValue);		
 						
 			// display the name of the clicked station in the button
 			$("button.button-width-location").text(d[2]);
@@ -924,7 +996,7 @@ function ready(error, data, nld, percentages) {
 	function chartPlot(station, value) {
 		monthValue = value;
 		
-		updateLine(station, monthValue, radioStatus);
+		updateLine(station, monthValue);		
 	};	
 		
 	/* 
