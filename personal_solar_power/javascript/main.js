@@ -101,7 +101,28 @@ var piePath = d3.svg.arc()
 var pieLabel = d3.svg.arc()	
 	.outerRadius(radius - 40)
 	.innerRadius(radius - 40);
-		
+
+var pieTip = d3.tip()
+	.attr("class", "tip")
+	.offset([40, 0])
+	.html(function(d) {
+		return "<strong>Bijdrage:<strong> <span>" + parseInt(d.value*100) + "%</span>";
+	});
+
+var radarTip = d3.tip()
+	.attr("class", "tip")
+	.offset([-12, 0])
+	.html(function(d) {
+		return "<strong>Score:<strong> <span>" + parseInt(d.value*10) + "</span>";
+	});
+
+var mapTip = d3.tip()
+	.attr("class", "tip")
+	.offset([-12, 0])
+	.html(function(d) {
+		return "<span>" + d[2] + "</span>";
+	});
+	
 var options = {
 	w: radarWidth,
 	h: radarHeight,
@@ -281,26 +302,10 @@ function updateRadar(radarData, cfg) {
 		.attr("cy", function(d,i){ return rScale(d.value) * Math.sin(angleSlice*i - Math.PI/2); })
 		.style("fill", "none")
 		.style("pointer-events", "all")
-		.on("mouseover", function(d,i) {
-			newX =  parseFloat(d3.select(this).attr('cx')) - 10;
-			newY =  parseFloat(d3.select(this).attr('cy')) - 10;
-					
-			tooltip
-				.attr('x', newX)
-				.attr('y', newY)
-				.text(d.value)
-				.transition().duration(200)
-				.style('opacity', 1);
-		})
-		.on("mouseout", function(){
-			tooltip.transition().duration(200)
-				.style("opacity", 0);
-		});
-		
-	//Set up the small tooltip for when you hover over a circle
-	var tooltip = gRadar.append("text")
-		.attr("class", "tooltip")
-		.style("opacity", 0);	
+		.on('mouseover', radarTip.show)
+		.on('mouseout', radarTip.hide);
+	
+	svgRadar.call(radarTip);	
 };
 		
 var xDomain;
@@ -694,7 +699,9 @@ function ready(error, data, nld, percentages) {
 					.style("fill", "#ffffcc")
 				d3.select(this)
 					.style("fill", "orange")
-			});
+			})
+			.on('mouseover', pieTip.show)
+			.on('mouseout', pieTip.hide);
 
 		arc.append("text")
 			.attr("transform", function(d) { return "translate(" + pieLabel.centroid(d) + ")"; })
@@ -785,6 +792,7 @@ function ready(error, data, nld, percentages) {
 	};
 	
 	pieChart(monthFactors, piePath);
+	svgPie.call(pieTip);
 	
 	// when a location is selected, display it in the button and store its value in a variable for calculation
 	$("a[class=location-a]").on("click", function(){
@@ -907,7 +915,11 @@ function ready(error, data, nld, percentages) {
 			
 			calFactors(monthValue, station);
 			calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);
-		});
+		})
+		.on('mouseover', mapTip.show)
+		.on('mouseout', mapTip.hide);
+		
+	svgNL.call(mapTip);	
 		
 	function chartPlot(station, value) {
 		monthValue = value;
