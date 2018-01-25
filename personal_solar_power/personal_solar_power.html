@@ -22,11 +22,11 @@
 		<script src="https://d3js.org/d3-time-format.v2.min.js"></script>
 		<script src="https://rawgit.com/tpreusse/radar-chart-d3/master/src/radar-chart.js"></script>		
 		
-		<svg id="chart" class="chart" width="850" height="270"></svg>
-		<svg id="radar" class="radar" width="710" height="600"></svg>
-		<svg id="pie" class="pie" width="180" height="180"></svg>
+		<svg id="chart" class="chart" width="900" height="270"></svg>
+		<svg id="radar" class="radar" width="560" height="480"></svg>
+		<svg id="pie" class="pie" width="250" height="250"></svg>
 		
-		<div class="title">Zonnepanelen Calculator</div>
+		<span class="title">Zonnepanelen Calculator <span style="text-decoration: underline; white-space: pre;">                       </span></span>
 		<p></p>
 		<div class="buttons">
 			<p class="enter">Voer gegevens in</p>			
@@ -119,6 +119,12 @@
 			<span class="production-unit">kWh</span>
 			<span class="profit-unit">Euro</span>
 			<span class="payback-unit">Jaar</span>
+		</div>
+		
+		<div class="results-names" id="results-names">
+			<span class="production-name">Opwekking</span>
+			<span class="profit-name">Winst</span>
+			<span class="payback-name">Payback</span>
 		</div>
 				
 		<div class="wrapper" id="wrapper">

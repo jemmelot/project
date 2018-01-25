@@ -73,20 +73,20 @@ var svgNL = d3.select("body").append("svg")
 // add an svg element to put the line chart into	
 var svgChart = 	d3.select("#chart")
 	chartMargin = {top: 30, right: 20, bottom: 10, left: 50},
-	chartWidth = 800 - chartMargin.left - chartMargin.right,
+	chartWidth = 850 - chartMargin.left - chartMargin.right,
 	chartHeight = 240 - chartMargin.top - chartMargin.bottom,
     gChart = svgChart.append("g").attr("transform", "translate(" + chartMargin.left + "," + chartMargin.top + ")");
 	
 //Initiate the radar chart SVG
 var svgRadar = d3.select("#radar")
 	radarMargin = {top: 70, right: 70, bottom: 80, left: 80},
-	radarWidth = 670 - radarMargin.left - radarMargin.right,
-	radarHeight = 670 - radarMargin.top - radarMargin.bottom,
+	radarWidth = 550 - radarMargin.left - radarMargin.right,
+	radarHeight = 550 - radarMargin.top - radarMargin.bottom,
 	gRadar = svgRadar.append("g").attr("transform", "translate(" + (radarWidth/2 + radarMargin.left) + "," + (radarHeight/2 + radarMargin.top) + ")");	
 
 var svgPie = d3.select("#pie"),
-	pieWidth = 180,
-	pieHeight = 180,
+	pieWidth = 250,
+	pieHeight = 250,
 	radius = Math.min(pieWidth, pieHeight) / 2,
 	gPie = svgPie.append("g").attr("transform", "translate(" + pieWidth / 2 + "," + pieHeight / 2 + ")");
 	
@@ -161,7 +161,7 @@ axisGrid.selectAll(".levels")
 		.style("fill", "none")
 		.style("stroke", "black")
 		.style("stroke-width", function(d, i) { if ((radius/cfg.levels*d) == 260) {
-			return "3px";
+			return "4px";
 		}}); 
 				
 //Create the straight lines radiating outward from the center
@@ -562,7 +562,7 @@ function ready(error, data, nld, percentages) {
 			stroke: '#' + wrapper.dataset.strokeColour,
 		}
 
-		var progressRadius = 110;
+		var progressRadius = 140;
 		var border = wrapper.dataset.trackWidth;
 		var strokeSpacing = wrapper.dataset.strokeSpacing;
 		var endAngle = Math.PI * 2;
