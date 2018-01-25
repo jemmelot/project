@@ -683,7 +683,18 @@ function ready(error, data, nld, percentages) {
 
 		arc.append("path")
 			.attr("d", piePath)
-			.attr("fill", function(d) { return d.data["color"]; });
+			.attr("fill", function(d) { return d.data["color"]; })
+			.attr("id", function(d) { return "pieName" + d.data["month"] ;})
+			.on("click", function(d) {
+				monthValue = d.data["month"];
+				
+				slider.value(monthValue);
+				
+				gPie.selectAll("path")
+					.style("fill", "#ffffcc")
+				d3.select(this)
+					.style("fill", "orange")
+			});
 
 		arc.append("text")
 			.attr("transform", function(d) { return "translate(" + pieLabel.centroid(d) + ")"; })
@@ -769,10 +780,11 @@ function ready(error, data, nld, percentages) {
 			d3.select("#progress").select(".radial-progress").remove();
 			d3.select("#progress").select("svg").remove();
 			
-			processBar(houseScore);
-			pieChart(monthFactors, piePath);
+			processBar(houseScore);			
 		}
 	};
+	
+	pieChart(monthFactors, piePath);
 	
 	// when a location is selected, display it in the button and store its value in a variable for calculation
 	$("a[class=location-a]").on("click", function(){
@@ -914,8 +926,14 @@ function ready(error, data, nld, percentages) {
 		.rangePoints([0, 1], 0.5))
 		.axis(d3.svg.axis())
 		.snap(true)
-		.value("Jaar")
+		.value(monthValue)
 		.on("slide", function(evt, value) {
+			
+			gPie.selectAll("path")
+				.style("fill", "#ffffcc")
+			d3.select("#pieName" + value)
+				.style("fill", "orange")
+			
 			chartPlot(station, value)
 			
 			calFactors(value, station);
