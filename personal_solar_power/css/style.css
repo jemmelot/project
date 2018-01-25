@@ -9,7 +9,7 @@
 .radar {
 	position: absolute;
 	bottom: 20px;
-	right: 20px;
+	right: 10px;
 }
 
 .legend {
@@ -19,6 +19,12 @@
 
 .tooltip {
 	fill: #000;
+}
+
+.pie {
+	position: absolute;
+	left: 735px;
+	top: 61px;
 }
 
 /* line chart attributes */
@@ -57,16 +63,16 @@
 
 .title {
 	position: absolute;
-	top: 20px;
-	left: 470px;
-	font-size: 30px;
+	top: 30px;
+	left: 440px;
+	font-size: 20px;
 	text-decoration: underline;
 }
 
 .progress_svg {
 	position: absolute;
-	left: 630px;
-	top: -170px;
+	left: 545px;
+	top: -140px;
 }
 
 .map-text {
@@ -113,8 +119,8 @@
 /* button group position */
 .buttons {
 	position: absolute;
-	left: 490px;
-	top: 45px;
+	left: 440px;
+	top: 60px;
 	font-size: 20px;
 }
 
@@ -144,14 +150,15 @@
 /* results group properties */
 .results {
 	position: absolute;
-	top: 70px;
-	left: 815px;	
+	top: 30px;
+	right: 0px;	
 	font-size: 55px;
 }
 
 /* production result position */
 .production {
 	position: absolute;
+	right: 380px;
 	width: 200px;
 	height: 80px;
 }
@@ -159,7 +166,7 @@
 /* profit result position */
 .profit {
 	position: absolute;
-	left: 460px;
+	right: 190px;
 	width: 200px;
 	height: 80px;
 }
@@ -167,36 +174,35 @@
 /* payback result position */
 .payback {
 	position: absolute;
-	left: 231px;
+	right: 0px;
 	width: 200px;
-	top: -20px;
 	height: 80px;
 }
 
 /* results units group properties */
 .results-units {
 	position: absolute;
-	top: 135px;
-	left: 885px;	
+	top: 95px;
+	right: 0px;	
 	font-size: 30px;
 }
 
 /* production result unit position */
 .production-unit {
-	position: absolute;	
+	position: absolute;
+	right: 450px;
 }
 
 /* profit result unit position */
 .profit-unit {
 	position: absolute;
-	left: 458px;
+	right: 255px;
 }
 
 /* payback result unit position */
 .payback-unit {
 	position: absolute;
-	left: 232px;
-	top: -20px;
+	right: 72px;	
 }
 
 /* 

@@ -83,7 +83,25 @@ var svgRadar = d3.select("#radar")
 	radarWidth = 670 - radarMargin.left - radarMargin.right,
 	radarHeight = 670 - radarMargin.top - radarMargin.bottom,
 	gRadar = svgRadar.append("g").attr("transform", "translate(" + (radarWidth/2 + radarMargin.left) + "," + (radarHeight/2 + radarMargin.top) + ")");	
+
+var svgPie = d3.select("#pie"),
+	pieWidth = 180,
+	pieHeight = 180,
+	radius = Math.min(pieWidth, pieHeight) / 2,
+	gPie = svgPie.append("g").attr("transform", "translate(" + pieWidth / 2 + "," + pieHeight / 2 + ")");
 	
+var pie = d3.layout.pie()
+		.sort(null)
+		.value(function(d) { return d.value; });
+		
+var piePath = d3.svg.arc()
+	.outerRadius(radius - 10)
+	.innerRadius(0);
+	
+var pieLabel = d3.svg.arc()	
+	.outerRadius(radius - 40)
+	.innerRadius(radius - 40);
+		
 var options = {
 	w: radarWidth,
 	h: radarHeight,
@@ -544,7 +562,7 @@ function ready(error, data, nld, percentages) {
 			stroke: '#' + wrapper.dataset.strokeColour,
 		}
 
-		var progressRadius = 100;
+		var progressRadius = 110;
 		var border = wrapper.dataset.trackWidth;
 		var strokeSpacing = wrapper.dataset.strokeSpacing;
 		var endAngle = Math.PI * 2;
@@ -637,7 +655,42 @@ function ready(error, data, nld, percentages) {
 	
 	// size of one panel in square meters
 	var size = 1.65
-	
+		
+	var monthFactors = 	[
+							{"month": "Jan", "value": 0.03, "color": "#98abc5"},
+							{"month": "Feb", "value": 0.05, "color": "#8a89a6"},
+							{"month": "Mar", "value": 0.08, "color": "#7b6888"},
+							{"month": "Apr", "value": 0.12, "color": "#6b486b"},
+							{"month": "May", "value": 0.13, "color": "#a05d56"},
+							{"month": "Jun", "value": 0.13, "color": "#d0743c"},
+							{"month": "Jul", "value": 0.13, "color": "#ff8c00"},
+							{"month": "Aug", "value": 0.13, "color": "#66ccff"},
+							{"month": "Sep", "value": 0.11, "color": "#ffcc66"},
+							{"month": "Oct", "value": 0.10, "color": "#66ff99"},
+							{"month": "Nov", "value": 0.07, "color": "#ff6666"},
+							{"month": "Dec", "value": 0.02, "color": "#66ffff"},
+						]
+						
+	function pieChart(pieData, piePath) {
+		pieData.forEach(function(d) {
+			d.value = +d.value;
+		});
+		
+		var arc = gPie.selectAll(".arc")
+			.data(pie(pieData))
+			.enter().append("g")
+			.attr("class", "arc");
+
+		arc.append("path")
+			.attr("d", piePath)
+			.attr("fill", function(d) { return d.data["color"]; });
+
+		arc.append("text")
+			.attr("transform", function(d) { return "translate(" + pieLabel.centroid(d) + ")"; })
+			.attr("dy", "0.35em")
+			.text(function(d) { return d.data["month"]; });
+	};	
+							
 	function calFactors(monthValue, station) {
 		totalTemp = 0;
 		totalRad = 0;
@@ -715,7 +768,9 @@ function ready(error, data, nld, percentages) {
 			
 			d3.select("#progress").select(".radial-progress").remove();
 			d3.select("#progress").select("svg").remove();
+			
 			processBar(houseScore);
+			pieChart(monthFactors, piePath);
 		}
 	};
 	
