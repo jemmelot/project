@@ -22,12 +22,15 @@
 		<script src="https://d3js.org/d3-time-format.v2.min.js"></script>
 		<script src="https://rawgit.com/tpreusse/radar-chart-d3/master/src/radar-chart.js"></script>		
 		
+		<!-- svgs to put visualizations into -->
 		<svg id="chart" class="chart" width="900" height="270"></svg>
 		<svg id="radar" class="radar" width="560" height="480"></svg>
 		<svg id="pie" class="pie" width="250" height="250"></svg>
 		
-		<span class="title">Zonnepanelen Calculator <span style="text-decoration: underline; white-space: pre;">                       </span></span>
+		<span class="title">Zonnepanelen Calculator</span>
 		<p></p>
+		
+		<!-- set of dropdown menus -->
 		<div class="buttons">
 			<p class="enter">Voer woning gegevens in</p>			
 			<div class="btn-group" id="location">
@@ -87,10 +90,10 @@
 				<button type="button" data-toggle="dropdown" class="btn btn-default button-width-panel">Type paneel</button>
 				<button type="button" data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
 				<ul class="dropdown-menu">
-					<li><a href="#" class="panel-a" data-panel="0.17" data-coefficient="0.43" data-price="300" panel-score="1">Mono-kristallijn</a></li>
-					<li><a href="#" class="panel-a" data-panel="0.14" data-coefficient="0.45" data-price="225" panel-score="0.4">Poly-kristallijn</a></li>
-					<li><a href="#" class="panel-a" data-panel="0.08" data-coefficient="0.20" data-price="150" panel-score="0.1">Amorf/Dunne lijn</a></li>
-					<li><a href="#" class="panel-a" data-panel="0.14" data-coefficient="0.36" data-price="180" panel-score="0.7">CIGS</a></li>				
+					<li><a href="#" class="panel-a" data-toggle="popover" data-trigger="hover" data-placement="right" data-content="Hoog rendement, lange levensduur, relatief duur, veel verlies bij slechte omstandigheden" data-panel="0.17" data-coefficient="0.43" data-price="300" panel-score="1">Mono-kristallijn</a></li>
+					<li><a href="#" class="panel-a" data-toggle="popover" data-trigger="hover" data-placement="right" data-content="Gemiddeld rendement, lange levensduur, relatief goedkoop, weining verlies bij slechte omstandigheden" data-panel="0.14" data-coefficient="0.45" data-price="225" panel-score="0.4">Poly-kristallijn</a></li>
+					<li><a href="#" class="panel-a" data-toggle="popover" data-trigger="hover" data-placement="right" data-content="Laag rendement, korte levensduur, relatief goedkoop, weinig verlies bij slechte omstandigheden" data-panel="0.08" data-coefficient="0.20" data-price="150" panel-score="0.1">Amorf/Dunne lijn</a></li>
+					<li><a href="#" class="panel-a" data-toggle="popover" data-trigger="hover" data-placement="right" data-content="Gemiddeld rendement, lange levensduur, relatief duur, weinig verlies bij slechte omstandigheden" data-panel="0.14" data-coefficient="0.36" data-price="180" panel-score="0.7">CIGS</a></li>				
 				</ul>
 			</div>
 
@@ -109,28 +112,33 @@
 			</div>				
 		</div>
 		
+		<!-- results base values -->
 		<div class="results" id="results">
 			<div class="production" align="center">0</div>
 			<div class="profit" align="center">0</div>
 			<div class="payback" align="center">0</div>			
 		</div>
 		
+		<!-- result units -->
 		<div class="results-units" id="results-units">
 			<span class="production-unit">kWh</span>
 			<span class="profit-unit">Euro</span>
 			<span class="payback-unit">Jaar</span>
 		</div>
 		
+		<!-- result subjects -->
 		<div class="results-names" id="results-names">
 			<span class="production-name">Opwekking</span>
 			<span class="profit-name">Winst</span>
 			<span class="payback-name">Payback</span>
 		</div>
-				
+		
+		<!-- element to put the month slider into -->
 		<div class="wrapper" id="wrapper">
 			<div id="slider"></div>
 		</div>
 		
+		<!-- radial progress bar properties -->
 		<div id="progress" 
 			data-percentage="100" 
 			data-track-width="20" 
@@ -146,6 +154,17 @@
 		
 		<span class="pie-description">Maandelijkse bijdrage opbrengst</span>
 		
+		<!-- information button -->
+		<button type="button" class="btn btn-default btn-sm" data-toggle="popover"  data-trigger="focus" data-placement="bottom" data-content=
+				"Deze visualisatie toont hoeveel te halen valt uit persoonlijke zonne-energie. Na het selecteren van het dichtsbijzijnde weerstation
+				en enkele eigenschappen van het huis krijgt elk aspect een score die rechtsonderin getoond zijn. Ook wordt een algemene woning score
+				berekend. In de lijngrafiek wordt data voor elke maand uit 2017 getoond, met voor elke dag de waardes voor opwekking en winst. Als
+				laatste worden rechtsbovenin de resultaten getoond voor de geselecteerde maand of het gehele jaar ('Payback' geeft aan hoe lang het 
+				duurt voordat de initiële investering zal zijn terugverdiend). ------------------------- Jesse Emmelot, 11963522">
+			<span class="glyphicon glyphicon-info-sign"></span> Informatie
+		</button>
+		
+		<!-- checkboxes -->
 		<div class="check-radiation">
 			<label><input type="checkbox" id="check-radiation" value="">Straling</label>
 		</div>
@@ -154,8 +173,7 @@
 		</div>
 		
 		<div class="map-text">Selecteer meetstation</div>
-		<!-- <div class="name">Jesse Emmelot, 11963522</div> -->
-		
+				
 		<script src="https://d3js.org/d3-queue.v3.min.js"></script>		
 		<script src="javascript/slider.js"></script>		
 		<script src="javascript/main.js"></script>

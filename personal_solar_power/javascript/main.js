@@ -13,6 +13,8 @@
 	- http://bl.ocks.org/mikehadlow/93b471e569e31af07cd3
 	- https://codepen.io/numberformat/pen/QjLeLP?editors=0110
 	- https://gist.github.com/nbremer/21746a9668ffdf6d8242#file-radarchart-js
+	- https://bl.ocks.org/mbostock/3887235
+	- http://bl.ocks.org/d3noob/e34791a32a54e015f57d
 	
 	Data sources:
 	- http://projects.knmi.nl/klimatologie/daggegevens/selectie.cgi
@@ -21,8 +23,15 @@
 	- https://woonbewust.nl/blog/soorten-zonnepanelen
 	- https://www.zonne-paneel.net/prijs-zonnepanelen/
 	- http://www.sun-solar.nl/index.php/product/solar-frontier-sf175-s-paneel-135-euro-incl-btw-sunsolar/
+	- https://www.essent.nl/content/particulier/kennisbank/zonnepanelen/opbrengst-zonnepanelen-per-maand.html#
 */
 
+// activate popover functionality for information tab
+$(document).ready(function(){
+    $('[data-toggle="popover"]').popover(); 
+});
+
+// instantiate global variables
 var monthValue = "Jaar";
 var station = "";
 var monthTotalTemp = 0;
@@ -31,20 +40,21 @@ var monthTotalRad = 0;
 // array of month abbreviations to check which array within a station object to load data from
 var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jaar"];	
 
+// instantiate global chart domain names
 var yDomainMin;
 var yDomainMinTwo;
 var yDomainMax;
 var yDomainMaxTwo;
-
 var xDomainMin;
 var xDomainMax;
 
 // variables to keep track of checkbox statuses
-var tempCheck = 1;
-var radCheck = 1;
+var tempActive = 1;
+var radActive = 1;
 $('#check-temperature').prop('checked', true);
 $('#check-radiation').prop('checked', true);
 
+// blank radar chart data
 var radarData = [
 	[
 		{axis: "Oriëntatie", value: 0},
@@ -59,6 +69,7 @@ var radarData = [
 var mapWidth = 390;
 var mapHeight = 450;
 
+// define date format
 var format = d3.time.format("%Y-%b-%d").parse;
 
 // set map projection type
@@ -75,38 +86,43 @@ var svgNL = d3.select("body").append("svg")
 	.attr("width", mapWidth)
 	.attr("height", mapHeight)
 
-// add an svg element to put the line chart into	
+// select svg element to put the line chart into	
 var svgChart = 	d3.select("#chart")
 	chartMargin = {top: 30, right: 20, bottom: 10, left: 50},
 	chartWidth = 850 - chartMargin.left - chartMargin.right,
 	chartHeight = 240 - chartMargin.top - chartMargin.bottom,
     gChart = svgChart.append("g").attr("transform", "translate(" + chartMargin.left + "," + chartMargin.top + ")");
 	
-//Initiate the radar chart SVG
+// select svg element to put the radar chart into
 var svgRadar = d3.select("#radar")
 	radarMargin = {top: 70, right: 70, bottom: 80, left: 80},
 	radarWidth = 550 - radarMargin.left - radarMargin.right,
 	radarHeight = 550 - radarMargin.top - radarMargin.bottom,
 	gRadar = svgRadar.append("g").attr("transform", "translate(" + (radarWidth/2 + radarMargin.left) + "," + (radarHeight/2 + radarMargin.top) + ")");	
 
+// select svg element to put the pie chart into
 var svgPie = d3.select("#pie"),
 	pieWidth = 250,
 	pieHeight = 250,
 	radius = Math.min(pieWidth, pieHeight) / 2,
 	gPie = svgPie.append("g").attr("transform", "translate(" + pieWidth / 2 + "," + pieHeight / 2 + ")");
 	
+// declare pie chart basis	
 var pie = d3.layout.pie()
 		.sort(null)
 		.value(function(d) { return d.value; });
-		
+
+// pie chart parameters		
 var piePath = d3.svg.arc()
 	.outerRadius(radius - 10)
 	.innerRadius(0);
-	
+
+// pie chart category label positions	
 var pieLabel = d3.svg.arc()	
 	.outerRadius(radius - 40)
 	.innerRadius(radius - 40);
 
+// define tooltip that shows the value at each pie chart slice
 var pieTip = d3.tip()
 	.attr("class", "tip")
 	.offset([40, 0])
@@ -114,6 +130,7 @@ var pieTip = d3.tip()
 		return "<strong>Bijdrage:<strong> <span>" + parseInt(d.value*100) + "%</span>";
 	});
 
+// define tooltip that shows the value of every radar chart category
 var radarTip = d3.tip()
 	.attr("class", "tip")
 	.offset([-12, 0])
@@ -121,6 +138,7 @@ var radarTip = d3.tip()
 		return "<strong>Score:<strong> <span>" + parseInt(d.value*10) + "</span>";
 	});
 
+// define tooltip that shows the name of every weather station on the map
 var mapTip = d3.tip()
 	.attr("class", "tip")
 	.offset([-12, 0])
@@ -128,6 +146,7 @@ var mapTip = d3.tip()
 		return "<span>" + d[2] + "</span>";
 	});
 
+// radar chart parameters
 var options = {
 	w: radarWidth,
 	h: radarHeight,
@@ -138,6 +157,7 @@ var options = {
 	color: "orange"
 };
 
+// more detailed radar chart parameter object
 var cfg = {
 	w: radarWidth,				//Width of the circle
 	h: radarHeight,				//Height of the circle
@@ -154,30 +174,31 @@ var cfg = {
 	color: "orange"		//Color function
 };
 
-//Put all of the options into a variable called cfg
+// put all of the options into a variable called cfg
 if('undefined' !== typeof options){
 	for(var i in options){
 		if('undefined' !== typeof options[i]){ cfg[i] = options[i]; }
 	}//for i
 }//if
 
-//If the supplied maxValue is smaller than the actual one, replace by the max in the data
+// if the supplied maxValue is smaller than the actual one, replace by the max in the data
 var maxValue = Math.max(cfg.maxValue, d3.max(radarData, function(i){return d3.max(i.map(function(o){return o.value;}))}));
 
-var allAxis = (radarData[0].map(function(i, j){return i.axis})),	//Names of each axis
-	total = allAxis.length,					//The number of different axes
-	radius = Math.min(cfg.w/2, cfg.h/2), 	//Radius of the outermost circle
-	angleSlice = Math.PI * 2 / total;		//The width in radians of each "slice"
+// radar chart dimensions
+var allAxis = (radarData[0].map(function(i, j){return i.axis})),	
+	total = allAxis.length,					
+	radius = Math.min(cfg.w/2, cfg.h/2), 	
+	angleSlice = Math.PI * 2 / total;
 		
-//Scale for the radius
+// scale for the radar chart radius
 var rScale = d3.scale.linear()
 	.range([0, radius])
 	.domain([0, maxValue]);
 	
-//Wrapper for the grid & axes
+// wrapper for the grid & axes
 var axisGrid = gRadar.append("g").attr("class", "axisWrapper");
 	
-//Draw the background circles
+// draw the radar background circles
 axisGrid.selectAll(".levels")
 	.data(d3.range(1,(cfg.levels+1)).reverse())
 	.enter()
@@ -190,14 +211,14 @@ axisGrid.selectAll(".levels")
 			return "4px";
 		}}); 
 				
-//Create the straight lines radiating outward from the center
+// create the straight lines radiating outward from the center
 var axis = axisGrid.selectAll(".axis")
 	.data(allAxis)
 	.enter()
 	.append("g")
 	.attr("class", "axis");
 	
-//Append the lines
+// append the lines
 axis.append("line")
 	.attr("x1", 0)
 	.attr("y1", 0)
@@ -207,7 +228,7 @@ axis.append("line")
 	.style("stroke", "black")
 	.style("stroke-width", "2px");
 
-//Append the labels at each axis
+// append the labels at each axis
 axis.append("text")
 	.attr("class", "legend")
 	.style("font-size", "13px")
@@ -223,7 +244,7 @@ axis.append("text")
 	.text(function(d) {return d});
 
 function updateRadar(radarData, cfg) {
-	//If the supplied maxValue is smaller than the actual one, replace by the max in the data
+	// if the supplied maxValue is smaller than the actual one, replace by the max in the data
 	var maxValue = Math.max(cfg.maxValue, d3.max(radarData, function(i){return d3.max(i.map(function(o){return o.value;}))}));
 
 	var allAxis = (radarData[0].map(function(i, j){return i.axis})),	//Names of each axis
@@ -231,24 +252,24 @@ function updateRadar(radarData, cfg) {
 		radius = Math.min(cfg.w/2, cfg.h/2), 	//Radius of the outermost circle
 		angleSlice = Math.PI * 2 / total;		//The width in radians of each "slice"
 			
-	//Scale for the radius
+	// scale for the radius
 	var rScale = d3.scale.linear()
 		.range([0, radius])
 		.domain([0, maxValue]);
 		
-	//The radial line function
+	// the radial line function
 	var radarLine = d3.svg.line.radial()
 		.interpolate("linear-closed")
 		.radius(function(d) { return rScale(d.value); })
 		.angle(function(d,i) {	return i*angleSlice; });	
 	
-	//Create a wrapper for the blobs	
+	// create a wrapper for the blobs	
 	var blobWrapper = gRadar.selectAll(".radarWrapper")
 		.data(radarData)
 		.enter().append("g")
 		.attr("class", "radarWrapper");
 			
-	// Colored backgrounds	
+	// colored backgrounds	
 	blobWrapper
 		.append("path")
 		.attr("class", "radarArea")
@@ -256,23 +277,23 @@ function updateRadar(radarData, cfg) {
 		.style("fill", "orange")
 		.style("fill-opacity", cfg.opacityArea)
 		.on('mouseover', function (d,i){
-			//Dim all blobs
+			// dim all blobs
 			d3.selectAll(".radarArea")
 				.transition().duration(200)
 				.style("fill-opacity", 0.1); 
-			//Bring back the hovered over blob
+			// bring back the hovered over blob
 			d3.select(this)
 				.transition().duration(200)
 				.style("fill-opacity", 0.7);	
 		})
 		.on('mouseout', function(){
-			//Bring back all blobs
+			// bring back all blobs
 			d3.selectAll(".radarArea")
 				.transition().duration(200)
 				.style("fill-opacity", cfg.opacityArea);
 		});
 		
-	//Create the outlines	
+	// create the outlines	
 	blobWrapper.append("path")
 		.attr("class", "radarStroke")
 		.attr("d", function(d,i) { return radarLine(d); })
@@ -280,7 +301,7 @@ function updateRadar(radarData, cfg) {
 		.style("stroke", "orange")
 		.style("fill", "none")
 			
-	//Append the circles
+	// append the circles
 	blobWrapper.selectAll(".radarCircle")
 		.data(function(d,i) { return d; })
 		.enter().append("circle")
@@ -291,13 +312,13 @@ function updateRadar(radarData, cfg) {
 		.style("fill", "orange")
 		.style("fill-opacity", 0.8);
 
-	//Wrapper for the invisible circles on top
+	// wrapper for the invisible circles on top
 	var blobCircleWrapper = gRadar.selectAll(".radarCircleWrapper")
 		.data(radarData)
 		.enter().append("g")
 		.attr("class", "radarCircleWrapper");
 		
-	//Append a set of invisible circles on top for the mouseover pop-up
+	// append a set of invisible circles on top for the mouseover pop-up
 	blobCircleWrapper.selectAll(".radarInvisibleCircle")
 		.data(function(d,i) { return d; })
 		.enter().append("circle")
@@ -310,26 +331,33 @@ function updateRadar(radarData, cfg) {
 		.on('mouseover', radarTip.show)
 		.on('mouseout', radarTip.hide);
 	
+	// call the radar chart tooltip functionality
 	svgRadar.call(radarTip);	
 };
-		
+
+// instantiate line chart main domains		
 var xDomain;
 var yDomain;	
 var yDomainTwo;	
-	
+
+// line chart x axis	
 var x = d3.time.scale()
 	.rangeRound([0, chartWidth])
-	
+
+// line chart temperature axis	
 var y = d3.scale.linear()
 	.rangeRound([chartHeight, 0])
-	
+
+// line	chart radiation axis
 var yTwo = d3.scale.linear()
 	.rangeRound([chartHeight, 0])
-		
+
+// temperature line variable	
 var tempLine = d3.svg.line()
 	.x(function(d) { return x(d.date); })
 	.y(function(d) { return y(d.temperature); });
 
+// radiation line variable
 var radLine = d3.svg.line()
 	.x(function(d) { return x(d.date); })
 	.y(function(d) { return yTwo(d.radiation); });
@@ -357,6 +385,11 @@ d3.queue()
 	.await(ready);
 	
 function ready(error, data, nld, percentages) {
+	/*
+		put all data into the appropriate format.
+		Dates to date formats, temperature and 
+		radiation to numbers.
+	*/
 	Object.keys(data).forEach(function(key,index) {
 		Object.keys(data[key].dates).forEach(function(part,index) {
 			data[key].dates[part].forEach(function(d) {
@@ -366,19 +399,23 @@ function ready(error, data, nld, percentages) {
 			});			
 		})
 	});
-		
+	
+	// log data to check for errors
 	console.log(data);
 	console.log(percentages);
 
+	// instantiate data array for the line chart values
 	lineData = []
-		
+	
+	// add the a axis
 	gChart.append("g")
 		.attr("class", "x axis")
 		.attr("transform", "translate(0," + chartHeight + ")")
 		.call(xAxis)
 		.select(".domain")
 			.remove();
-		
+	
+	// add the temperature axis
 	gChart.append("g")
 		.attr("class", "y axis")
 		.style("fill", "red")
@@ -390,7 +427,8 @@ function ready(error, data, nld, percentages) {
 		.attr("y", -25)
 		.attr("dy", ".71em")
 		.text("Temperatuur");
-		
+	
+	// add the radiation axis
 	gChart.append("g")
 		.attr("class", "y axisTwo")
 		.attr("transform", "translate(" + chartWidth + " ,0)")	
@@ -403,7 +441,8 @@ function ready(error, data, nld, percentages) {
 		.attr("y", -25)
 		.attr("dy", ".71em")
 		.text("Straling");
-						
+	
+	// add the temperature line
 	gChart.append("path")
 		.attr("class", "tempLines")
 		.attr("id", "tempLine")
@@ -414,7 +453,8 @@ function ready(error, data, nld, percentages) {
 		.attr("stroke-linecap", "round")
 		.attr("stroke-width", 1.5)
 		.attr("d", tempLine);
-		
+	
+	// add the radiation line
 	gChart.append("path")
 		.attr("class", "radLines")
 		.attr("id", "radLine")
@@ -425,10 +465,14 @@ function ready(error, data, nld, percentages) {
 		.attr("stroke-linecap", "round")
 		.attr("stroke-width", 1.5)
 		.attr("d", radLine);
-		
+	
+	// define variable to serve as the basis for the crosshair functionality
 	var focus = gChart.append('g')
 		.style('display', 'none');
-                
+    
+	/*
+		define all visible crosshair parts
+	*/
 	focus.append('line')
 		.attr('id', 'focusLineX')
 		.attr('class', 'focusLine');
@@ -465,7 +509,7 @@ function ready(error, data, nld, percentages) {
 		
 	var bisectDate = d3.bisector(function(d) { return d.date; }).left;
 	
-	// functions on checkbox clicks
+	// temperature line turns on or of depending on whether its checkbox is checked or not
 	$(".check-temperature").on("click", function() {
 		var tempActive = tempLine.active ? false : true;
 		
@@ -477,7 +521,7 @@ function ready(error, data, nld, percentages) {
 					
 	})
 	
-	// functions on checkbox clicks
+	// radiation line turns on or of depending on whether its checkbox is checked or not
 	$(".check-radiation").on("click", function() {
 		var radActive = radLine.active ? false : true;
 		
@@ -488,8 +532,10 @@ function ready(error, data, nld, percentages) {
 		radLine.active = radActive;	
 	})
 	
+	// function to update the lines and axes when a new month or station is selected
 	function updateLine(station, monthValue) {
 		
+		// if the whole year is selected, select data from all months to average from
 		if (monthValue == "Jaar") {
 			lineData = [];
 			
@@ -503,9 +549,11 @@ function ready(error, data, nld, percentages) {
 		else {
 			lineData = data[station].dates[monthValue]
 		}
-						
+		
+		// define variable to make changes to the line chart with
 		var newLine = d3.select("#chart").transition();
 					
+		// define temperature domains		
 		xDomain = x.domain(d3.extent(lineData, function(d) { return d.date; }));
 		yDomain = y.domain(d3.extent(lineData, function(d) { return d.temperature; }));
 					
@@ -515,6 +563,7 @@ function ready(error, data, nld, percentages) {
 		yDomainMin = d3.min(lineData, function(d) { return d.temperature; });
 		yDomainMax = d3.max(lineData, function(d) { return d.temperature; });
 		
+		// apply the new line data and domain values to the corresponding parts
 		newLine.select(".tempLines")
 			.duration(500)
 			.attr("d", tempLine(lineData))
@@ -525,7 +574,8 @@ function ready(error, data, nld, percentages) {
 		newLine.select(".y.axis")
 			.duration(500)
 			.call(yAxis);
-						
+		
+		// define radiation domains
 		xDomain = x.domain(d3.extent(lineData, function(d) { return d.date; }));
 		yDomainTwo = yTwo.domain(d3.extent(lineData, function(d) { return d.radiation; }));
 	
@@ -534,7 +584,8 @@ function ready(error, data, nld, percentages) {
 	
 		yDomainMinTwo = d3.min(lineData, function(d) { return d.radiation; });
 		yDomainMaxTwo = d3.max(lineData, function(d) { return d.radiation; });
-				
+		
+		// apply the new line data and domain values to the corresponding parts
 		newLine.select(".radLines")
 			.duration(500)
 			.attr("d", radLine(lineData))
@@ -545,7 +596,8 @@ function ready(error, data, nld, percentages) {
 		newLine.select(".y.axisTwo")
 			.duration(500)
 			.call(yAxisTwo);	
-						
+		
+		// add an invisible chart sizes rectangle to track mouse position for crosshairs
 		gChart.append('rect')
 			.attr('class', 'overlay')
 			.attr('width', chartWidth)
@@ -569,6 +621,9 @@ function ready(error, data, nld, percentages) {
 									
 					var textX = crossX - focus.select("#focusTextX").node().getComputedTextLength();
 
+					/*
+						add all crosshair parts which follow the cursor around
+					*/
 					focus.select('#focusCircle')
 						.attr('cx', crossX)
 						.attr('cy', crossY)
@@ -591,14 +646,14 @@ function ready(error, data, nld, percentages) {
 					focus.select("#focusTextY")
 						.attr("transform", "translate(" + 0 + "," + (crossY - 10) + ")")
 						.text(function() {
-							if (tempCheck == 1) {
+							if (tempActive == true) {
 								return (d.temperature + " °C");
 							}
 						});
 					focus.select("#focusTextYTwo")
 						.attr("transform", "translate(" + 0 + "," + (crossYTwo - 10) + ")")
 						.text(function() {
-							if (radCheck == 1) {
+							if (radActive == true) {
 								return (d.radiation + " J/cm2");
 							};						
 						});						
@@ -624,20 +679,24 @@ function ready(error, data, nld, percentages) {
 		$("#location ul").append('<li><a href="#" class="location-a" data-location="'+index+'"</a>'+index+'</li>');   
 	}
 	
+	// instantiate total house score variable
 	var houseScore = 0; 
 	
+	// draw a radial progress bar showing the total score of the house
 	function processBar(houseScore) {
 		var wrapper = document.getElementById('progress');
 		var start = 0;
 		var end = houseScore;
 		
+		// define tooltip that shows the score on hover
 		var scoreTip = d3.tip()
 			.attr("class", "tip")
 			.offset([-5, 0])
 			.html(function(d) {
 				return "<strong>Overall score: </strong> <span>" + parseFloat(houseScore/10) + "</span>";
 			});
-
+		
+		// make bar color scale with the score (higher = greener, lower = redder, yellow towards the middle)
 		var colours = {
 			fill: function() {
 				if (end <= 50) {
@@ -652,7 +711,10 @@ function ready(error, data, nld, percentages) {
 			text: '#' + wrapper.dataset.textColour,
 			stroke: '#' + wrapper.dataset.strokeColour,
 		}
-
+		
+		/*
+			radial progress bar parameter values
+		*/
 		var progressRadius = 140;
 		var border = wrapper.dataset.trackWidth;
 		var strokeSpacing = wrapper.dataset.strokeSpacing;
@@ -663,13 +725,13 @@ function ready(error, data, nld, percentages) {
 		var progress = start;
 		var step = end < start ? -0.01 : 0.01;
 
-		//Define the circle
+		// define the circle
 		var circle = d3.svg.arc()
 			.startAngle(0)
 			.innerRadius(progressRadius)
 			.outerRadius(progressRadius - border);
 
-		//setup SVG wrapper
+		// setup SVG wrapper
 		var svg = d3.select(wrapper)
 			.append('svg')
 			.attr("class", "progress_svg")
@@ -700,7 +762,7 @@ function ready(error, data, nld, percentages) {
 			.on('mouseout', scoreTip.hide);
 			
 		function update(progress) {
-			//update position of endAngle
+			// update position of endAngle
 			value.attr('d', circle.endAngle(endAngle * progress));
 		} 
 
@@ -717,6 +779,7 @@ function ready(error, data, nld, percentages) {
 			}
 		})();
 		
+		// call the tooltip to display the house score on hover
 		svg.call(scoreTip);
 	}
 		
@@ -752,7 +815,8 @@ function ready(error, data, nld, percentages) {
 	var size = 1.65
 		
 	var pieColor = "";
-		
+	
+	// general monthly shares of total yearly energy production
 	var monthFactors = 	[
 							{"month": "Jan", "value": 0.03, "color": pieColor},
 							{"month": "Feb", "value": 0.05, "color": pieColor},
@@ -767,10 +831,15 @@ function ready(error, data, nld, percentages) {
 							{"month": "Nov", "value": 0.07, "color": pieColor},
 							{"month": "Dec", "value": 0.02, "color": pieColor},
 						]
-						
+	
+	/*	
+		make a pie chart showing how much each month contributes to yearly energy production 					
+	*/
 	function pieChart(pieData, piePath) {
 		pieData.forEach(function(d) {
 			d.value = +d.value;
+			
+			// the higher the month contribution value, the more orange its slice is 
 			d.color = "rgb(255," + parseInt(245 - (92 * ((d.value - 0.02)/0.11))) + "," + parseInt(230 - (230 * ((d.value - 0.02)/0.11))) + ")";	
 		});
 		
@@ -786,6 +855,7 @@ function ready(error, data, nld, percentages) {
 			.on("click", function(d) {
 				monthValue = d.data["month"];
 				
+				// when a particular month is selected from the pie chart, change the slider position and thereby all visualization data and results
 				slider.value(monthValue);
 				
 				gPie.selectAll("path")
@@ -801,7 +871,10 @@ function ready(error, data, nld, percentages) {
 			.attr("dy", "0.35em")
 			.text(function(d) { return d.data["month"]; });
 	};	
-							
+	
+	/*
+		determine monthly or yearly average temperature and radiation for calculation input
+	*/
 	function calFactors(monthValue, station) {
 		totalTemp = 0;
 		totalRad = 0;
@@ -831,12 +904,15 @@ function ready(error, data, nld, percentages) {
 		}
 	}			
 	
-	// calculation function
+	/* 
+		results calculation function
+	*/
 	function calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad) {
 		if (orientation.length != 0 && angle.length != 0 && surface !=0 && panel != 0 && usage != 0 && calTemp != 0 && calRad != 0) {
 			
 			houseScore = ((orientationScore + angleScore + surfaceScore + panelScore + usageScore)/5)*100; 
-									
+			
+			// update radar chart data based on user inputs
 			radarData = [
 				[
 					{axis: "Oriëntatie", value: orientationScore},
@@ -850,7 +926,8 @@ function ready(error, data, nld, percentages) {
 			d3.select("#radar").select(".radarWrapper").remove();
 			d3.select("#radar").select(".radarCircleWrapper").remove();
 			d3.select("#radar").select(".tooltip").remove();
-							
+			
+			// update radar chart
 			updateRadar(radarData, cfg);
 									
 			insolationEfficiency = percentages[orientation]["angle"][angle];
@@ -880,11 +957,12 @@ function ready(error, data, nld, percentages) {
 			d3.select("#progress").select(".radial-progress").remove();
 			d3.select("#progress").select("svg").remove();
 			
+			// update radial progress bar to reflect any changes in user input
 			processBar(houseScore);
 		}
 	};
 	
-	// calculation function
+	// calculation function for the daily production and profit values to be displayed along the crosshair on the line chart
 	function lineCalculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad) {
 		if (orientation.length != 0 && angle.length != 0 && surface !=0 && panel != 0 && usage != 0 && calTemp != 0 && calRad != 0) {
 			
@@ -913,6 +991,7 @@ function ready(error, data, nld, percentages) {
 		}
 	};
 	
+	// draw the pie chart along with tooltip functionality
 	pieChart(monthFactors, piePath);
 	svgPie.call(pieTip);
 	
@@ -931,10 +1010,9 @@ function ready(error, data, nld, percentages) {
 			.style("fill", "#FFB6C1")
 			.attr("r", 8);
 		
+		// update line chart and recalculate results
 		updateLine(station, monthValue);		
-		
-		calFactors(monthValue, station);
-						
+		calFactors(monthValue, station);						
 		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);
 	});
 	
@@ -962,7 +1040,7 @@ function ready(error, data, nld, percentages) {
 		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);
 	});
 	
-	// when a panel is selected, display it in the button and store its value in a variable for calculation
+	// when a panel is selected, display it in the button and store its values in a variable for calculation
 	$("a[class=panel-a]").on("click", function(){
 		panel = parseFloat($(this).attr("data-panel"));
 		panelScore = parseFloat($(this).attr("panel-score"));
@@ -979,16 +1057,7 @@ function ready(error, data, nld, percentages) {
 		$("button.button-width-usage").text($(this).text());
 		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);
 	});
-	
-	/*
-	var l = topojson.feature(nld, nld.objects.subunits).features[3],
-		b = path.bounds(l),
-		s = .3 / Math.max((b[1][0] - b[0][0]) / mapWidth, (b[1][1] - b[0][1]) / mapHeight),
-		t = [(mapWidth - s * (b[1][0] + b[0][0])) / 2, (mapHeight - s * (b[1][1] + b[0][1])) / 2];
-	
-	console.log(s, t);
-	*/
-	
+		
 	// map scale and position
 	projection
 		.scale(5000)
@@ -1011,7 +1080,7 @@ function ready(error, data, nld, percentages) {
 		dots.push(dot);
 	});
 				
-	// add circles to svg
+	// add circles to map svg
     svgNL.selectAll("circle")
 		.data(dots).enter()
 		.append("circle")
@@ -1022,6 +1091,8 @@ function ready(error, data, nld, percentages) {
 		.attr("fill", "red")
 		.on("click", function (d) { 
 			station = d[2];
+			
+			// update line chart to display current weather station data
 			updateLine(station, monthValue);		
 						
 			// display the name of the clicked station in the button
@@ -1035,12 +1106,14 @@ function ready(error, data, nld, percentages) {
 				.style("fill", "#FFB6C1")
 				.attr("r", 8);
 			
+			// recalculate results
 			calFactors(monthValue, station);
 			calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);
 		})
 		.on('mouseover', mapTip.show)
 		.on('mouseout', mapTip.hide);
-		
+	
+	// call map tooltip functionality
 	svgNL.call(mapTip);	
 		
 	function chartPlot(station, value) {

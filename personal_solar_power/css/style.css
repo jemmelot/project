@@ -1,6 +1,6 @@
 /* Jesse Emmelot, 11963522 */
 
-/* style attributes for the axis */
+/* style attributes */
 .lines {
 	fill: none;
 	stroke-width: 2.5px;	
@@ -62,7 +62,7 @@
 	position: absolute;
 	top: 30px;
 	left: 440px;
-	font-size: 30px;
+	font-size: 35px;
 	text-decoration: underline;
 }
 
@@ -117,7 +117,7 @@
 .buttons {
 	position: absolute;
 	left: 440px;
-	top: 60px;
+	top: 70px;
 	font-size: 20px;
 }
 
@@ -238,35 +238,6 @@
 	width: 814px;
 }
 
-.axis path,
-.axis line {
-    fill: none;
-    stroke: grey;
-    stroke-width: 1;
-    shape-rendering: crispEdges;
-}
-
-.axisTwo path,
-.axisTwo line {
-    fill: none;
-    stroke: grey;
-    stroke-width: 1;
-    shape-rendering: crispEdges;
-}
-
-.label {
-	font-size: 13px;
-	stroke: #000;
-	fill: #000;
-}
-
-.pie-description {
-	position: absolute;
-	left: 737px;
-	top: 400px;
-	font-size: 16px
-}
-
 .d3-slider {
     position: relative;
     font-family: Verdana,Arial,sans-serif;
@@ -355,6 +326,38 @@
     margin-bottom: -.6em;      
 }
 
+/*
+	other assets
+*/
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+.axisTwo path,
+.axisTwo line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+.label {
+	font-size: 13px;
+	stroke: #000;
+	fill: #000;
+}
+
+.pie-description {
+	position: absolute;
+	left: 737px;
+	top: 400px;
+	font-size: 16px
+}
+
 .radial-progress { 
 	&__text {
 		font-family: Arial, sans-serif;
@@ -365,6 +368,12 @@
 
 #progress {
  position: absolute
+}
+
+.btn-sm {
+	position: absolute;
+	left: 857px;
+	top: 40px;
 }
 
 .tip {
