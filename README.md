@@ -11,9 +11,8 @@ This visualization will be made to inform people who are interested in personal 
 With climate being an important reoccurring topic of news and discussion, it is often stated that the individual can contribute in a positive way. One of the ways is personal solar energy, and although solar panels on regular houses are a common sight, it may not be clear to everyone what the benefits for them could be. This project targets every home owner with interest in personal solar power.
 
 ### Solution
-This image shows the old design for the visualization. The actual working visualization is most up to date in terms of design.
-
-![](doc/maart_hoogeveen.png)
+This image shows how the current state of the visualization looks.
+![](doc/visualization.png)
 
 ### Main features
 - country map containing all weather stations, each clickable to update location *(MVP)*
