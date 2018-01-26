@@ -47,12 +47,33 @@ To switch between showing temperature/radiation and energy/profit potential next
 - ###### Radar plot
 Plotting the colored lines on the radarplot can be done by connecting the five radial points of data together. 
 
-### Functions
+### Functions (in order)
+###### updateRadar
+Replots the colors area and lines on the radar chart everytime a user input is altered.
+
+###### updateLine
+Replots the colored lines and y-axes of the line chart when the weather station or month are changed
+
+###### progressBar
+Replots the radial progress bar everytime a user input is altered. This function contains two functions, 'update' and 'iterate' in order to animate the drawing of the bar.
+
+###### pieChart
+Plots the pie chart
+
+##### calFactors
+Determines monthly or yearly average temperature and radiation for calculation
+
 ###### calculation
-This functions takes all user inputs, combined with the temperature/radiation data from the dataset to calculate the results and be able to plot all visualizations. This functions is defined right after all json data is loaden in and all variables have been instantiated.
+Takes all user inputs, combined with the temperature/radiation data from the dataset to calculate the results and be able to plot all visualizations.
 
 ###### on click functions
 Defined right after the calculation function, used to register all user inputs into variables.
+
+###### lineCalculation
+calculation function for the daily production and profit values to be displayed along the crosshair on the line chart
+
+###### chartPlot
+Used to update the currently selected month variable and call the line update function.
 
 ### D3 plugins
 ###### d3-tip
