@@ -17,7 +17,7 @@ All KNMI data is in .txt format and can be converted to JSON by running a selfma
 ###### User data
 All user specific variables will have a selection menu of several value choices, for quicker usability and more concise plotting.
 
-### Component overview
+### Component overview (some images are not up to date. The actual working visualization has the most up to date designs)
 ###### Country map
 ![](doc/advanced_sketch_map.png)
 
