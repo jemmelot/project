@@ -127,7 +127,7 @@ var mapTip = d3.tip()
 	.html(function(d) {
 		return "<span>" + d[2] + "</span>";
 	});
-	
+
 var options = {
 	w: radarWidth,
 	h: radarHeight,
@@ -451,6 +451,10 @@ function ready(error, data, nld, percentages) {
 		.attr("x", 9)
 		.attr("dy", ".35em");
 	focus.append('text')	
+		.attr('id', 'focusTextXTwo')
+		.attr("x", 9)
+		.attr("dy", ".35em");
+	focus.append('text')	
 		.attr('id', 'focusTextY')
 		.attr("x", 9)
 		.attr("dy", ".35em");	
@@ -604,6 +608,12 @@ function ready(error, data, nld, percentages) {
 								.replace('0100', '0200')
 								.replace('standaardtijd', 'zomertijd')
 								.replace('00:00:00 GMT+0200 (West-Europa (zomertijd))', ''));
+					focus.select("#focusTextXTwo")
+						.attr("transform", "translate(" + (textX + 110) + "," + (y(yDomainMax) + 15) + ")")
+						.text(function() {
+							return (lineCalculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, d.temperature, d.radiation)[0]
+									+ " kWh	" + lineCalculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, d.temperature, d.radiation)[1] + " euro");
+						});
 				};
 			});
 	}	
@@ -620,6 +630,13 @@ function ready(error, data, nld, percentages) {
 		var wrapper = document.getElementById('progress');
 		var start = 0;
 		var end = houseScore;
+		
+		var scoreTip = d3.tip()
+			.attr("class", "tip")
+			.offset([-5, 0])
+			.html(function(d) {
+				return "<strong>Overall score: </strong> <span>" + parseFloat(houseScore/10) + "</span>";
+			});
 
 		var colours = {
 			fill: function() {
@@ -678,8 +695,10 @@ function ready(error, data, nld, percentages) {
 			.attr('class', 'radial-progress__value')
 			.attr('fill', colours.fill)
 			.attr('stroke', colours.stroke)
-			.attr('stroke-width', strokeSpacing + 'px');
-
+			.attr('stroke-width', strokeSpacing + 'px')
+			.on('mouseover', scoreTip.show)
+			.on('mouseout', scoreTip.hide);
+			
 		function update(progress) {
 			//update position of endAngle
 			value.attr('d', circle.endAngle(endAngle * progress));
@@ -697,6 +716,8 @@ function ready(error, data, nld, percentages) {
 				setTimeout(iterate, 10);
 			}
 		})();
+		
+		svg.call(scoreTip);
 	}
 		
 	// instantiate variables for calculations
@@ -859,7 +880,36 @@ function ready(error, data, nld, percentages) {
 			d3.select("#progress").select(".radial-progress").remove();
 			d3.select("#progress").select("svg").remove();
 			
-			processBar(houseScore);			
+			processBar(houseScore);
+		}
+	};
+	
+	// calculation function
+	function lineCalculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad) {
+		if (orientation.length != 0 && angle.length != 0 && surface !=0 && panel != 0 && usage != 0 && calTemp != 0 && calRad != 0) {
+			
+			insolationEfficiency = percentages[orientation]["angle"][angle];
+									
+			idealInsolation = (calRad*10000)/3600000;
+			
+			trueInsolation = idealInsolation*insolationEfficiency;
+			
+			capacity = surface*panel*inverterEfficiency;
+			
+			basicOutput = trueInsolation*capacity;
+						
+			productionDay = basicOutput*(1-(((calTemp - 25)*coefficient))/100);
+			productionYear = productionDay*365;
+			
+			totalCost = (surface/size)*cost;
+									
+			profit = productionYear*energy;
+			
+			payback = totalCost/profit;
+						
+			var returnArray = [Math.round(productionDay * 100) / 100, Math.round(profit * 10) / 10]
+			
+			return returnArray;
 		}
 	};
 	

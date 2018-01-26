@@ -260,6 +260,13 @@
 	fill: #000;
 }
 
+.pie-description {
+	position: absolute;
+	left: 737px;
+	top: 400px;
+	font-size: 16px
+}
+
 .d3-slider {
     position: relative;
     font-family: Verdana,Arial,sans-serif;
