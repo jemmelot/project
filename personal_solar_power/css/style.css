@@ -1,8 +1,15 @@
 /* Jesse Emmelot, 11963522 */
 
 /* style attributes */
+path.line
+{
+	fill: none;
+	stroke: #000;
+}
+
 .lines {
 	fill: none;
+	stroke: #000;
 	stroke-width: 2.5px;	
 }
 
@@ -19,8 +26,8 @@
 
 .pie {
 	position: absolute;
-	left: 725px;
-	top: 120px;
+	left: 710px;
+	top: 105px;
 }
 
 /* line chart attributes */
@@ -123,6 +130,11 @@
 
 .dropdown-menu {
 	width: 250px;
+}
+
+.info-dropdown {
+	width: 30px;
+	text-align: center;
 }
 
 .enter {
@@ -366,14 +378,23 @@
 	}  
 }
 
+.sources {
+	width: 800px;
+}
+
 #progress {
  position: absolute
 }
 
 .btn-sm {
 	position: absolute;
-	left: 857px;
-	top: 40px;
+	left: 845px;
+	top: 34px;
+	data-trigger: popover;
+}
+
+.popover {
+	width: 800px;
 }
 
 .tip {

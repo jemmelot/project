@@ -31,6 +31,19 @@ $(document).ready(function(){
     $('[data-toggle="popover"]').popover(); 
 });
 
+$(document).ready(function () {
+	$('.pop').each(function () {
+		var $elem = $(this);
+		$elem.popover({
+			placement: 'right',
+			trigger: 'hover',
+			html: true,
+			container: $elem,
+			animation: true
+		});
+	});		
+});
+
 // instantiate global variables
 var monthValue = "Jaar";
 var station = "";
@@ -105,7 +118,7 @@ var svgPie = d3.select("#pie"),
 	pieWidth = 250,
 	pieHeight = 250,
 	radius = Math.min(pieWidth, pieHeight) / 2,
-	gPie = svgPie.append("g").attr("transform", "translate(" + pieWidth / 2 + "," + pieHeight / 2 + ")");
+	gPie = svgPie.append("g").attr("transform", "translate(" + (pieWidth / 2 + 15) + "," + (pieHeight / 2 + 15) + ")");
 	
 // declare pie chart basis	
 var pie = d3.layout.pie()
@@ -116,11 +129,10 @@ var pie = d3.layout.pie()
 var piePath = d3.svg.arc()
 	.outerRadius(radius - 10)
 	.innerRadius(0);
-
-// pie chart category label positions	
-var pieLabel = d3.svg.arc()	
-	.outerRadius(radius - 40)
-	.innerRadius(radius - 40);
+	
+var labelArc = d3.svg.arc()
+	.outerRadius(radius - 45)
+	.innerRadius(radius - 45);	
 
 // define tooltip that shows the value at each pie chart slice
 var pieTip = d3.tip()
@@ -365,6 +377,7 @@ var radLine = d3.svg.line()
 // line chart x axis properties		
 var	xAxis = d3.svg.axis()
 	.scale(x)
+	.tickFormat(d3.time.format("%b"))
 	.orient("bottom");
 	
 // line chart y axis properties	
@@ -382,9 +395,10 @@ d3.queue()
 	.defer(d3.json, "datasets/data.json")
 	.defer(d3.json, "datasets/map.json")
 	.defer(d3.json, "datasets/percentages.json")
+	.defer(d3.json, "datasets/months.json")
 	.await(ready);
 	
-function ready(error, data, nld, percentages) {
+function ready(error, data, nld, percentages, monthEfficiency) {
 	/*
 		put all data into the appropriate format.
 		Dates to date formats, temperature and 
@@ -418,29 +432,29 @@ function ready(error, data, nld, percentages) {
 	// add the temperature axis
 	gChart.append("g")
 		.attr("class", "y axis")
-		.style("fill", "red")
-		.style("stroke", "red")
+		.style("fill", "#cc0000")
+		.style("stroke", "#cc0000")
 		.call(yAxis)
 		.append("text")
 		.attr("class", "label")
-		.attr("x", -28)
+		.attr("x", -29)
 		.attr("y", -25)
 		.attr("dy", ".71em")
-		.text("Temperatuur");
+		.text("Temperatuur(°C)");
 	
 	// add the radiation axis
 	gChart.append("g")
 		.attr("class", "y axisTwo")
 		.attr("transform", "translate(" + chartWidth + " ,0)")	
-		.style("fill", "yellow")
-		.style("stroke", "yellow")
+		.style("fill", "#ffcc00")
+		.style("stroke", "#ffcc00")
 		.call(yAxisTwo)
 		.append("text")
 		.attr("class", "label")
-		.attr("x", -20)
+		.attr("x", -64)
 		.attr("y", -25)
 		.attr("dy", ".71em")
-		.text("Straling");
+		.text("Straling(J/cm2)");
 	
 	// add the temperature line
 	gChart.append("path")
@@ -448,10 +462,10 @@ function ready(error, data, nld, percentages) {
 		.attr("id", "tempLine")
 		.datum(lineData)
 		.attr("fill", "none")
-		.attr("stroke", "red")
+		.attr("stroke", "#cc0000")
 		.attr("stroke-linejoin", "round")
 		.attr("stroke-linecap", "round")
-		.attr("stroke-width", 1.5)
+		.attr("stroke-width", 2)
 		.attr("d", tempLine);
 	
 	// add the radiation line
@@ -460,10 +474,10 @@ function ready(error, data, nld, percentages) {
 		.attr("id", "radLine")
 		.datum(lineData)
 		.attr("fill", "none")
-		.attr("stroke", "yellow")
+		.attr("stroke", "#ffcc00")
 		.attr("stroke-linejoin", "round")
 		.attr("stroke-linecap", "round")
-		.attr("stroke-width", 1.5)
+		.attr("stroke-width", 2)
 		.attr("d", radLine);
 	
 	// define variable to serve as the basis for the crosshair functionality
@@ -567,10 +581,17 @@ function ready(error, data, nld, percentages) {
 		newLine.select(".tempLines")
 			.duration(500)
 			.attr("d", tempLine(lineData))
-			.attr("fill", "none");
-		newLine.select(".x.axis")
-			.duration(500)
-			.call(xAxis);
+			.attr("fill", "none");		
+		if (monthValue == "Jaar") {
+			newLine.select(".x.axis")
+				.duration(500)
+				.call(xAxis.tickFormat(d3.time.format("%b")));
+		}
+		else {
+			newLine.select(".x.axis")
+				.duration(500)
+				.call(xAxis.tickFormat(d3.time.format("%d")));	
+		}				
 		newLine.select(".y.axis")
 			.duration(500)
 			.call(yAxis);
@@ -590,9 +611,16 @@ function ready(error, data, nld, percentages) {
 			.duration(500)
 			.attr("d", radLine(lineData))
 			.attr("fill", "none");
-		newLine.select(".x.axis")
-			.duration(500)
-			.call(xAxis);
+		if (monthValue == "Jaar") {
+			newLine.select(".x.axis")
+				.duration(500)
+				.call(xAxis.tickFormat(d3.time.format("%b")));
+		}
+		else {
+			newLine.select(".x.axis")
+				.duration(500)
+				.call(xAxis.tickFormat(d3.time.format("%d")));
+		}				
 		newLine.select(".y.axisTwo")
 			.duration(500)
 			.call(yAxisTwo);	
@@ -627,13 +655,13 @@ function ready(error, data, nld, percentages) {
 					focus.select('#focusCircle')
 						.attr('cx', crossX)
 						.attr('cy', crossY)
-						.attr("stroke", "red")
-						.attr("fill", "red");
+						.attr("stroke", "#cc0000")
+						.attr("fill", "#cc0000");
 					focus.select('#focusCircleTwo')
 						.attr('cx', crossX)
 						.attr('cy', crossYTwo)
-						.attr("stroke", "yellow")
-						.attr("fill", "yellow");
+						.attr("stroke", "#ffcc00")
+						.attr("fill", "#ffcc00");
 					focus.select('#focusLineX')
 						.attr('x1', crossX).attr('y1', y(yDomainMin))
 						.attr('x2', crossX).attr('y2', y(yDomainMax));
@@ -666,8 +694,9 @@ function ready(error, data, nld, percentages) {
 					focus.select("#focusTextXTwo")
 						.attr("transform", "translate(" + (textX + 110) + "," + (y(yDomainMax) + 15) + ")")
 						.text(function() {
-							return (lineCalculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, d.temperature, d.radiation)[0]
-									+ " kWh	" + lineCalculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, d.temperature, d.radiation)[1] + " euro");
+							if (orientation.length != 0 && angle.length != 0 && surface !=0 && panel != 0 && usage != 0) {
+								return (Math.round(dailyResults(d.temperature, d.radiation)[0]) + " kWh	" + Math.round(dailyResults(d.temperature, d.radiation)[1]) + " euro");
+							}
 						});
 				};
 			});
@@ -684,7 +713,6 @@ function ready(error, data, nld, percentages) {
 	
 	// draw a radial progress bar showing the total score of the house
 	function processBar(houseScore) {
-		var wrapper = document.getElementById('progress');
 		var start = 0;
 		var end = houseScore;
 		
@@ -707,20 +735,20 @@ function ready(error, data, nld, percentages) {
 					return 'rgb(' + (255 - Math.round(5.1 * (end - 50))) + ',' + 255 + ',' + 0 + ')'
 				}
 			},
-			track: '#' + wrapper.dataset.trackColour,
-			text: '#' + wrapper.dataset.textColour,
-			stroke: '#' + wrapper.dataset.strokeColour,
+			track: "#ffffff",
+			text: "00c0ff",
+			stroke: "ffffff",
 		}
 		
 		/*
 			radial progress bar parameter values
 		*/
 		var progressRadius = 140;
-		var border = wrapper.dataset.trackWidth;
-		var strokeSpacing = wrapper.dataset.strokeSpacing;
+		var border = 20;
+		var strokeSpacing = 0;
 		var endAngle = Math.PI * 2;
 		var formatText = d3.format('.0%');
-		var boxSize = radius * 2;
+		var boxSize = progressRadius * 2;
 		var count = end;
 		var progress = start;
 		var step = end < start ? -0.01 : 0.01;
@@ -732,12 +760,11 @@ function ready(error, data, nld, percentages) {
 			.outerRadius(progressRadius - border);
 
 		// setup SVG wrapper
-		var svg = d3.select(wrapper)
+		var svg = d3.select("#pie")
 			.append('svg')
 			.attr("class", "progress_svg")
 			.attr('width', boxSize)
-			.attr('height', boxSize)
-			.attr('transform', 'translate(' + 20 + ',' + 20 + ')');
+			.attr('height', boxSize);
 
 		// add group container
 		var g = svg.append('g')
@@ -800,6 +827,10 @@ function ready(error, data, nld, percentages) {
 	// placeholder variables for testing
 	var calTemp = 0;
 	var calRad = 0;
+	var calYearTemp = 0;
+	var calYearRad = 0;
+	var dailyTemp = 0;
+	var dailyRad = 0;
 	
 	// instantiate other calculation variables
 	var capacity = 0;
@@ -835,81 +866,191 @@ function ready(error, data, nld, percentages) {
 	/*	
 		make a pie chart showing how much each month contributes to yearly energy production 					
 	*/
-	function pieChart(pieData, piePath) {
+	function pieColors(pieData, piePath) {
+		var least = 1;
+		var most = 0;
+		
 		pieData.forEach(function(d) {
 			d.value = +d.value;
-			
-			// the higher the month contribution value, the more orange its slice is 
-			d.color = "rgb(255," + parseInt(245 - (92 * ((d.value - 0.02)/0.11))) + "," + parseInt(230 - (230 * ((d.value - 0.02)/0.11))) + ")";	
-		});
+						
+			if (d.value < least) {
+				least = d["value"];
+			};
+			if (d.value > most) {
+				most = d["value"];
+			};
+		});	
 		
-		var arc = gPie.selectAll(".arc")
-			.data(pie(pieData))
-			.enter().append("g")
-			.attr("class", "arc");
-
-		arc.append("path")
-			.attr("d", piePath)
-			.attr("fill", function(d) { return d.data["color"]; })
-			.attr("id", function(d) { return "pieName" + d.data["month"] ;})
-			.on("click", function(d) {
-				monthValue = d.data["month"];
-				
-				// when a particular month is selected from the pie chart, change the slider position and thereby all visualization data and results
-				slider.value(monthValue);
-				
+		pieData.forEach(function(d) {
+			// the higher the month contribution value, the more orange its slice is 
+			d.color = "rgb(255," + parseInt(245 - (92 * ((d.value - least)/(most - least)))) + "," + parseInt(230 - (230 * ((d.value - least)/(most - least)))) + ")";	
+		});
+	};
+	
+	pieColors(monthFactors, piePath);
+		
+	var arc = gPie
+		.datum(monthFactors)
+		.selectAll("path")
+		.data(pie)
+		.enter()
+		.append("path")
+		.attr("d", piePath)
+		.attr("stroke", "white")
+		.attr("fill", function(d) { return d.data["color"]; })
+		.attr("id", function(d) { return "pieName" + d.data["month"] ;})
+		.each(function(d) {
+			this._current = d;			
+		})
+		.on("click", function(d) {
+			monthValue = d.data["month"];
+			
+			// when a particular month is selected from the pie chart, change the slider position and thereby all visualization data and results
+			slider.value(monthValue);
+			
+			if (monthValue == "Jaar") {
+				updatePie(monthFactors);
+			}
+			else {
 				gPie.selectAll("path")
 					.style("fill", "#ffffcc")
 				d3.select(this)
 					.style("fill", "orange")
+			};
+		})
+		.on('mouseover', pieTip.show)
+		.on('mouseout', pieTip.hide);
+	
+	gPie.append("g")
+		.attr("class", "labelText");
+	
+	var pieText = gPie.select(".labelText").selectAll("text")
+		.data(pie(monthFactors), function(d) {
+			return d.data["month"]
+		})
+		.enter()
+		.append("text")	
+		.attr("transform", function(d) { 
+			var midAngle = d.endAngle < Math.PI ? d.startAngle/2 + d.endAngle/2 : d.startAngle/2  + d.endAngle/2 + Math.PI ;
+			return "translate(" + labelArc.centroid(d)[0] + "," + labelArc.centroid(d)[1] + ") rotate(-90) rotate(" + (midAngle * 180/Math.PI) + ")"; })
+		.attr("dy", "0.35em")
+		.attr("font-size", "15px")
+		.attr('text-anchor','middle')
+		.text(function(d) { return d.data["month"]; })
+		.each(function(d) {
+			this._current = d;			
+		});
+		
+	function updatePie(newPieData) {
+		arc = arc.data(pie(newPieData));
+		arc.transition()
+			.duration(500)
+			.attrTween("d", arcTween);
+		gPie.select(".labelText").remove();	
+		gPie.append("g")
+		.attr("class", "labelText");
+	
+		var pieText = gPie.select(".labelText").selectAll("text")
+			.data(pie(monthFactors), function(d) {
+				return d.data["month"]
 			})
-			.on('mouseover', pieTip.show)
-			.on('mouseout', pieTip.hide);
-
-		arc.append("text")
-			.attr("transform", function(d) { return "translate(" + pieLabel.centroid(d) + ")"; })
+			.enter()
+			.append("text")	
+			.attr("transform", function(d) { 
+				var midAngle = d.endAngle < Math.PI ? d.startAngle/2 + d.endAngle/2 : d.startAngle/2  + d.endAngle/2 + Math.PI ;
+				return "translate(" + labelArc.centroid(d)[0] + "," + labelArc.centroid(d)[1] + ") rotate(-90) rotate(" + (midAngle * 180/Math.PI) + ")"; })
 			.attr("dy", "0.35em")
-			.text(function(d) { return d.data["month"]; });
-	};	
+			.attr("font-size", "15px")
+			.attr('text-anchor','middle')
+			.text(function(d) { return d.data["month"]; })
+			.each(function(d) {
+				this._current = d;			
+			});
+	};
+		
+	function arcTween(a) {
+		var i = d3.interpolate(this._current, a);
+		this._current = i(0);
+		return function(t) {
+			return piePath(i(t));
+		};
+	}			
+			
+	function dailyResults(dailyTemp, dailyRad) {
+		idealInsolation = (dailyRad*10000)/3600000;
+		insolationEfficiency = percentages[orientation]["angle"][angle];
+		//insolationMonthEfficiency = monthEfficiency[monthValue]["angle"][angle];
+		trueInsolation = idealInsolation*insolationEfficiency//*insolationEfficiency;
+		basicOutput = trueInsolation*capacity;
+		productionDay = basicOutput*(1-(((dailyTemp - 25)*coefficient))/100);
+		profitDay = productionDay*energy;
+		
+		var dailyArray = [productionDay, profitDay]
+		
+		return dailyArray;
+	}
 	
 	/*
 		determine monthly or yearly average temperature and radiation for calculation input
 	*/
-	function calFactors(monthValue, station) {
-		totalTemp = 0;
-		totalRad = 0;
-		
-		if (monthValue != "") {
-			if (monthValue == "Jaar") {
-				for (var i = 0; i < ((months.length) - 1); i++) {
-					for (var j = 0; j < data[station].dates[months[i]].length; j++) {
-						totalTemp += data[station].dates[months[i]][j].temperature;
-						totalRad += data[station].dates[months[i]][j].radiation;
-					}
+	function periodResults(monthValue, station) {
+		var yearProduction = 0;
+		var yearProfit = 0;
+		var monthProduction = 0;
+		var monthProfit = 0;
+				
+		if (monthValue != "") {			
+			for (var i = 0; i < ((months.length) - 1); i++) {
+				var tempProduction = 0;
+								
+				for (var j = 0; j < data[station].dates[months[i]].length; j++) {
+					yearProduction += dailyResults(data[station].dates[months[i]][j].temperature, data[station].dates[months[i]][j].radiation)[0];
+					yearProfit += dailyResults(data[station].dates[months[i]][j].temperature, data[station].dates[months[i]][j].radiation)[1];
+					tempProduction += dailyResults(data[station].dates[months[i]][j].temperature, data[station].dates[months[i]][j].radiation)[0];
 				}
 				
-				calTemp = totalTemp/365;
-				calRad = totalRad/365;				
-			} 
-			
-			else {
-				for (var i = 0; i < data[station].dates[monthValue].length; i++) {
-					totalTemp += data[station].dates[monthValue][i].temperature
-					totalRad += data[station].dates[monthValue][i].radiation
-				}
-				
-				calTemp = totalTemp/(data[station].dates[monthValue].length);
-				calRad = totalRad/(data[station].dates[monthValue].length);
+				monthFactors[i]["value"] = tempProduction;
 			}
+			
+			var periodArray = [yearProduction, yearProfit]
+									
+			if (monthValue != "Jaar") {
+				for (var i = 0; i < data[station].dates[monthValue].length; i++) {
+					monthProduction += dailyResults(data[station].dates[monthValue][i].temperature, data[station].dates[monthValue][i].radiation)[0];
+					monthProfit += dailyResults(data[station].dates[monthValue][i].temperature, data[station].dates[monthValue][i].radiation)[1];
+				}
+				
+				periodArray.push(monthProduction);
+				periodArray.push(monthProfit);
+			}
+						
+			return periodArray;
 		}
-	}			
+	}
+	
+	function scoreAngle() {
+		if (monthValue == "Jaar") {
+			var tempArray = Object.keys(percentages["zuid"]["angle"]).map(function ( key ) { return percentages["zuid"]["angle"][key]; });
+			bestAngle = Math.max.apply( null, tempArray );
+			worstAngle = Math.min.apply( null, tempArray );
+			angleScore = ((percentages["zuid"]["angle"][angle]) - worstAngle)/(bestAngle - worstAngle);
+		}
+		else {
+			var tempArray = Object.keys(monthEfficiency[monthValue]["angle"]).map(function ( key ) { return monthEfficiency[monthValue]["angle"][key]; });
+			bestAngle = Math.max.apply( null, tempArray );
+			worstAngle = Math.min.apply( null, tempArray );
+			angleScore = ((monthEfficiency[monthValue]["angle"][angle]) - worstAngle)/(bestAngle - worstAngle);
+		};
+		return angleScore;
+	}
 	
 	/* 
 		results calculation function
 	*/
-	function calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad) {
-		if (orientation.length != 0 && angle.length != 0 && surface !=0 && panel != 0 && usage != 0 && calTemp != 0 && calRad != 0) {
+	function calculation() {
+		if (orientation.length != 0 && angle.length != 0 && surface !=0 && panel != 0 && usage != 0) {
 			
+			angleScore = scoreAngle();				
 			houseScore = ((orientationScore + angleScore + surfaceScore + panelScore + usageScore)/5)*100; 
 			
 			// update radar chart data based on user inputs
@@ -929,70 +1070,44 @@ function ready(error, data, nld, percentages) {
 			
 			// update radar chart
 			updateRadar(radarData, cfg);
-									
-			insolationEfficiency = percentages[orientation]["angle"][angle];
-									
-			idealInsolation = (calRad*10000)/3600000;
-			
-			trueInsolation = idealInsolation*insolationEfficiency;
-			
+						
 			capacity = surface*panel*inverterEfficiency;
-			
-			basicOutput = trueInsolation*capacity;
-						
-			productionDay = basicOutput*(1-(((calTemp - 25)*coefficient))/100);
-			productionYear = productionDay*365;
-			
 			totalCost = (surface/size)*cost;
-									
-			profit = productionYear*energy;
 			
-			payback = totalCost/profit;
-						
+			productionYear = periodResults(monthValue, station)[0];
+			profitYear = periodResults(monthValue, station)[1];
+			productionMonth = periodResults(monthValue, station)[2];
+			profitMonth = periodResults(monthValue, station)[3];
+												
+			payback = totalCost/profitYear;
+			
+			monthFactors.forEach(function(d) {
+				d["value"] /= productionYear;				
+			});
+			pieColors(monthFactors, piePath);
+			
+			updatePie(monthFactors);
+								
 			// update result div values when a new calculation is made
-			$(".results > .production").text(parseInt(productionYear));
-			$(".results > .profit").text(parseInt(profit));
-			$(".results > .payback").text(parseInt(payback));
+			if (monthValue == "Jaar") {
+				$(".results > .production").text(Math.round(parseFloat(productionYear)));
+				$(".results > .profit").text(Math.round(parseFloat(profitYear)));
+			}
+			else {
+				$(".results > .production").text(Math.round(parseFloat(productionMonth)));
+				$(".results > .profit").text(Math.round(parseFloat(profitMonth)));
+			};	
+			$(".results > .payback").text(Math.round(parseFloat(payback)));
 			
 			d3.select("#progress").select(".radial-progress").remove();
 			d3.select("#progress").select("svg").remove();
 			
 			// update radial progress bar to reflect any changes in user input
-			processBar(houseScore);
+			processBar(houseScore);			
 		}
 	};
-	
-	// calculation function for the daily production and profit values to be displayed along the crosshair on the line chart
-	function lineCalculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad) {
-		if (orientation.length != 0 && angle.length != 0 && surface !=0 && panel != 0 && usage != 0 && calTemp != 0 && calRad != 0) {
 			
-			insolationEfficiency = percentages[orientation]["angle"][angle];
-									
-			idealInsolation = (calRad*10000)/3600000;
-			
-			trueInsolation = idealInsolation*insolationEfficiency;
-			
-			capacity = surface*panel*inverterEfficiency;
-			
-			basicOutput = trueInsolation*capacity;
-						
-			productionDay = basicOutput*(1-(((calTemp - 25)*coefficient))/100);
-			productionYear = productionDay*365;
-			
-			totalCost = (surface/size)*cost;
-									
-			profit = productionYear*energy;
-			
-			payback = totalCost/profit;
-						
-			var returnArray = [Math.round(productionDay * 100) / 100, Math.round(profit * 10) / 10]
-			
-			return returnArray;
-		}
-	};
-	
 	// draw the pie chart along with tooltip functionality
-	pieChart(monthFactors, piePath);
 	svgPie.call(pieTip);
 	
 	// when a location is selected, display it in the button and store its value in a variable for calculation
@@ -1006,14 +1121,13 @@ function ready(error, data, nld, percentages) {
 		svgNL.selectAll("circle")
 			.style("fill","red")
 			.attr("r", 8);
-		d3.select("#name" + station)
+		d3.select("#name" + station.replace(/ /g,''))
 			.style("fill", "#FFB6C1")
 			.attr("r", 8);
 		
 		// update line chart and recalculate results
 		updateLine(station, monthValue);		
-		calFactors(monthValue, station);						
-		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);
+		calculation();
 	});
 	
 	// when an orientation is selected, display it in the button and store its value in a variable for calculation
@@ -1021,15 +1135,14 @@ function ready(error, data, nld, percentages) {
 		orientation = $(this).attr("data-orientation");
 		orientationScore = parseFloat($(this).attr("orientation-score"));
 		$("button.button-width-orientation").text($(this).text());	
-		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);		
+		calculation();		
 	});
 	
 	// when an angle is selected, display it in the button and store its value in a variable for calculation
 	$("a[class=angle-a]").on("click", function(){
 		angle = $(this).attr("data-angle");
-		angleScore = parseFloat($(this).attr("angle-score"));
 		$("button.button-width-angle").text($(this).text());
-		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);
+		calculation();
 	});
 	
 	// when a surface is selected, display it in the button and store its value in a variable for calculation
@@ -1037,7 +1150,7 @@ function ready(error, data, nld, percentages) {
 		surface = parseInt($(this).attr("data-surface"));
 		surfaceScore = parseFloat($(this).attr("surface-score"));
 		$("button.button-width-surface").text($(this).text());
-		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);
+		calculation();
 	});
 	
 	// when a panel is selected, display it in the button and store its values in a variable for calculation
@@ -1047,7 +1160,7 @@ function ready(error, data, nld, percentages) {
 		$("button.button-width-panel").text($(this).text());
 		coefficient = parseFloat($(this).attr("data-coefficient"));
 		cost = parseInt($(this).attr("data-price"));
-		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);		
+		calculation();		
 	});
 	
 	// when a usage is selected, display it in the button and store its value in a variable for calculation
@@ -1055,7 +1168,7 @@ function ready(error, data, nld, percentages) {
 		usage = parseInt($(this).attr("data-usage"));
 		usageScore = parseFloat($(this).attr("usage-score"));
 		$("button.button-width-usage").text($(this).text());
-		calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);
+		calculation();
 	});
 		
 	// map scale and position
@@ -1084,7 +1197,7 @@ function ready(error, data, nld, percentages) {
     svgNL.selectAll("circle")
 		.data(dots).enter()
 		.append("circle")
-		.attr("id", function(d){ return "name" + d[2]; })
+		.attr("id", function(d){ return "name" + d[2].replace(/ /g,''); })
 		.attr("cx", function (d) { return projection(d)[0]; })
 		.attr("cy", function (d) { return projection(d)[1]; })
 		.attr("r", "8px")
@@ -1107,8 +1220,7 @@ function ready(error, data, nld, percentages) {
 				.attr("r", 8);
 			
 			// recalculate results
-			calFactors(monthValue, station);
-			calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad);
+			calculation();
 		})
 		.on('mouseover', mapTip.show)
 		.on('mouseout', mapTip.hide);
@@ -1141,11 +1253,13 @@ function ready(error, data, nld, percentages) {
 			d3.select("#pieName" + value)
 				.style("fill", "orange")
 			
-			chartPlot(station, value)
+			monthValue = value;
 			
-			calFactors(value, station);
-			
-			calculation(orientation, angle, surface, panel, coefficient, cost, usage, orientationScore, angleScore, surfaceScore, panelScore, usageScore, calTemp, calRad)
+			if (station != "") {
+				updateLine(station, value);	
+								
+				calculation()
+			}
 		});
 	   
 	// call the slider to display it on the page
