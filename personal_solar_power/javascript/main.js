@@ -79,8 +79,8 @@ var radarData = [
 ];
 
 // define map size
-var mapWidth = 390;
-var mapHeight = 450;
+var mapHeight = 400;
+var mapWidth = 350;
 
 // define date format
 var format = d3.time.format("%Y-%b-%d").parse;
@@ -103,7 +103,7 @@ var svgNL = d3.select("body").append("svg")
 var svgChart = 	d3.select("#chart")
 	chartMargin = {top: 30, right: 20, bottom: 10, left: 50},
 	chartWidth = 850 - chartMargin.left - chartMargin.right,
-	chartHeight = 240 - chartMargin.top - chartMargin.bottom,
+	chartHeight = 285 - chartMargin.top - chartMargin.bottom,
     gChart = svgChart.append("g").attr("transform", "translate(" + chartMargin.left + "," + chartMargin.top + ")");
 	
 // select svg element to put the radar chart into
@@ -115,8 +115,8 @@ var svgRadar = d3.select("#radar")
 
 // select svg element to put the pie chart into
 var svgPie = d3.select("#pie"),
-	pieWidth = 250,
-	pieHeight = 250,
+	pieWidth = 260,
+	pieHeight = 260,
 	radius = Math.min(pieWidth, pieHeight) / 2,
 	gPie = svgPie.append("g").attr("transform", "translate(" + (pieWidth / 2 + 15) + "," + (pieHeight / 2 + 15) + ")");
 	
@@ -711,6 +711,10 @@ function ready(error, data, nld, monthEfficiency) {
 	
 	// draw a radial progress bar showing the total score of the house
 	function processBar(houseScore) {
+		d3.select(".pie-description").transition()
+			.duration(500)
+			.style("top", "380px");
+		
 		var start = 0;
 		var end = houseScore;
 		
@@ -741,7 +745,7 @@ function ready(error, data, nld, monthEfficiency) {
 		/*
 			radial progress bar parameter values
 		*/
-		var progressRadius = 140;
+		var progressRadius = 145;
 		var border = 20;
 		var strokeSpacing = 0;
 		var endAngle = Math.PI * 2;
@@ -1214,11 +1218,18 @@ function ready(error, data, nld, monthEfficiency) {
 		$("button.button-width-usage").text($(this).text());
 		calculation();
 	});
-		
+	
+	 var l = topojson.feature(nld, nld.objects.subunits).features[3],
+            b = path.bounds(l),
+            s = .3 / Math.max((b[1][0] - b[0][0]) / mapWidth, (b[1][1] - b[0][1]) / mapHeight),
+            t = [(mapWidth - s * (b[1][0] + b[0][0])) / 2, (mapHeight - s * (b[1][1] + b[0][1])) / 2];
+	
+	console.log(s, t);
+	
 	// map scale and position
 	projection
-		.scale(5000)
-		.translate([-250, 5580]);
+		.scale(4300)
+		.translate([-206, 4800]);
 
 	// draw the map
 	svgNL.selectAll("path")

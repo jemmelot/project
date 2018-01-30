@@ -26,14 +26,14 @@ path.line
 
 .pie {
 	position: absolute;
-	left: 710px;
-	top: 105px;
+	left: 650px;
+	top: 80px;
 }
 
 /* line chart attributes */
 .chart {
 	position: absolute;
-	bottom: 45px;
+	bottom: 35px;
 	left: 20px;
 	fill: none;
     stroke: #000;
@@ -65,10 +65,9 @@ path.line
 }
 
 .title {
-	text-decoration: underline;
 	position: absolute;
-	top: 30px;
-	left: 440px;
+	top: 25px;
+	left: 400px;
 	font-size: 35px;
 	text-decoration: underline;
 }
@@ -81,55 +80,55 @@ path.line
 
 .map-text {
 	position: absolute;
-	font-size: 16px;
-	bottom: 340px;
-	left: 60px;
+	font-size: 15px;
+	bottom: 390px;
+	left: 50px;
 }
 
 .btn {
-	font-size: 17px;
+	font-size: 16px;
 }
 
 /* location button width */
 .button-width-location{
-	width: 200px;
+	width: 180px;
 }
 
 /* orientation button width */
 .button-width-orientation{
-	width: 200px;
+	width: 180px;
 }
 
 /* angle button width */
 .button-width-angle{
-	width: 200px;
+	width: 180px;
 }
 
 /* surface button width */
 .button-width-surface{
-	width: 200px;
+	width: 180px;
 }
 
 /* panel button width */
 .button-width-panel{
-	width: 200px;
+	width: 180px;
 }
 
 /* width button width */
 .button-width-usage{
-	width: 200px;
+	width: 180px;
 }
 
 /* button group position */
 .buttons {
 	position: absolute;
-	left: 440px;
+	left: 400px;
 	top: 70px;
 	font-size: 20px;
 }
 
 .dropdown-menu {
-	width: 250px;
+	width: 205px;
 }
 
 .info-dropdown {
@@ -139,7 +138,7 @@ path.line
 
 .enter {
 	display: block;
-	margin: 15px 0;
+	margin: 1`0px 0;
 }
 
 /* student credentials */
@@ -161,13 +160,13 @@ path.line
 	position: absolute;
 	top: 85px;
 	right: 0px;	
-	font-size: 55px;
+	font-size: 70px;
 }
 
 /* production result position */
 .production {
 	position: absolute;
-	right: 330px;
+	right: 370px;
 	width: 200px;
 	height: 80px;
 }
@@ -175,7 +174,7 @@ path.line
 /* profit result position */
 .profit {
 	position: absolute;
-	right: 170px;
+	right: 185px;
 	width: 200px;
 	height: 80px;
 }
@@ -191,7 +190,7 @@ path.line
 /* results units group properties */
 .results-units {
 	position: absolute;
-	top: 150px;
+	top: 170px;
 	right: 0px;	
 	font-size: 30px;
 }
@@ -199,13 +198,13 @@ path.line
 /* production result unit position */
 .production-unit {
 	position: absolute;
-	right: 400px;
+	right: 440px;
 }
 
 /* profit result unit position */
 .profit-unit {
 	position: absolute;
-	right: 235px;
+	right: 255px;
 }
 
 /* payback result unit position */
@@ -225,13 +224,13 @@ path.line
 /* production result unit position */
 .production-name {
 	position: absolute;
-	right: 360px;
+	right: 400px;
 }
 
 /* profit result unit position */
 .profit-name {
 	position: absolute;
-	right: 232px;
+	right: 250px;
 }
 
 /* payback result unit position */
@@ -245,7 +244,7 @@ path.line
 */
 .wrapper{
 	position: absolute;
-	bottom: 40px;
+	bottom: 45px;
 	left: 52px;
 	width: 814px;
 }
@@ -365,8 +364,8 @@ path.line
 
 .pie-description {
 	position: absolute;
-	left: 737px;
-	top: 400px;
+	left: 685px;
+	top: 360px;
 	font-size: 16px
 }
 
@@ -388,8 +387,8 @@ path.line
 
 .btn-sm {
 	position: absolute;
-	left: 845px;
-	top: 34px;
+	left: 810px;
+	top: 30px;
 	data-trigger: popover;
 }
 
