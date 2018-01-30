@@ -1227,13 +1227,7 @@ function ready(error, data, nld, percentages, monthEfficiency) {
 	
 	// call map tooltip functionality
 	svgNL.call(mapTip);	
-		
-	function chartPlot(station, value) {
-		monthValue = value;
-		
-		updateLine(station, monthValue);		
-	};	
-		
+				
 	/* 
 		add a slider to select which month the weather station data should be
 		picked from. Sliding it will re-check weather the station has been changed
