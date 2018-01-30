@@ -394,11 +394,10 @@ var yAxisTwo = d3.svg.axis()
 d3.queue()
 	.defer(d3.json, "datasets/data.json")
 	.defer(d3.json, "datasets/map.json")
-	.defer(d3.json, "datasets/percentages.json")
 	.defer(d3.json, "datasets/months.json")
 	.await(ready);
 	
-function ready(error, data, nld, percentages, monthEfficiency) {
+function ready(error, data, nld, monthEfficiency) {
 	/*
 		put all data into the appropriate format.
 		Dates to date formats, temperature and 
@@ -416,8 +415,7 @@ function ready(error, data, nld, percentages, monthEfficiency) {
 	
 	// log data to check for errors
 	console.log(data);
-	console.log(percentages);
-
+	
 	// instantiate data array for the line chart values
 	lineData = []
 	
@@ -823,6 +821,7 @@ function ready(error, data, nld, percentages, monthEfficiency) {
 	var surfaceScore = 0;
 	var panelScore = 0;
 	var usageScore = 0;
+	var orientationEfficiency = 0;
 		
 	// placeholder variables for testing
 	var calTemp = 0;
@@ -978,9 +977,9 @@ function ready(error, data, nld, percentages, monthEfficiency) {
 			
 	function dailyResults(dailyTemp, dailyRad) {
 		idealInsolation = (dailyRad*10000)/3600000;
-		insolationEfficiency = percentages[orientation]["angle"][angle];
-		//insolationMonthEfficiency = monthEfficiency[monthValue]["angle"][angle];
-		trueInsolation = idealInsolation*insolationEfficiency//*insolationEfficiency;
+		insolationEfficiency = monthEfficiency[monthValue]["angle"][angle];
+		trueInsolationEfficiency = insolationEfficiency * orientationEfficiency;
+		trueInsolation = idealInsolation * trueInsolationEfficiency;
 		basicOutput = trueInsolation*capacity;
 		productionDay = basicOutput*(1-(((dailyTemp - 25)*coefficient))/100);
 		profitDay = productionDay*energy;
@@ -988,7 +987,7 @@ function ready(error, data, nld, percentages, monthEfficiency) {
 		var dailyArray = [productionDay, profitDay]
 		
 		return dailyArray;
-	}
+	};
 	
 	/*
 		determine monthly or yearly average temperature and radiation for calculation input
@@ -1029,20 +1028,13 @@ function ready(error, data, nld, percentages, monthEfficiency) {
 	}
 	
 	function scoreAngle() {
-		if (monthValue == "Jaar") {
-			var tempArray = Object.keys(percentages["zuid"]["angle"]).map(function ( key ) { return percentages["zuid"]["angle"][key]; });
-			bestAngle = Math.max.apply( null, tempArray );
-			worstAngle = Math.min.apply( null, tempArray );
-			angleScore = ((percentages["zuid"]["angle"][angle]) - worstAngle)/(bestAngle - worstAngle);
-		}
-		else {
-			var tempArray = Object.keys(monthEfficiency[monthValue]["angle"]).map(function ( key ) { return monthEfficiency[monthValue]["angle"][key]; });
-			bestAngle = Math.max.apply( null, tempArray );
-			worstAngle = Math.min.apply( null, tempArray );
-			angleScore = ((monthEfficiency[monthValue]["angle"][angle]) - worstAngle)/(bestAngle - worstAngle);
-		};
+		var tempArray = Object.keys(monthEfficiency[monthValue]["angle"]).map(function ( key ) { return monthEfficiency[monthValue]["angle"][key]; });
+		bestAngle = Math.max.apply( null, tempArray );
+		worstAngle = Math.min.apply( null, tempArray );
+		angleScore = ((monthEfficiency[monthValue]["angle"][angle]) - worstAngle)/(bestAngle - worstAngle);
+	
 		return angleScore;
-	}
+	};
 	
 	/* 
 		results calculation function
@@ -1133,6 +1125,7 @@ function ready(error, data, nld, percentages, monthEfficiency) {
 	// when an orientation is selected, display it in the button and store its value in a variable for calculation
 	$("a[class=orientation-a]").on("click", function(){
 		orientation = $(this).attr("data-orientation");
+		orientationEfficiency = parseFloat($(this).attr("data-efficiency"));
 		orientationScore = parseFloat($(this).attr("orientation-score"));
 		$("button.button-width-orientation").text($(this).text());	
 		calculation();		
