@@ -812,8 +812,9 @@ function ready(error, data, nld, monthEfficiency) {
 	var orientation = "";
 	var angle = "";
 	var surface = 0;
-	var panel = 0;
+	var panel = "";
 	var coefficient = 0;
+	var efficiency = 0;
 	var cost = 0;
 	var usage = 0;
 	var orientationScore = 0;
@@ -843,23 +844,68 @@ function ready(error, data, nld, monthEfficiency) {
 	
 	// size of one panel in square meters
 	var size = 1.65
+	
+	var panels =	[
+						{"panel": "mono", "efficiency": 0.17, "coefficient": 0.43, "score": 0},
+						{"panel": "poly", "efficiency": 0.14, "coefficient": 0.45, "score": 0},
+						{"panel": "amorf", "efficiency": 0.08, "coefficient": 0.20, "score": 0},
+						{"panel": "cigs", "efficiency": 0.14, "coefficient": 0.36, "score": 0}						
+					]
+	
+	var bestEfficiency = 0;
+	var worstEfficiency = 1;
+	var bestCoefficient = 0;
+	var worstCoefficient = 1;
+	
+	panels.forEach(function(d) {
+		if (d.efficiency < worstEfficiency) {
+			worstEfficiency = d.efficiency;
+		};
+		if (d.efficiency > bestEfficiency) {
+			bestEfficiency = d.efficiency;
+		};
+		if (d.coefficient < worstCoefficient) {
+			worstCoefficient = d.coefficient;
+		};
+		if (d.coefficient > bestCoefficient) {
+			bestCoefficient = d.coefficient;
+		};		
+	});	
+
+	panels.forEach(function(d) {
+		d.score = ((1 - (d.coefficient - worstCoefficient)/(bestCoefficient - worstCoefficient)) + ((d.efficiency - worstEfficiency)/(bestEfficiency - worstEfficiency)))/2; 
+	});
+	
+	var bestPanel = 0;
+	var worstPanel = 1;
+	
+	panels.forEach(function(d) {
+		if (d.score < worstPanel) {
+			worstPanel = d.score;
+		};
+		if (d.score > bestPanel) {
+			bestPanel = d.score;
+		};
+	});
 		
-	var pieColor = "";
+	panels.forEach(function(d) {
+		d.score = (d.score - worstPanel)/(bestPanel - worstPanel);
+	});
 	
 	// general monthly shares of total yearly energy production
 	var monthFactors = 	[
-							{"month": "Jan", "value": 0.03, "color": pieColor},
-							{"month": "Feb", "value": 0.05, "color": pieColor},
-							{"month": "Mar", "value": 0.08, "color": pieColor},
-							{"month": "Apr", "value": 0.12, "color": pieColor},
-							{"month": "May", "value": 0.13, "color": pieColor},
-							{"month": "Jun", "value": 0.13, "color": pieColor},
-							{"month": "Jul", "value": 0.13, "color": pieColor},
-							{"month": "Aug", "value": 0.13, "color": pieColor},
-							{"month": "Sep", "value": 0.11, "color": pieColor},
-							{"month": "Oct", "value": 0.10, "color": pieColor},
-							{"month": "Nov", "value": 0.07, "color": pieColor},
-							{"month": "Dec", "value": 0.02, "color": pieColor},
+							{"month": "Jan", "value": 0.03, "color": ""},
+							{"month": "Feb", "value": 0.05, "color": ""},
+							{"month": "Mar", "value": 0.08, "color": ""},
+							{"month": "Apr", "value": 0.12, "color": ""},
+							{"month": "May", "value": 0.13, "color": ""},
+							{"month": "Jun", "value": 0.13, "color": ""},
+							{"month": "Jul", "value": 0.13, "color": ""},
+							{"month": "Aug", "value": 0.13, "color": ""},
+							{"month": "Sep", "value": 0.11, "color": ""},
+							{"month": "Oct", "value": 0.10, "color": ""},
+							{"month": "Nov", "value": 0.07, "color": ""},
+							{"month": "Dec", "value": 0.02, "color": ""},
 						]
 	
 	/*	
@@ -1040,7 +1086,7 @@ function ready(error, data, nld, monthEfficiency) {
 		results calculation function
 	*/
 	function calculation() {
-		if (orientation.length != 0 && angle.length != 0 && surface !=0 && panel != 0 && usage != 0) {
+		if (orientation.length != 0 && angle.length != 0 && surface !=0 && panel.length != 0 && usage != 0) {
 			
 			angleScore = scoreAngle();				
 			houseScore = ((orientationScore + angleScore + surfaceScore + panelScore + usageScore)/5)*100; 
@@ -1063,7 +1109,7 @@ function ready(error, data, nld, monthEfficiency) {
 			// update radar chart
 			updateRadar(radarData, cfg);
 						
-			capacity = surface*panel*inverterEfficiency;
+			capacity = surface*efficiency*inverterEfficiency;
 			totalCost = (surface/size)*cost;
 			
 			productionYear = periodResults(monthValue, station)[0];
@@ -1148,10 +1194,15 @@ function ready(error, data, nld, monthEfficiency) {
 	
 	// when a panel is selected, display it in the button and store its values in a variable for calculation
 	$("a[class=panel-a]").on("click", function(){
-		panel = parseFloat($(this).attr("data-panel"));
-		panelScore = parseFloat($(this).attr("panel-score"));
+		panel = $(this).attr("data-panel");
+		panels.forEach(function(d) {
+			if (d.panel == panel) {
+				panelScore = d.score;
+				coefficient = d.coefficient;
+				efficiency = d.efficiency;
+			}
+		}); 
 		$("button.button-width-panel").text($(this).text());
-		coefficient = parseFloat($(this).attr("data-coefficient"));
 		cost = parseInt($(this).attr("data-price"));
 		calculation();		
 	});
