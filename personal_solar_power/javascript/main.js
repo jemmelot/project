@@ -133,7 +133,6 @@ var svgRadar = d3.select("#radar")
 	radarWidth = 550 - radarMargin.left - radarMargin.right,
 	radarHeight = 550 - radarMargin.top - radarMargin.bottom,
 	gRadar = svgRadar.append("g").attr("transform", "translate(" + (radarWidth/2 + radarMargin.left) + "," + (radarHeight/2 + radarMargin.top) + ")");	
-		
 	
 var cvg;
 
@@ -238,95 +237,95 @@ var monthFactors = 	[
 					]				
 
 function updateRadar(radarData, cfg) {
-// if the supplied maxValue is smaller than the actual one, replace by the max in the data
-var maxValue = Math.max(cfg.maxValue, d3.max(radarData, function(i){return d3.max(i.map(function(o){return o.value;}))}));
+	// if the supplied maxValue is smaller than the actual one, replace by the max in the data
+	var maxValue = Math.max(cfg.maxValue, d3.max(radarData, function(i){return d3.max(i.map(function(o){return o.value;}))}));
 
-var allAxis = (radarData[0].map(function(i, j){return i.axis})),	//Names of each axis
-	total = allAxis.length,					//The number of different axes
-	radius = Math.min(cfg.w/2, cfg.h/2), 	//Radius of the outermost circle
-	angleSlice = Math.PI * 2 / total;		//The width in radians of each "slice"
+	var allAxis = (radarData[0].map(function(i, j){return i.axis})),	//Names of each axis
+		total = allAxis.length,					//The number of different axes
+		radius = Math.min(cfg.w/2, cfg.h/2), 	//Radius of the outermost circle
+		angleSlice = Math.PI * 2 / total;		//The width in radians of each "slice"
+			
+	// scale for the radius
+	var rScale = d3.scale.linear()
+		.range([0, radius])
+		.domain([0, maxValue]);
 		
-// scale for the radius
-var rScale = d3.scale.linear()
-	.range([0, radius])
-	.domain([0, maxValue]);
-	
-// the radial line function
-var radarLine = d3.svg.line.radial()
-	.interpolate("linear-closed")
-	.radius(function(d) { return rScale(d.value); })
-	.angle(function(d,i) {	return i*angleSlice; });	
+	// the radial line function
+	var radarLine = d3.svg.line.radial()
+		.interpolate("linear-closed")
+		.radius(function(d) { return rScale(d.value); })
+		.angle(function(d,i) {	return i*angleSlice; });	
 
-// create a wrapper for the blobs	
-var blobWrapper = gRadar.selectAll(".radarWrapper")
-	.data(radarData)
-	.enter().append("g")
-	.attr("class", "radarWrapper");
+	// create a wrapper for the blobs	
+	var blobWrapper = gRadar.selectAll(".radarWrapper")
+		.data(radarData)
+		.enter().append("g")
+		.attr("class", "radarWrapper");
+			
+	// colored backgrounds	
+	blobWrapper
+		.append("path")
+		.attr("class", "radarArea")
+		.attr("d", function(d,i) { return radarLine(d); })
+		.style("fill", "orange")
+		.style("fill-opacity", cfg.opacityArea)
+		.on('mouseover', function (d,i){
+			// dim all blobs
+			d3.selectAll(".radarArea")
+				.transition().duration(200)
+				.style("fill-opacity", 0.1); 
+			// bring back the hovered over blob
+			d3.select(this)
+				.transition().duration(200)
+				.style("fill-opacity", 0.7);	
+		})
+		.on('mouseout', function(){
+			// bring back all blobs
+			d3.selectAll(".radarArea")
+				.transition().duration(200)
+				.style("fill-opacity", cfg.opacityArea);
+		});
 		
-// colored backgrounds	
-blobWrapper
-	.append("path")
-	.attr("class", "radarArea")
-	.attr("d", function(d,i) { return radarLine(d); })
-	.style("fill", "orange")
-	.style("fill-opacity", cfg.opacityArea)
-	.on('mouseover', function (d,i){
-		// dim all blobs
-		d3.selectAll(".radarArea")
-			.transition().duration(200)
-			.style("fill-opacity", 0.1); 
-		// bring back the hovered over blob
-		d3.select(this)
-			.transition().duration(200)
-			.style("fill-opacity", 0.7);	
-	})
-	.on('mouseout', function(){
-		// bring back all blobs
-		d3.selectAll(".radarArea")
-			.transition().duration(200)
-			.style("fill-opacity", cfg.opacityArea);
-	});
-	
-// create the outlines	
-blobWrapper.append("path")
-	.attr("class", "radarStroke")
-	.attr("d", function(d,i) { return radarLine(d); })
-	.style("stroke-width", cfg.strokeWidth + "px")
-	.style("stroke", "orange")
-	.style("fill", "none")
+	// create the outlines	
+	blobWrapper.append("path")
+		.attr("class", "radarStroke")
+		.attr("d", function(d,i) { return radarLine(d); })
+		.style("stroke-width", cfg.strokeWidth + "px")
+		.style("stroke", "orange")
+		.style("fill", "none")
+			
+	// append the circles
+	blobWrapper.selectAll(".radarCircle")
+		.data(function(d,i) { return d; })
+		.enter().append("circle")
+		.attr("class", "radarCircle")
+		.attr("r", cfg.dotRadius)
+		.attr("cx", function(d,i){ return rScale(d.value) * Math.cos(angleSlice*i - Math.PI/2); })
+		.attr("cy", function(d,i){ return rScale(d.value) * Math.sin(angleSlice*i - Math.PI/2); })
+		.style("fill", "orange")
+		.style("fill-opacity", 0.8);
+
+	// wrapper for the invisible circles on top
+	var blobCircleWrapper = gRadar.selectAll(".radarCircleWrapper")
+		.data(radarData)
+		.enter().append("g")
+		.attr("class", "radarCircleWrapper");
 		
-// append the circles
-blobWrapper.selectAll(".radarCircle")
-	.data(function(d,i) { return d; })
-	.enter().append("circle")
-	.attr("class", "radarCircle")
-	.attr("r", cfg.dotRadius)
-	.attr("cx", function(d,i){ return rScale(d.value) * Math.cos(angleSlice*i - Math.PI/2); })
-	.attr("cy", function(d,i){ return rScale(d.value) * Math.sin(angleSlice*i - Math.PI/2); })
-	.style("fill", "orange")
-	.style("fill-opacity", 0.8);
+	// append a set of invisible circles on top for the mouseover pop-up
+	blobCircleWrapper.selectAll(".radarInvisibleCircle")
+		.data(function(d,i) { return d; })
+		.enter().append("circle")
+		.attr("class", "radarInvisibleCircle")
+		.attr("r", cfg.dotRadius*1.5)
+		.attr("cx", function(d,i){ return rScale(d.value) * Math.cos(angleSlice*i - Math.PI/2); })
+		.attr("cy", function(d,i){ return rScale(d.value) * Math.sin(angleSlice*i - Math.PI/2); })
+		.style("fill", "none")
+		.style("pointer-events", "all")
+		.on('mouseover', radarTip.show)
+		.on('mouseout', radarTip.hide);
 
-// wrapper for the invisible circles on top
-var blobCircleWrapper = gRadar.selectAll(".radarCircleWrapper")
-	.data(radarData)
-	.enter().append("g")
-	.attr("class", "radarCircleWrapper");
-	
-// append a set of invisible circles on top for the mouseover pop-up
-blobCircleWrapper.selectAll(".radarInvisibleCircle")
-	.data(function(d,i) { return d; })
-	.enter().append("circle")
-	.attr("class", "radarInvisibleCircle")
-	.attr("r", cfg.dotRadius*1.5)
-	.attr("cx", function(d,i){ return rScale(d.value) * Math.cos(angleSlice*i - Math.PI/2); })
-	.attr("cy", function(d,i){ return rScale(d.value) * Math.sin(angleSlice*i - Math.PI/2); })
-	.style("fill", "none")
-	.style("pointer-events", "all")
-	.on('mouseover', radarTip.show)
-	.on('mouseout', radarTip.hide);
-
-// call the radar chart tooltip functionality
-svgRadar.call(radarTip);	
+	// call the radar chart tooltip functionality
+	svgRadar.call(radarTip);	
 };					
 					
 // function to update the lines and axes when a new month or station is selected
@@ -366,18 +365,18 @@ function updateLine(station, monthValue, data, monthEfficiency) {
 		.attr("d", tempLine(lineData))
 		.attr("fill", "none");		
 	if (monthValue == "Jaar") {
-		newLine.select(".x.axis")
+		newLine.select(".xAxis")
 			.duration(500)
 			.call(xAxis.tickFormat(d3.time.format("%b")));
 	}
 	else {
-		newLine.select(".x.axis")
+		newLine.select(".xAxis")
 			.duration(500)
 			.call(xAxis.tickFormat(d3.time.format("%d")));	
 	}				
-	newLine.select(".y.axis")
+	newLine.select(".yAxis")
 		.duration(500)
-		.call(yAxis);
+		.call(yAxis.tickValues((d3.range(yDomainMin, yDomainMax, 2))));
 	
 	// define radiation domains
 	xDomain = x.domain(d3.extent(lineData, function(d) { return d.date; }));
@@ -395,16 +394,16 @@ function updateLine(station, monthValue, data, monthEfficiency) {
 		.attr("d", radLine(lineData))
 		.attr("fill", "none");
 	if (monthValue == "Jaar") {
-		newLine.select(".x.axis")
+		newLine.select(".xAxis")
 			.duration(500)
 			.call(xAxis.tickFormat(d3.time.format("%b")));
 	}
 	else {
-		newLine.select(".x.axis")
+		newLine.select(".xAxis")
 			.duration(500)
 			.call(xAxis.tickFormat(d3.time.format("%d")));
 	}				
-	newLine.select(".y.axisTwo")
+	newLine.select(".yAxisTwo")
 		.duration(500)
 		.call(yAxisTwo);	
 	

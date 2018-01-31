@@ -46,7 +46,7 @@ function lineChart(data) {
 		
 	// add the a axis
 	gChart.append("g")
-		.attr("class", "x axis")
+		.attr("class", "xAxis")
 		.attr("transform", "translate(0," + chartHeight + ")")
 		.call(xAxis)
 		.select(".domain")
@@ -54,7 +54,7 @@ function lineChart(data) {
 	
 	// add the temperature axis
 	gChart.append("g")
-		.attr("class", "y axis")
+		.attr("class", "yAxis")
 		.style("fill", "#cc0000")
 		.style("stroke", "#cc0000")
 		.call(yAxis)
@@ -67,7 +67,7 @@ function lineChart(data) {
 	
 	// add the radiation axis
 	gChart.append("g")
-		.attr("class", "y axisTwo")
+		.attr("class", "yAxisTwo")
 		.attr("transform", "translate(" + chartWidth + " ,0)")	
 		.style("fill", "#ffcc00")
 		.style("stroke", "#ffcc00")
@@ -130,17 +130,28 @@ function lineChart(data) {
 	focus.append('text')	
 		.attr('id', 'focusTextX')
 		.attr("x", 9)
+		.attr("fill", "black")
+		.attr("stroke", "none")
+		.attr("font-weight", "550")
 		.attr("dy", ".35em");
 	focus.append('text')	
 		.attr('id', 'focusTextXTwo')
 		.attr("x", 9)
+		.attr("fill", "black")
+		.attr("stroke", "none")
 		.attr("dy", ".35em");
 	focus.append('text')	
 		.attr('id', 'focusTextY')
 		.attr("x", 9)
+		.attr("fill", "black")
+		.attr("stroke", "none")
+		.attr("font-weight", "550")
 		.attr("dy", ".35em");	
 	focus.append('text')	
 		.attr('id', 'focusTextYTwo')
 		.attr("x", 9)
+		.attr("fill", "black")
+		.attr("stroke", "none")
+		.attr("font-weight", "550")
 		.attr("dy", ".35em");
 }

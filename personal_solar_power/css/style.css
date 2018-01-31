@@ -358,29 +358,34 @@ path.radLines {
 /*
 	other assets
 */
-.axis path,
-.axis line {
+.xAxis text {
+	stroke: none;
+	fill: black;
+}
+
+.yAxis path,
+.yAxis line {
     fill: none;
     stroke: grey;
     stroke-width: 1;
     shape-rendering: crispEdges;
 }
 
-.axis text {
+.yAxis text {
 	stroke: none;
 	font-weight: 600;
 	font-size: 15px;
 }
 
-.axisTwo path,
-.axisTwo line {
+.yAxisTwo path,
+.yAxisTwo line {
     fill: none;
     stroke: grey;
     stroke-width: 1;
     shape-rendering: crispEdges;
 }
 
-.axisTwo text {
+.yAxisTwo text {
 	stroke: none;
 	font-weight: 600;
 	font-size: 15px;
