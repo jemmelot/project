@@ -1,10 +1,28 @@
 /* Jesse Emmelot, 11963522 */
 
 /* style attributes */
-path.line
-{
+path.tempLines {
 	fill: none;
-	stroke: #000;
+}
+
+path.radLines {
+	fill: none;	
+}
+
+.tempLines {
+	fill: none;
+}
+
+.radLines {
+	fill: none;	
+}
+
+#tempLine {
+	fill: none;
+}
+
+#radLine {
+	fill: none;	
 }
 
 .lines {
@@ -48,13 +66,13 @@ path.line
 
 .check-temperature {
 	position: absolute;
-	bottom: 260px;
+	bottom: 310px;
 	left: 80px;
 }
 
 .check-radiation {
 	position: absolute;
-	bottom: 235px;
+	bottom: 285px;
 	left: 80px;
 }
 
@@ -348,6 +366,12 @@ path.line
     shape-rendering: crispEdges;
 }
 
+.axis text {
+	stroke: none;
+	font-weight: 600;
+	font-size: 15px;
+}
+
 .axisTwo path,
 .axisTwo line {
     fill: none;
@@ -356,10 +380,15 @@ path.line
     shape-rendering: crispEdges;
 }
 
-.label {
-	font-size: 13px;
-	stroke: #000;
-	fill: #000;
+.axisTwo text {
+	stroke: none;
+	font-weight: 600;
+	font-size: 15px;
+}
+
+text.label {
+	font-size: 14px;
+	fill: #000;	
 }
 
 .pie-description {
