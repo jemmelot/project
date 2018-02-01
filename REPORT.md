@@ -5,6 +5,7 @@
 ### Short description
 This visualization shows the user the potential gains from solar energy in their home, by having them provide information about their house and location to calculate results. These results are based on climate data from that location, and visualized along with how well the house scores in terms of solar suitability.
 
+![](doc/final_visualization.png)
 
 ### Technical design
 #### Overview
