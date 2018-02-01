@@ -31,6 +31,15 @@
 */
 
 /*
+	set page zoom level based on screen size
+*/
+var width = $(window).width();
+var height = $(window).height();
+
+var zoomLevel = width/1536;
+document.body.style.zoom = zoomLevel;
+
+/*
 	instantiate global variables
 */
 // global dataset variable names
