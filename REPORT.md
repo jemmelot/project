@@ -46,6 +46,9 @@ After the ready function and formatting all weather station names are added to t
 - progress.js: contains main progressBar function to plot the bar based on the initial house score. To animate the plotting, an update and iterate function are used to draw the bar gradually (by adding a small delay after every bit of the bar). 
 - slider.js: contains all code (created by … at …com) used to implement concise slider functionality in the main file.
 
+### Challenges
+The biggest challenges were to get all of the calculations to produce correct results, and dynamically update all visualizations with it, as well as interconnecting all visualizations
+
 ### Decisions
 Initially the idea was to create a (perhaps color-coded) map to select location, a line/bar chart to show weatherdata, a radar chart and three radial progress bars. The final version has the following changes from this initial idea:
 - line/bar chart is now a lines only chart. The original plan was to have monthly progression be shown with lines, while bars would show monthly averages throughout the year. Plotting the whole year with lines instead of bars still shows the yearly fluctuations, while also allowing to hovering a specific day for data display.
