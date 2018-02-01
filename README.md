@@ -7,6 +7,8 @@ https://jemmelot.github.io/project/personal_solar_power/personal_solar_power.htm
 ### Purpose
 This purpose of this visualization is to inform people about the potential gains from solar energy in their home. It does this by taking information about the users house and location, in response calculating the energy production and profit over a certain period, along with an estimate of how long earning back the initial investment will take. Alongside the numbers are visualizations showing climate data at their location, as well as how well their house is suited for solar energy (i.e. how well the house scores).
 
+![](doc/final_visualization.png)
+
 ###### map to select nearest weather station
 ![](doc/final_map.png)
 
