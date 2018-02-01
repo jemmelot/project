@@ -57,9 +57,6 @@ Replots the colored lines and y-axes of the line chart when the weather station 
 ###### progressBar
 Replots the radial progress bar everytime a user input is altered. This function contains two functions, 'update' and 'iterate' in order to animate the drawing of the bar.
 
-###### pieChart
-Plots the pie chart
-
 ##### calFactors
 Determines monthly or yearly average temperature and radiation for calculation
 
