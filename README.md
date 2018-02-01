@@ -43,4 +43,4 @@ This purpose of this visualization is to inform people about the potential gains
 - d3-queue
 - jQuery
 
-<p align = "center">Copyright (c) 2017, Jesse Emmelot</p>
+<p align = "center">Copyright &copy; 2017, Jesse Emmelot</p>
