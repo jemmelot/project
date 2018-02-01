@@ -5,6 +5,8 @@
 ### Short description
 This visualization shows the user the potential gains from solar energy in their home, by having them provide information about their house and location to calculate results. These results are based on climate data from that location, and visualized along with how well the house scores in terms of solar suitability.
 
+![](doc/final_visualization.png)
+
 ### Technical design
 #### Overview
 The datastructure of the project consists of one HTML file, one CSS file and several Javascript files. The HTML file includes all external code with script tags, so there are no local libraries inside the repository.  The Javascript files consist of a main file and a separate file for every visualization. The main file contains all global variables  and functions used within itself and other files. It also contains the dataset queue, which after being called allows for all separate visualization functions to be called and altered.
