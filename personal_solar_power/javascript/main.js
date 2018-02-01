@@ -35,9 +35,15 @@
 */
 var width = $(window).width();
 var height = $(window).height();
+var zoomWidth = width/1536;
+var zoomHeight = height/772;
 
-var zoomLevel = width/1536;
-document.body.style.zoom = zoomLevel;
+if (zoomWidth < zoomHeight) {
+	document.body.style.zoom = zoomWidth;
+}
+else {
+	document.body.style.zoom = zoomHeight;
+};
 
 /*
 	instantiate global variables
