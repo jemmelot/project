@@ -47,7 +47,7 @@ After the ready function and formatting all weather station names are added to t
 - slider.js: contains all code (created by … at …com) used to implement concise slider functionality in the main file.
 
 ### Challenges
-The biggest challenges were to get all of the calculations to produce correct results, and dynamically update all visualizations with it, as well as interconnecting all visualizations
+The biggest challenges were to get all of the calculations to produce correct results, and dynamically update all visualizations with it, as well as interconnecting all visualizations.
 
 ### Decisions
 Initially the idea was to create a (perhaps color-coded) map to select location, a line/bar chart to show weatherdata, a radar chart and three radial progress bars. The final version has the following changes from this initial idea:
