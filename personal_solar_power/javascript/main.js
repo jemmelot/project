@@ -51,7 +51,7 @@ var radarData = [
 		{axis: "Oriëntatie", value: 0},
 		{axis: "Dakhoek", value: 0},
 		{axis: "Dakoppervlak", value: 0},
-		{axis: "Rendement", value: 0},
+		{axis: "Paneeltype", value: 0},
 		{axis: "Verbruik", value: 0},								
 	]
 ];
@@ -442,8 +442,9 @@ function updateLine(station, monthValue, data, monthEfficiency) {
 					.attr('x1', crossX).attr('y1', y(yDomainMin))
 					.attr('x2', crossX).attr('y2', y(yDomainMax));
 				focus.select("#focusTextX")
-					.attr("transform", "translate(" + (textX + 45) + "," + (y(yDomainMax) - 15) + ")")
+					.attr("transform", "translate(" + (textX + 30) + "," + (y(yDomainMax) - 15) + ")")
 					.text(d.date.toString()
+							.replace('Mon', '').replace('Tue', '').replace('Wed', '').replace('Thu', '').replace('Fri', '').replace('Sat', '').replace('Sun', '')
 							.replace('0100', '0200')
 							.replace('standaardtijd', 'zomertijd')
 							.replace('00:00:00 GMT+0200 (West-Europa (zomertijd))', ''));

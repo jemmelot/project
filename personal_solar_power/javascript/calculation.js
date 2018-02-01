@@ -74,7 +74,7 @@ function calculation(data, monthEfficiency) {
 				{axis: "Oriëntatie", value: orientationScore},
 				{axis: "Dakhoek", value: angleScore},
 				{axis: "Dakoppervlak", value: surfaceScore},
-				{axis: "Rendement", value: panelScore},
+				{axis: "Paneeltype", value: panelScore},
 				{axis: "Verbruik", value: usageScore},								
 			]
 		];
