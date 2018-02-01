@@ -7,6 +7,19 @@ https://jemmelot.github.io/project/personal_solar_power/personal_solar_power.htm
 ### Purpose
 This purpose of this visualization is to inform people about the potential gains from solar energy in their home. It does this by taking information about the users house and location, in response calculating the energy production and profit over a certain period, along with an estimate of how long earning back the initial investment will take. Alongside the numbers are visualizations showing climate data at their location, as well as how well their house is suited for solar energy (i.e. how well the house scores).
 
+###### map to select nearest weather station
+![](doc/final_map.png)
+
+###### line chart showing weather data and results
+![](doc/final_linechart.png)
+![](doc/final_linemonth.png)
+
+###### pie chart to show monthy contribution to yearly energy production, radial progress bar to show overall score of a house (in relation to how well it would be suited for solar panels)
+![](doc/final_pie.png)
+
+###### radar chart to show how well the house scores in each of its aspects
+![](doc/final_radar.png)
+
 ### Sources
 ###### Code
 - country map (Phil Pedruco, no licence): http://bl.ocks.org/phil-pedruco/9344373
