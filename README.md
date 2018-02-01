@@ -34,8 +34,6 @@ This purpose of this visualization is to inform people about the potential gains
 - NASA (maandelijkse hoekrendementen): https://eosweb.larc.nasa.gov/cgi-bin/sse/grid.cgi?&num=186143&lat=52.1&submit=Submit&hgt=100&veg=17&sitelev=&email=skip@larc.nasa.gov&p=grid_id&p=ret_tlt0&step=2&lon=5.18
 - Essent (algemene maand bijdrages): https://www.essent.nl/content/particulier/kennisbank/zonnepanelen/opbrengst-zonnepanelen-per-maand.html#
 
-<center>Copyright (c) 2017, Jesse Emmelot</center>
-
 ### External libraries and API's
 - d3-tip
 - topojson
@@ -44,3 +42,5 @@ This purpose of this visualization is to inform people about the potential gains
 - d3-time-format
 - d3-queue
 - jQuery
+
+<p align = "center">Copyright (c) 2017, Jesse Emmelot</p>
