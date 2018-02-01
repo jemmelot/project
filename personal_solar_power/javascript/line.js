@@ -1,6 +1,6 @@
 function lineChart(data) {
 	// select svg element to put the line chart into	
-	var svgChart = 	d3.select("#chart")
+	svgChart = 	d3.select("#chart"),
 		chartMargin = {top: 30, right: 20, bottom: 10, left: 50},
 		chartWidth = 850 - chartMargin.left - chartMargin.right,
 		chartHeight = 285 - chartMargin.top - chartMargin.bottom,
@@ -74,7 +74,7 @@ function lineChart(data) {
 		.call(yAxisTwo.tickFormat(""))
 		.append("text")
 		.attr("class", "label")
-		.attr("x", -64)
+		.attr("x", -57)
 		.attr("y", -25)
 		.attr("dy", ".71em")
 		.text("Straling(J/cm2)");

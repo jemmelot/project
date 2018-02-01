@@ -1,5 +1,5 @@
-// draw a radial progress bar showing the total score of the house
 function progressBar(houseScore) {
+	// add description label
 	d3.select(".pie-description").transition()
 		.duration(500)
 		.style("top", "380px");
@@ -34,10 +34,10 @@ function progressBar(houseScore) {
 	/*
 		radial progress bar parameter values
 	*/
-	var progressRadius = 145;
-	var border = 20;
 	strokeSpacing = 0;
 	endAngle = Math.PI * 2;
+	var progressRadius = 145;
+	var border = 20;
 	var formatText = d3.format('.0%');
 	var boxSize = progressRadius * 2;
 	var count = end;
@@ -50,7 +50,7 @@ function progressBar(houseScore) {
 		.innerRadius(progressRadius)
 		.outerRadius(progressRadius - border);
 
-	// setup SVG wrapper
+	// select svg to put the radial progress bar into
 	svg = d3.select("#pie")
 		.append('svg')
 		.attr("class", "progress_svg")
@@ -70,7 +70,7 @@ function progressBar(houseScore) {
 			.attr('stroke-width', strokeSpacing + 'px')
 			.attr('d', circle.endAngle(endAngle));
 
-	// add colour fill
+	// add color fill
 	progressValue = track.append('path')
 		.attr('class', 'radial-progress__value')
 		.attr('fill', colours.fill)
@@ -80,7 +80,7 @@ function progressBar(houseScore) {
 		.on('mouseout', scoreTip.hide);
 		
 	function update(progress) {
-		// update position of endAngle
+		// update position of endAngle after every bar bit to animate the process
 		progressValue.attr('d', circle.endAngle(endAngle * progress));		
 	} 
 
@@ -88,11 +88,12 @@ function progressBar(houseScore) {
 		// call update to begin animation
 		update(progress);
 		if (count > 0) {
-			// reduce count until it reaches 0
 			count--;
-			// increase progress
+			
+			// keep track of how much the bar is drawn
 			progress += step;
-			// control the speed of the fill
+			
+			// add a small delay after every bit to cause a gradual animation
 			setTimeout(iterate, 10);
 		}
 	})();

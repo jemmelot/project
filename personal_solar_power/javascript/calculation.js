@@ -1,3 +1,6 @@
+/*
+	calculate energy production and profit for any particular day of the year
+*/
 function dailyResults(dailyTemp, dailyRad, data, monthEfficiency) {
 	idealInsolation = (dailyRad*10000)/3600000;
 	insolationEfficiency = monthEfficiency[monthValue]["angle"][angle];
@@ -13,7 +16,7 @@ function dailyResults(dailyTemp, dailyRad, data, monthEfficiency) {
 };
 
 /*
-	determine monthly or yearly average temperature and radiation for calculation input
+	combine all daily results from a particular month and the whole year
 */
 function periodResults(monthValue, station, data, monthEfficiency) {
 	var yearProduction = 0;
@@ -50,6 +53,9 @@ function periodResults(monthValue, station, data, monthEfficiency) {
 	}
 }
 
+/*
+	adjust roof angle score based on which period is selected
+*/
 function scoreAngle(data, monthEfficiency) {
 	var tempArray = Object.keys(monthEfficiency[monthValue]["angle"]).map(function ( key ) { return monthEfficiency[monthValue]["angle"][key]; });
 	bestAngle = Math.max.apply( null, tempArray );
@@ -60,15 +66,16 @@ function scoreAngle(data, monthEfficiency) {
 };
 
 /* 
-	results calculation function
+	main calculation function
 */
 function calculation(data, monthEfficiency) {
 	if (orientation.length != 0 && angle.length != 0 && surface !=0 && panel.length != 0 && usage != 0) {
 		
+		// update roof angle score and overall score
 		angleScore = scoreAngle(data, monthEfficiency);				
 		houseScore = ((orientationScore + angleScore + surfaceScore + panelScore + usageScore)/5)*100; 
 		
-		// update radar chart data based on user inputs
+		// update radar chart data
 		radarData = [
 			[
 				{axis: "Oriëntatie", value: orientationScore},
@@ -78,22 +85,19 @@ function calculation(data, monthEfficiency) {
 				{axis: "Verbruik", value: usageScore},								
 			]
 		];
-					
-		d3.select("#radar").select(".radarWrapper").remove();
-		d3.select("#radar").select(".radarCircleWrapper").remove();
-		d3.select("#radar").select(".tooltip").remove();
-		
+				
 		// update radar chart
 		updateRadar(radarData, cfg);
-					
-		capacity = surface*efficiency*inverterEfficiency;
-		totalCost = (surface/size)*cost;
 		
+		// calculate production and profit for a particular period
+		capacity = surface*efficiency*inverterEfficiency;
+		totalCost = (surface/size)*cost;		
 		productionYear = periodResults(monthValue, station, data, monthEfficiency)[0];
 		profitYear = periodResults(monthValue, station, data, monthEfficiency)[1];
 		productionMonth = periodResults(monthValue, station, data, monthEfficiency)[2];
 		profitMonth = periodResults(monthValue, station, data, monthEfficiency)[3];
 		
+		// calculate payback period based on yearly profit
 		payback = totalCost/profitYear;
 				
 		monthFactors.forEach(function(d) {
@@ -101,6 +105,7 @@ function calculation(data, monthEfficiency) {
 		});
 		pieColors(monthFactors, piePath);
 		
+		// update pie chart
 		updatePie(monthFactors);
 							
 		// update result div values when a new calculation is made
@@ -117,12 +122,13 @@ function calculation(data, monthEfficiency) {
 		d3.select("#progress").select(".radial-progress").remove();
 		d3.select("#progress").select("svg").remove();
 		
+		// update radial progress bar to reflect any changes in user input
 		if (progressMade == 1)
 		{
 			updateProgress(houseScore);
 		}	
 		
-		// update radial progress bar to reflect any changes in user input
+		// on the first calculation, draw the initial radial progress bar
 		if (progressMade == 0) {
 			progressBar(houseScore);
 			progressMade = 1;

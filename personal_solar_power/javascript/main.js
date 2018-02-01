@@ -3,83 +3,59 @@
 	11963522
 
 	Code sources:
-	- http://bl.ocks.org/phil-pedruco/9344373
-	- http://bl.ocks.org/phil-pedruco/7745589
-	- https://www.w3schools.com/
-	- https://www.bootply.com/113296
-	- https://github.com/MasterMaps/d3-slider
-	- https://codepen.io/shellbryson/pen/KzaKLe
-	- http://bl.ocks.org/mikehadlow/93b471e569e31af07cd3
-	- https://codepen.io/numberformat/pen/QjLeLP?editors=0110
-	- https://gist.github.com/nbremer/21746a9668ffdf6d8242#file-radarchart-js
-	- https://bl.ocks.org/mbostock/3887235
-	- http://bl.ocks.org/d3noob/e34791a32a54e015f57d
-	- http://bl.ocks.org/vigorousnorth/7331bb51d4f0c2ae0314
-	- http://www.cagrimmett.com/til/2016/08/27/d3-transitions.html
+	- country map (Phil Pedruco, no licence): http://bl.ocks.org/phil-pedruco/9344373
+	- circle plotting (Phil Pedruco, no licence): http://bl.ocks.org/phil-pedruco/7745589
+	- bootstrap dropdowns (no licence): https://www.bootply.com/113296
+	- slider (Bjorn Sandvik, BSD-3-Clause): https://github.com/MasterMaps/d3-slider
+	- radial progress bar (no license): https://codepen.io/shellbryson/pen/KzaKLe
+	- line crosshairs (Mike Hadlow, no license): http://bl.ocks.org/mikehadlow/93b471e569e31af07cd3
+	- line crosshairs (no license): https://codepen.io/numberformat/pen/QjLeLP?editors=0110
+	- radar chart (Nadieh Bremer, no licence): https://gist.github.com/nbremer/21746a9668ffdf6d8242#file-radarchart-js
+	- pie chart (Mike Bostock, GPL-3.0): https://bl.ocks.org/mbostock/3887235
+	- dual line chart (d3noob, no licence): http://bl.ocks.org/d3noob/e34791a32a54e015f57d
+	- pie chart labels (Christian MilNeil, no license): http://bl.ocks.org/vigorousnorth/7331bb51d4f0c2ae0314
+	- pie chart transition (Chuck Grimmett, no license): http://www.cagrimmett.com/til/2016/08/27/d3-transitions.html
+	- other code examples: https://www.w3schools.com/
 	
 	Data sources:
-	- http://projects.knmi.nl/klimatologie/daggegevens/selectie.cgi
-	- https://thegrid.rexel.com/en-us/energy_efficiency/w/solar_renewable_and_energy_efficiency/72/how-to-calculate-the-output-of-a-solar-photovoltaic-system---a-detailed-guide#
-	- http://www.zonwatt.nl/zonnepanelen-technische-informatie/
-	- https://woonbewust.nl/blog/soorten-zonnepanelen
-	- https://www.zonne-paneel.net/prijs-zonnepanelen/
-	- https://www.zonnepanelen.net/zonnepanelen-plat-dak/
-	- http://www.sun-solar.nl/index.php/product/solar-frontier-sf175-s-paneel-135-euro-incl-btw-sunsolar/
-	- https://eosweb.larc.nasa.gov/cgi-bin/sse/grid.cgi?&num=186143&lat=52.1&submit=Submit&hgt=100&veg=17&sitelev=&email=skip@larc.nasa.gov&p=grid_id&p=ret_tlt0&step=2&lon=5.18
-	- https://www.essent.nl/content/particulier/kennisbank/zonnepanelen/opbrengst-zonnepanelen-per-maand.html#
+	- KNMI (temperature/radiation data): http://projects.knmi.nl/klimatologie/daggegevens/selectie.cgi
+	- The Grid (calculation help): https://thegrid.rexel.com/en-us/energy_efficiency/w/solar_renewable_and_energy_efficiency/72/how-to-calculate-the-output-of-a-solar-photovoltaic-system---a-detailed-guide#
+	- Woonbewust (types of solar panels): https://woonbewust.nl/blog/soorten-zonnepanelen
+	- Zonwatt (yearly roof angle efficiencies): http://www.zonwatt.nl/zonnepanelen-technische-informatie/
+	- Zonne-paneel.net (panel prices): https://www.zonne-paneel.net/prijs-zonnepanelen/
+	- Sun-solar (panel prices): http://www.sun-solar.nl/index.php/product/solar-frontier-sf175-s-paneel-135-euro-incl-btw-sunsolar/
+	- Zonnepanelen.net (orientation efficiencies): https://www.zonnepanelen.net/zonnepanelen-plat-dak/
+	- NASA (monthly roof angle efficiencies): https://eosweb.larc.nasa.gov/cgi-bin/sse/grid.cgi?&num=186143&lat=52.1&submit=Submit&hgt=100&veg=17&sitelev=&email=skip@larc.nasa.gov&p=grid_id&p=ret_tlt0&step=2&lon=5.18
+	- Essent (basic monthly production contributions): https://www.essent.nl/content/particulier/kennisbank/zonnepanelen/opbrengst-zonnepanelen-per-maand.html#
+
 */
-
-// instantiate global variables
-var data;
-var nld;
-var monthEfficiency;
-
-// instantiate total house score variable
-var houseScore = 0; 
-
-var monthValue = "Jaar";
-var station = "";
-
-var lineData = [];
-
-// array of month abbreviations to check which array within a station object to load data from
-var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jaar"];	
-
-// blank radar chart data
-var radarData = [
-	[
-		{axis: "Oriëntatie", value: 0},
-		{axis: "Dakhoek", value: 0},
-		{axis: "Dakoppervlak", value: 0},
-		{axis: "Paneeltype", value: 0},
-		{axis: "Verbruik", value: 0},								
-	]
-];
-
-var dutchDate = d3.locale({
-				"decimal": ".",
-				"thousands": ",",
-				"grouping": [3],
-				"currency": ["$", ""],
-				"dateTime": "%a %b %e %X %Y",
-				"date": "%Y-%b-%d",
-				"time": "%H:%M:%S",
-				"periods": ["AM", "PM"],
-				"days": ["zondag", "maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag"],
-				"shortDays": ["zo", "ma", "di", "wo", "do", "vr", "za"],
-				"months": ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"],
-				"shortMonths": ["jan", "feb", "maa", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"]
-			});
-
-// define date format
-var format = d3.time.format("%Y-%b-%d").parse;
-//var format = dutchDate.timeFormat("%Y-%b-%d").parse;
-
-var bisectDate = d3.bisector(function(d) { return d.date; }).left;
 
 /*
 	instantiate global variables
 */
+// global dataset variable names
+var data;
+var nld;
+var monthEfficiency;
+
+// overall house score variable
+var houseScore = 0; 
+
+// global period and weather station variable names
+var monthValue = "Jaar";
+var station = "";
+
+// array of month abbreviations to check which array within a station object to load data from
+var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "Jaar"];	
+
+// define date format
+var format = d3.time.format("%Y-%b-%d").parse;
+
+var bisectDate = d3.bisector(function(d) { return d.date; }).left;
+
+// line chart variables
+var svgChart;
+var lineData = [];
 var x;
 var y;
 var yTwo;
@@ -101,16 +77,53 @@ var focus;
 var tempCheck = 1;
 var radCheck = 1;
 
+// radar chart variables
+var svgRadar;
+var orientationScore = 0;
+var angleScore = 0;
+var surfaceScore = 0;
+var panelScore = 0;
+var usageScore = 0;
+var radarData = [
+	[
+		{axis: "Oriëntatie", value: orientationScore},
+		{axis: "Dakhoek", value: angleScore},
+		{axis: "Dakoppervlak", value: surfaceScore},
+		{axis: "Paneeltype", value: panelScore},
+		{axis: "Verbruik", value: usageScore},								
+	]
+];
+var radarTip;
+var cfg;
+
+// pie chart variables
+var svgPie;
+// general monthly shares of total yearly energy production used to make initial plot
+var monthFactors = [
+	{"month": "Jan", "value": 0.03, "color": ""},
+	{"month": "Feb", "value": 0.05, "color": ""},
+	{"month": "Mar", "value": 0.08, "color": ""},
+	{"month": "Apr", "value": 0.12, "color": ""},
+	{"month": "May", "value": 0.13, "color": ""},
+	{"month": "Jun", "value": 0.13, "color": ""},
+	{"month": "Jul", "value": 0.13, "color": ""},
+	{"month": "Aug", "value": 0.13, "color": ""},
+	{"month": "Sep", "value": 0.11, "color": ""},
+	{"month": "Oct", "value": 0.10, "color": ""},
+	{"month": "Nov", "value": 0.07, "color": ""},
+	{"month": "Dec", "value": 0.02, "color": ""},
+];	
 var arc;
 var pieText;
 var pieTip;
-var mapTip;
-var radarTip;
-var scoreTip;
 var pie;
 var piePath;
 var labelArc;
 var pieText;
+
+// radial progress bar variables
+var svg;
+var g;
 var progressValue;
 var colours;
 var circle;
@@ -118,76 +131,53 @@ var track;
 var trackPath;
 var strokeSpacing;
 var endAngle;
-var progressMade = 0;
 var midAngle;
+var scoreTip;
+var progressMade = 0;
 
+// map variables
 var svgNL;
 var svgChart;
-var svg;
-var g;
-var svgPie = d3.select("#pie"),
-	pieWidth = 260,
-	pieHeight = 260,
-	radius = Math.min(pieWidth, pieHeight) / 2,
-	gPie = svgPie.append("g").attr("transform", "translate(" + (pieWidth / 2 + 15) + "," + (pieHeight / 2 + 15) + ")");
+var mapTip;
 
-// select svg element to put the radar chart into
-var svgRadar = d3.select("#radar")
-	radarMargin = {top: 70, right: 70, bottom: 80, left: 80},
-	radarWidth = 550 - radarMargin.left - radarMargin.right,
-	radarHeight = 550 - radarMargin.top - radarMargin.bottom,
-	gRadar = svgRadar.append("g").attr("transform", "translate(" + (radarWidth/2 + radarMargin.left) + "," + (radarHeight/2 + radarMargin.top) + ")");	
-	
-var cvg;
-
-// instantiate variables for calculations
+// calculation variables
 var orientation = "";
 var angle = "";
 var surface = 0;
 var panel = "";
-var coefficient = 0;
-var efficiency = 0;
-var cost = 0;
 var usage = 0;
-var orientationScore = 0;
-var angleScore = 0;
-var surfaceScore = 0;
-var panelScore = 0;
-var usageScore = 0;
-var orientationEfficiency = 0;
-	
-// placeholder variables for testing
-var calTemp = 0;
-var calRad = 0;
-var calYearTemp = 0;
-var calYearRad = 0;
-var dailyTemp = 0;
-var dailyRad = 0;
-
-// instantiate other calculation variables
-var capacity = 0;
+var coefficient;
+var efficiency;
+var cost;
+var orientationEfficiency;
+var dailyTemp;
+var dailyRad;
+var capacity;
 var inverterEfficiency = 0.95;
-var insolation = 0;
-var reference = 25;
-var temperatureFactor = 0;
 
-// cost per kWh
+// common energy cost per kWh
 var energy = 0.20;
 
-// size of one panel in square meters
+// common size of one panel in square meters
 var size = 1.65
 
-var panels =	[
-					{"panel": "mono", "efficiency": 0.17, "coefficient": 0.43, "score": 0},
-					{"panel": "poly", "efficiency": 0.14, "coefficient": 0.45, "score": 0},
-					{"panel": "amorf", "efficiency": 0.08, "coefficient": 0.20, "score": 0},
-					{"panel": "cigs", "efficiency": 0.14, "coefficient": 0.36, "score": 0}						
-				]
-				
+// different types of solar panels and their characteristics
+var panels = [
+	{"panel": "mono", "efficiency": 0.17, "coefficient": 0.43, "price": 300, "score": 0},
+	{"panel": "poly", "efficiency": 0.14, "coefficient": 0.45, "price": 225, "score": 0},
+	{"panel": "amorf", "efficiency": 0.08, "coefficient": 0.20, "price": 150, "score": 0},
+	{"panel": "cigs", "efficiency": 0.14, "coefficient": 0.36, "price": 180, "score": 0}						
+]
+
+/*
+	determine how well each solar panel scores based on its efficiency, temperature coefficient and cost
+*/				
 var bestEfficiency = 0;
 var worstEfficiency = 1;
 var bestCoefficient = 0;
 var worstCoefficient = 1;
+var bestPrice = 0;
+var worstPrice = 1;
 
 panels.forEach(function(d) {
 	if (d.efficiency < worstEfficiency) {
@@ -201,12 +191,23 @@ panels.forEach(function(d) {
 	};
 	if (d.coefficient > bestCoefficient) {
 		bestCoefficient = d.coefficient;
+	};
+	if (d.price < worstPrice) {
+		worstPrice = d.price;
+	};
+	if (d.price > bestPrice) {
+		bestPrice = d.price;
 	};		
 });	
 
 panels.forEach(function(d) {
-	d.score = ((1 - (d.coefficient - worstCoefficient)/(bestCoefficient - worstCoefficient)) + ((d.efficiency - worstEfficiency)/(bestEfficiency - worstEfficiency)))/2; 
+	d.score = ((1 - (d.coefficient - worstCoefficient)/(bestCoefficient - worstCoefficient)) + 
+	((d.efficiency - worstEfficiency)/(bestEfficiency - worstEfficiency)) +
+	(1 - (d.price - worstPrice)/(bestPrice - worstPrice))
+	)/3; 
 });
+
+console.log(panels)
 
 var bestPanel = 0;
 var worstPanel = 1;
@@ -221,33 +222,25 @@ panels.forEach(function(d) {
 });
 	
 panels.forEach(function(d) {
-	d.score = (d.score - worstPanel)/(bestPanel - worstPanel);
+	d.score = Math.round((d.score - worstPanel)/(bestPanel - worstPanel)*10)/10;
 });
 
-// general monthly shares of total yearly energy production
-var monthFactors = 	[
-						{"month": "Jan", "value": 0.03, "color": ""},
-						{"month": "Feb", "value": 0.05, "color": ""},
-						{"month": "Mar", "value": 0.08, "color": ""},
-						{"month": "Apr", "value": 0.12, "color": ""},
-						{"month": "May", "value": 0.13, "color": ""},
-						{"month": "Jun", "value": 0.13, "color": ""},
-						{"month": "Jul", "value": 0.13, "color": ""},
-						{"month": "Aug", "value": 0.13, "color": ""},
-						{"month": "Sep", "value": 0.11, "color": ""},
-						{"month": "Oct", "value": 0.10, "color": ""},
-						{"month": "Nov", "value": 0.07, "color": ""},
-						{"month": "Dec", "value": 0.02, "color": ""},
-					]				
-
+/*
+	when one of the five values radar chart has changed, take the updated value array as input to redraw the colored plot
+*/
 function updateRadar(radarData, cfg) {
+	d3.select("#radar").select(".radarWrapper").remove();
+	d3.select("#radar").select(".radarCircleWrapper").remove();
+	d3.select("#radar").select(".tooltip").remove();
+	
 	// if the supplied maxValue is smaller than the actual one, replace by the max in the data
 	var maxValue = Math.max(cfg.maxValue, d3.max(radarData, function(i){return d3.max(i.map(function(o){return o.value;}))}));
-
-	var allAxis = (radarData[0].map(function(i, j){return i.axis})),	//Names of each axis
-		total = allAxis.length,					//The number of different axes
-		radius = Math.min(cfg.w/2, cfg.h/2), 	//Radius of the outermost circle
-		angleSlice = Math.PI * 2 / total;		//The width in radians of each "slice"
+	
+	// dimension variables
+	var allAxis = (radarData[0].map(function(i, j){return i.axis})),
+		total = allAxis.length,
+		radius = Math.min(cfg.w/2, cfg.h/2),
+		angleSlice = Math.PI * 2 / total;
 			
 	// scale for the radius
 	var rScale = d3.scale.linear()
@@ -332,10 +325,13 @@ function updateRadar(radarData, cfg) {
 	svgRadar.call(radarTip);	
 };					
 					
-// function to update the lines and axes when a new month or station is selected
+/*
+	transition the lines for temperature and radiation based on which period and weather station is selected, 
+	as well as hide or show the lines and their crosshair based on checkbox status.
+*/
 function updateLine(station, monthValue, data, monthEfficiency) {
 	
-	// if the whole year is selected, select data from all months to average from
+	// if the whole year is selected, select data from all months
 	if (monthValue == "Jaar") {
 		lineData = [];
 		
@@ -346,6 +342,7 @@ function updateLine(station, monthValue, data, monthEfficiency) {
 		}			
 	}
 	
+	// otherwise select data from a particular month
 	else {
 		lineData = data[station].dates[monthValue]
 	}
@@ -356,10 +353,12 @@ function updateLine(station, monthValue, data, monthEfficiency) {
 	// define temperature domains		
 	xDomain = x.domain(d3.extent(lineData, function(d) { return d.date; }));
 	yDomain = y.domain(d3.extent(lineData, function(d) { return d.temperature; }));
-				
+	
+	// x-axis domain for crosshair
 	xDomainMin = 0;
 	xDomainMax = lineData.length;
 	
+	// temperature y-axis domain for crosshair
 	yDomainMin = d3.min(lineData, function(d) { return d.temperature; });
 	yDomainMax = d3.max(lineData, function(d) { return d.temperature; });
 	
@@ -385,10 +384,8 @@ function updateLine(station, monthValue, data, monthEfficiency) {
 	// define radiation domains
 	xDomain = x.domain(d3.extent(lineData, function(d) { return d.date; }));
 	yDomainTwo = yTwo.domain(d3.extent(lineData, function(d) { return d.radiation; }));
-
-	xDomainMin = 0;
-	xDomainMax = lineData.length;
-
+	
+	// radiation y-axis domain for crosshair
 	yDomainMinTwo = d3.min(lineData, function(d) { return d.radiation; });
 	yDomainMaxTwo = d3.max(lineData, function(d) { return d.radiation; });
 	
@@ -436,7 +433,8 @@ function updateLine(station, monthValue, data, monthEfficiency) {
 				var textX = crossX - focus.select("#focusTextX").node().getComputedTextLength();
 
 				/*
-					add all crosshair parts which follow the cursor around
+					add all crosshair parts which follow the cursor around and
+					show date, temperature, radiation, production and profit on a day
 				*/
 				focus.select('#focusLineX')
 					.attr('x1', crossX).attr('y1', y(yDomainMin))
@@ -454,8 +452,7 @@ function updateLine(station, monthValue, data, monthEfficiency) {
 						if (orientation.length != 0 && angle.length != 0 && surface !=0 && panel != 0 && usage != 0) {
 							return (Math.round(dailyResults(d.temperature, d.radiation, data, monthEfficiency)[0]) + " kWh	" + Math.round(dailyResults(d.temperature, d.radiation, data, monthEfficiency)[1]) + " euro");
 						}
-					});					
-				
+					});						
 				focus.select('#focusCircle')
 					.attr('cx', crossX)
 					.attr('cy', crossY)
@@ -483,6 +480,9 @@ function updateLine(station, monthValue, data, monthEfficiency) {
 						return (d.radiation + " J/cm2");
 					});	
 
+				/*
+					show or hide lines and their corresponding crosshairs depending on checkbox statuses
+				*/
 				focus.select('#focusCircle')
 					.attr('opacity', tempCheck)
 				focus.select('#focusLineY')
@@ -501,12 +501,13 @@ function updateLine(station, monthValue, data, monthEfficiency) {
 }	
 
 /*	
-	make a pie chart showing how much each month contributes to yearly energy production 					
+	determine which shade each month gets based on how high its yearly contribution value  to total energy production	
 */
 function pieColors(pieData, piePath) {
 	var least = 1;
 	var most = 0;
 	
+	// determine smallest and largest value from the set to define domain
 	pieData.forEach(function(d) {
 		d.value = +d.value;
 					
@@ -524,7 +525,12 @@ function pieColors(pieData, piePath) {
 	});
 };
 
+/*
+	redistribute every slice (using the arcTween function) when results are updated, 
+	recoloring every slice with the previously calculated values.
+*/
 function updatePie(newPieData) {
+	// determine new angles based on data
 	arc = arc.data(pie(newPieData));
 	if (monthValue != "Jaar")
 	{
@@ -540,6 +546,7 @@ function updatePie(newPieData) {
 			.style("fill", function(d) {return d.data["color"];});
 	}		
 	
+	// update text position
 	gPie.select(".labelText").remove();	
 	gPie.append("g")
 	.attr("class", "labelText");
@@ -561,7 +568,10 @@ function updatePie(newPieData) {
 			this._current = d;			
 		});
 };
-	
+
+/*
+	determine new pie chart slice angles
+*/
 function arcTween(a) {
 	var i = d3.interpolate(this._current, a);
 	this._current = i(0);
@@ -570,7 +580,12 @@ function arcTween(a) {
 	};
 };	
 
+/*
+	transition the bar to a new position along the circular track when the overall 
+	score of the house changes, recoloring it using the embedded formulas.
+*/
 function updateProgress(houseScore) {
+	// set new color based on the new score
 	colours = {
 		fill: function() {
 			if (houseScore <= 50) {
@@ -586,6 +601,7 @@ function updateProgress(houseScore) {
 		stroke: "ffffff",
 	};
 	
+	// refine track properties
 	trackPath
 		.transition()
 		.duration(500)
@@ -594,6 +610,7 @@ function updateProgress(houseScore) {
 		.attr('stroke-width', strokeSpacing + 'px')
 		.attr('d', circle.endAngle(endAngle));
 	
+	// transition bar to its new position
 	progressValue
 		.transition()
 		.duration(500)
@@ -602,15 +619,20 @@ function updateProgress(houseScore) {
 		.attr('stroke-width', strokeSpacing + 'px')
 		.attr('d', circle.endAngle(endAngle * (houseScore/100)));
 		
-	// define tooltip that shows the score on hover
+	// redefine tooltip that shows the score on hover
 	scoreTip.html(function(d) {
 		return "<strong>Overall score: </strong> <span>" + parseFloat(houseScore/10).toFixed(1) + "</span>";
 	});	
 }
 
+/*
+	prepare some assets and call dataset function
+*/
 window.onload = function() {
+	// activate popover functionality
 	$('[data-toggle="popover"]').popover(); 
 	
+	// set popover properties
 	$('.pop').each(function () {
 		var $elem = $(this);
 		$elem.popover({
@@ -622,15 +644,19 @@ window.onload = function() {
 		});
 	});		
 	
-	// variables to keep track of checkbox statuses
+	// pre-check the check boxes for the line chart
 	$('#check-temperature').prop('checked', true);
 	$('#check-radiation').prop('checked', true);
 	
 	datasets();
 }
 
+/*
+	queue json datasets to be implemented. Data.json contains all weather station related information, 
+	map.json contains data to plot the country map and months.json includes the monthly solar efficiencies 
+	(when facing south) at all pickable roof angles.
+*/
 function datasets() {
-	// queue weather station data and map data
 	d3.queue()
 		.defer(d3.json, "datasets/data.json")
 		.defer(d3.json, "datasets/map.json")
@@ -638,10 +664,13 @@ function datasets() {
 		.await(ready);
 }
 
+/*
+	initialize datasets as variables
+*/
 function ready(error, data, nld, monthEfficiency) {
 	/*
 		put all data into the appropriate format.
-		Dates to date formats, temperature and 
+		Dates to date format, temperature and 
 		radiation to numbers.
 	*/
 	Object.keys(data).forEach(function(key,index) {
@@ -654,9 +683,6 @@ function ready(error, data, nld, monthEfficiency) {
 		})
 	});
 	
-	// log data to check for errors
-	console.log(data);
-				
 	// add weather station names to dropdown menu
 	for(index in data)
 	{
@@ -673,7 +699,8 @@ function ready(error, data, nld, monthEfficiency) {
 			tempCheck = 1
 			d3.select("#tempLine").style("opacity", tempCheck);
 		};
-				
+		
+		// call line update function to show or hide crosshairs
 		updateLine(station, monthValue, data, monthEfficiency);
 					
 	})
@@ -689,19 +716,29 @@ function ready(error, data, nld, monthEfficiency) {
 			d3.select("#radLine").style("opacity", radCheck);
 		};
 		
+		// call line update function to show or hide crosshairs
 		updateLine(station, monthValue, data, monthEfficiency);
 	})	
 	
+	// plot initial empty line chart
 	lineChart(data);
+	
+	// plot initial empty radar chart
 	radarChart(radarData);
+	
+	// determine pie chart slice colors
 	pieColors(monthFactors, piePath);
+	
+	// plot the initial pie chart based on initial values
 	pieChart(data);
+	
+	// draw the map
 	drawMap(data, nld, monthEfficiency);
 	
 	/* 
 		add a slider to select which month the weather station data should be
 		picked from. Sliding it will re-check weather the station has been changed
-		and if so, loads the month data from the new station.
+		and if so, loads the period data from the new station.
 	*/
 	slider = d3.slider()
 		.scale(d3.scale.ordinal()
@@ -754,7 +791,7 @@ function ready(error, data, nld, monthEfficiency) {
 		calculation(data, monthEfficiency);
 	});
 	
-	// when an orientation is selected, display it in the button and store its value in a variable for calculation
+	// when an orientation is selected, display it in the button and store its values in a variable for calculation
 	$("a[class=orientation-a]").on("click", function(){
 		orientation = $(this).attr("data-orientation");
 		orientationEfficiency = parseFloat($(this).attr("data-efficiency"));
@@ -770,7 +807,7 @@ function ready(error, data, nld, monthEfficiency) {
 		calculation(data, monthEfficiency);
 	});
 	
-	// when a surface is selected, display it in the button and store its value in a variable for calculation
+	// when a surface is selected, display it in the button and store its values in a variable for calculation
 	$("a[class=surface-a]").on("click", function(){
 		surface = parseInt($(this).attr("data-surface"));
 		surfaceScore = parseFloat($(this).attr("surface-score"));
@@ -786,6 +823,7 @@ function ready(error, data, nld, monthEfficiency) {
 				panelScore = d.score;
 				coefficient = d.coefficient;
 				efficiency = d.efficiency;
+				price = d.price;
 			}
 		}); 
 		$("button.button-width-panel").text($(this).text());

@@ -3,6 +3,11 @@ function drawMap(data, nld, monthEfficiency) {
 	var mapHeight = 400;
 	var mapWidth = 350;
 
+	// add an svg element to put the map into	
+	svgNL = d3.select("body").append("svg")
+		.attr("width", mapWidth)
+		.attr("height", mapHeight);
+	
 	// set map projection type
 	var projection = d3.geo.mercator()
 		.scale(1)
@@ -12,11 +17,6 @@ function drawMap(data, nld, monthEfficiency) {
 	var path = d3.geo.path()
 		.projection(projection);
 
-	// add an svg element to put the map into	
-	svgNL = d3.select("body").append("svg")
-		.attr("width", mapWidth)
-		.attr("height", mapHeight);
-		
 	// define tooltip that shows the name of every weather station on the map
 	var mapTip = d3.tip()
 		.attr("class", "tip")
@@ -47,7 +47,7 @@ function drawMap(data, nld, monthEfficiency) {
 		dots.push(dot);
 	});
 				
-	// add circles to map svg
+	// add dots to map svg
     svgNL.selectAll("circle")
 		.data(dots).enter()
 		.append("circle")

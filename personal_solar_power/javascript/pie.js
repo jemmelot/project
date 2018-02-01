@@ -1,4 +1,11 @@
 function pieChart(data) {
+	// select svg to put the pie chart into
+	svgPie = d3.select("#pie"),
+		pieWidth = 260,
+		pieHeight = 260,
+		radius = Math.min(pieWidth, pieHeight) / 2,
+		gPie = svgPie.append("g").attr("transform", "translate(" + (pieWidth / 2 + 15) + "," + (pieHeight / 2 + 15) + ")");
+	
 	// declare pie chart basis	
 	pie = d3.layout.pie()
 			.sort(null)
@@ -8,7 +15,8 @@ function pieChart(data) {
 	piePath = d3.svg.arc()
 		.outerRadius(radius - 10)
 		.innerRadius(0);
-		
+	
+	// text label position arc
 	labelArc = d3.svg.arc()
 		.outerRadius(radius - 45)
 		.innerRadius(radius - 45);	
@@ -20,7 +28,8 @@ function pieChart(data) {
 		.html(function(d) {
 			return "<strong>Bijdrage:<strong> <span>" + parseInt(d.value*100) + "%</span>";
 		});
-		
+	
+	// variable to distribute the slices based on data
 	arc = gPie
 		.datum(monthFactors)
 		.selectAll("path")
@@ -51,6 +60,7 @@ function pieChart(data) {
 	gPie.append("g")
 		.attr("class", "labelText");
 	
+	// add month names to their corresponding slice
 	pieText = gPie.select(".labelText").selectAll("text")
 		.data(pie(monthFactors), function(d) {
 			return d.data["month"]

@@ -1,4 +1,11 @@
 function radarChart(radarData) {
+	// select svg to put radar chart into
+	svgRadar = d3.select("#radar"),
+		radarMargin = {top: 70, right: 70, bottom: 80, left: 80},
+		radarWidth = 550 - radarMargin.left - radarMargin.right,
+		radarHeight = 550 - radarMargin.top - radarMargin.bottom,
+		gRadar = svgRadar.append("g").attr("transform", "translate(" + (radarWidth/2 + radarMargin.left) + "," + (radarHeight/2 + radarMargin.top) + ")");	
+	
 	// define tooltip that shows the value of every radar chart category
 	radarTip = d3.tip()
 		.attr("class", "tip")
@@ -20,27 +27,27 @@ function radarChart(radarData) {
 
 	// more detailed radar chart parameter object
 	cfg = {
-		w: radarWidth,				//Width of the circle
-		h: radarHeight,				//Height of the circle
-		margin: {top: 20, right: 20, bottom: 20, left: 20}, //The margins of the SVG
-		levels: 3,				//How many levels or inner circles should there be drawn
-		maxValue: 0, 			//What is the value that the biggest circle will represent
-		labelFactor: 1.25, 	//How much farther than the radius of the outer circle should the labels be placed
-		wrapWidth: 60, 		//The number of pixels after which a label needs to be given a new line
-		opacityArea: 0.5, 	//The opacity of the area of the blob
-		dotRadius: 4, 			//The size of the colored circles of each blog
-		opacityCircles: 0.1, 	//The opacity of the circles of each blob
-		strokeWidth: 2, 		//The width of the stroke around each blob
-		roundStrokes: false,	//If true the area and stroke will follow a round path (cardinal-closed)
-		color: "orange"		//Color function
+		w: radarWidth,
+		h: radarHeight,
+		margin: {top: 20, right: 20, bottom: 20, left: 20},
+		levels: 3,
+		maxValue: 0,
+		labelFactor: 1.25,
+		wrapWidth: 60,
+		opacityArea: 0.5,
+		dotRadius: 4,
+		opacityCircles: 0.1,
+		strokeWidth: 2,
+		roundStrokes: false,
+		color: "orange"
 	};
 
 	// put all of the options into a variable called cfg
 	if('undefined' !== typeof options){
 		for(var i in options){
 			if('undefined' !== typeof options[i]){ cfg[i] = options[i]; }
-		}//for i
-	}//if
+		}
+	}
 
 	// if the supplied maxValue is smaller than the actual one, replace by the max in the data
 	var maxValue = Math.max(cfg.maxValue, d3.max(radarData, function(i){return d3.max(i.map(function(o){return o.value;}))}));
@@ -56,7 +63,7 @@ function radarChart(radarData) {
 		.range([0, radius])
 		.domain([0, maxValue]);
 		
-	// wrapper for the grid & axes
+	// add wrapper for the grid and axes
 	var axisGrid = gRadar.append("g").attr("class", "axisWrapper");
 		
 	// draw the radar background circles
@@ -72,14 +79,14 @@ function radarChart(radarData) {
 				return "4px";
 			}}); 
 					
-	// create the straight lines radiating outward from the center
+	// define the straight lines radiating outward from the center
 	var axis = axisGrid.selectAll(".axis")
 		.data(allAxis)
 		.enter()
 		.append("g")
 		.attr("class", "axis");
 		
-	// append the lines
+	// append the straight lines
 	axis.append("line")
 		.attr("x1", 0)
 		.attr("y1", 0)
