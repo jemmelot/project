@@ -1,6 +1,6 @@
 /* Jesse Emmelot, 11963522 */
 
-/* style attributes */
+/* line chart attributes */
 path.tempLines {
 	fill: none;
 }
@@ -25,37 +25,22 @@ path.radLines {
 	fill: none;	
 }
 
+#check-radiation {
+	width: 15px;
+	height: 15px;
+}
+
+#check-temperature {
+	width: 15px;
+	height: 15px;
+}
+
 .lines {
 	fill: none;
 	stroke: #000;
 	stroke-width: 2.5px;	
 }
 
-.radar {
-	position: absolute;
-	bottom: 70px;
-	right: 40px;
-}
-
-.radar-description {
-	position: absolute;
-	bottom: 25px;
-	right: 220px;
-	font-size: 16px;
-}
-
-.legend {
-	font-family: 'Raleway', sans-serif;
-	fill: #000;
-}
-
-.pie {
-	position: absolute;
-	left: 650px;
-	top: 80px;
-}
-
-/* line chart attributes */
 .chart {
 	position: absolute;
 	bottom: 35px;
@@ -83,26 +68,74 @@ path.radLines {
 	left: 80px;
 }
 
-.progress-wrapper {
-	position: absolute;
-	top: 300px;
-	right: 500px;
+.xAxis text {
+	stroke: none;
+	fill: black;
 }
 
-.title {
-	position: absolute;
-	top: 25px;
-	left: 400px;
-	font-size: 35px;
-	text-decoration: underline;
+.yAxis path,
+.yAxis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
 }
 
-.progress_svg {
-	position: absolute;
-	left: 630px;
-	top: 15px;
+.yAxis text {
+	stroke: none;
+	font-weight: 600;
+	font-size: 15px;
 }
 
+.yAxisTwo path,
+.yAxisTwo line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+.yAxisTwo text {
+	stroke: none;
+	font-weight: 600;
+	font-size: 15px;
+}
+
+
+/* radar chart attributes */
+.radar {
+	position: absolute;
+	bottom: 70px;
+	right: 40px;
+}
+
+.radar-description {
+	position: absolute;
+	bottom: 25px;
+	right: 220px;
+	font-size: 16px;
+}
+
+.legend {
+	font-family: 'Raleway', sans-serif;
+	fill: #000;
+}
+
+/* pie chart attributes */
+.pie {
+	position: absolute;
+	left: 650px;
+	top: 80px;
+}
+
+.pie-description {
+	position: absolute;
+	left: 685px;
+	top: 360px;
+	font-size: 16px
+}
+
+/* map attributes */
 .map-text {
 	position: absolute;
 	font-size: 15px;
@@ -110,6 +143,21 @@ path.radLines {
 	left: 50px;
 }
 
+/* radial progress bar attributes */
+.radial-progress { 
+	&__text {
+		font-family: Arial, sans-serif;
+		font-size: 2rem;
+		font-weight: bold;
+	}  
+}
+
+#progress {
+ position: absolute
+}
+
+
+/* dropdown menu attributes */
 .btn {
 	font-size: 16px;
 }
@@ -363,39 +411,14 @@ path.radLines {
 }
 
 /*
-	other assets
+	other attributes
 */
-.xAxis text {
-	stroke: none;
-	fill: black;
-}
-
-.yAxis path,
-.yAxis line {
-    fill: none;
-    stroke: grey;
-    stroke-width: 1;
-    shape-rendering: crispEdges;
-}
-
-.yAxis text {
-	stroke: none;
-	font-weight: 600;
-	font-size: 15px;
-}
-
-.yAxisTwo path,
-.yAxisTwo line {
-    fill: none;
-    stroke: grey;
-    stroke-width: 1;
-    shape-rendering: crispEdges;
-}
-
-.yAxisTwo text {
-	stroke: none;
-	font-weight: 600;
-	font-size: 15px;
+.title {
+	position: absolute;
+	top: 25px;
+	left: 400px;
+	font-size: 35px;
+	text-decoration: underline;
 }
 
 text.label {
@@ -403,28 +426,10 @@ text.label {
 	fill: #000;	
 }
 
-.pie-description {
-	position: absolute;
-	left: 685px;
-	top: 360px;
-	font-size: 16px
-}
-
-.radial-progress { 
-	&__text {
-		font-family: Arial, sans-serif;
-		font-size: 2rem;
-		font-weight: bold;
-	}  
-}
-
 .sources {
 	width: 800px;
 }
 
-#progress {
- position: absolute
-}
 
 .btn-sm {
 	position: absolute;
@@ -437,6 +442,7 @@ text.label {
 	width: 800px;
 }
 
+/* tooltip attributes */
 .tip {
 	line-height: 1;
 	padding: 10px;
@@ -462,14 +468,4 @@ text.label {
 	margin: -1px 0 0 0;
 	top: 100%;
 	left: 0;
-}
-
-#check-radiation {
-	width: 15px;
-	height: 15px;
-}
-
-#check-temperature {
-	width: 15px;
-	height: 15px;
 }

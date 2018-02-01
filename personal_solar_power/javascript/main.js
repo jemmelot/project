@@ -222,8 +222,6 @@ panels.forEach(function(d) {
 	)/3; 
 });
 
-console.log(panels)
-
 var bestPanel = 0;
 var worstPanel = 1;
 
@@ -462,7 +460,7 @@ function updateLine(station, monthValue, data, monthEfficiency) {
 							.replace('standaardtijd', 'zomertijd')
 							.replace('00:00:00 GMT+0200 (West-Europa (zomertijd))', ''));
 				focus.select("#focusTextXTwo")
-					.attr("transform", "translate(" + (textX + 110) + "," + (y(yDomainMax) + 15) + ")")
+					.attr("transform", "translate(" + (textX + 80) + "," + (y(yDomainMax) + 15) + ")")
 					.text(function() {
 						if (orientation.length != 0 && angle.length != 0 && surface !=0 && panel != 0 && usage != 0) {
 							return (Math.round(dailyResults(d.temperature, d.radiation, data, monthEfficiency)[0]) + " kWh	" + Math.round(dailyResults(d.temperature, d.radiation, data, monthEfficiency)[1]) + " euro");
@@ -475,7 +473,7 @@ function updateLine(station, monthValue, data, monthEfficiency) {
 					.attr("fill", "#cc0000");
 				focus.select('#focusLineY')
 					.attr('x1', 0).attr('y1', crossY)
-					.attr('x2', 750).attr('y2', crossY);
+					.attr('x2', 780).attr('y2', crossY);
 				focus.select("#focusTextY")
 					.attr("transform", "translate(" + 0 + "," + (crossY - 10) + ")")
 					.text(function() {
@@ -488,7 +486,7 @@ function updateLine(station, monthValue, data, monthEfficiency) {
 					.attr("fill", "#ffcc00");
 				focus.select('#focusLineYTwo')
 					.attr('x1', 0).attr('y1', crossYTwo)
-					.attr('x2', 750).attr('y2', crossYTwo);
+					.attr('x2', 780).attr('y2', crossYTwo);
 				focus.select("#focusTextYTwo")
 					.attr("transform", "translate(" + 0 + "," + (crossYTwo - 10) + ")")
 					.text(function() {
@@ -838,11 +836,11 @@ function ready(error, data, nld, monthEfficiency) {
 				panelScore = d.score;
 				coefficient = d.coefficient;
 				efficiency = d.efficiency;
-				price = d.price;
+				cost = d.price;
+				console.log(cost);
 			}
 		}); 
 		$("button.button-width-panel").text($(this).text());
-		cost = parseInt($(this).attr("data-price"));
 		calculation(data, monthEfficiency);		
 	});
 	

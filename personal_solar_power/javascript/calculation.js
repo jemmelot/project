@@ -69,7 +69,7 @@ function scoreAngle(data, monthEfficiency) {
 	main calculation function
 */
 function calculation(data, monthEfficiency) {
-	if (orientation.length != 0 && angle.length != 0 && surface !=0 && panel.length != 0 && usage != 0) {
+	if (station.length != 0 && orientation.length != 0 && angle.length != 0 && surface !=0 && panel.length != 0 && usage != 0) {
 		
 		// update roof angle score and overall score
 		angleScore = scoreAngle(data, monthEfficiency);				
