@@ -663,7 +663,7 @@ function ready(error, data, nld, monthEfficiency) {
 	}
 	
 	// temperature line turns on or of depending on whether its checkbox is checked or not
-	$(".check-temperature").on("click", function() {
+	$("#check-temperature").on("click", function() {
 		if (tempCheck == 1) {
 			tempCheck = 0
 			d3.select("#tempLine").style("opacity", tempCheck);
@@ -678,7 +678,7 @@ function ready(error, data, nld, monthEfficiency) {
 	})
 	
 	// radiation line turns on or of depending on whether its checkbox is checked or not
-	$(".check-radiation").on("click", function() {
+	$("#check-radiation").on("click", function() {
 		if (radCheck == 1) {
 			radCheck = 0
 			d3.select("#radLine").style("opacity", radCheck);
