@@ -456,3 +456,13 @@ text.label {
 	top: 100%;
 	left: 0;
 }
+
+#check-radiation {
+	width: 15px;
+	height: 15px;
+}
+
+#check-temperature {
+	width: 15px;
+	height: 15px;
+}

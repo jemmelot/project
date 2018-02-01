@@ -8,21 +8,24 @@
 	- https://www.w3schools.com/
 	- https://www.bootply.com/113296
 	- https://github.com/MasterMaps/d3-slider
-	- http://bl.ocks.org/tpreusse/2bc99d74a461b8c0acb1
 	- https://codepen.io/shellbryson/pen/KzaKLe
 	- http://bl.ocks.org/mikehadlow/93b471e569e31af07cd3
 	- https://codepen.io/numberformat/pen/QjLeLP?editors=0110
 	- https://gist.github.com/nbremer/21746a9668ffdf6d8242#file-radarchart-js
 	- https://bl.ocks.org/mbostock/3887235
 	- http://bl.ocks.org/d3noob/e34791a32a54e015f57d
+	- http://bl.ocks.org/vigorousnorth/7331bb51d4f0c2ae0314
+	- http://www.cagrimmett.com/til/2016/08/27/d3-transitions.html
 	
 	Data sources:
 	- http://projects.knmi.nl/klimatologie/daggegevens/selectie.cgi
 	- https://thegrid.rexel.com/en-us/energy_efficiency/w/solar_renewable_and_energy_efficiency/72/how-to-calculate-the-output-of-a-solar-photovoltaic-system---a-detailed-guide#
-	- https://mijnhernieuwbareenergie.be/cfs-file/__key/communityserver-blogs-components-weblogfiles/00-00-00-00-01/Tabel-PV-ori_EB00_ntatie-_2D00_-rendement.jpg
+	- http://www.zonwatt.nl/zonnepanelen-technische-informatie/
 	- https://woonbewust.nl/blog/soorten-zonnepanelen
 	- https://www.zonne-paneel.net/prijs-zonnepanelen/
+	- https://www.zonnepanelen.net/zonnepanelen-plat-dak/
 	- http://www.sun-solar.nl/index.php/product/solar-frontier-sf175-s-paneel-135-euro-incl-btw-sunsolar/
+	- https://eosweb.larc.nasa.gov/cgi-bin/sse/grid.cgi?&num=186143&lat=52.1&submit=Submit&hgt=100&veg=17&sitelev=&email=skip@larc.nasa.gov&p=grid_id&p=ret_tlt0&step=2&lon=5.18
 	- https://www.essent.nl/content/particulier/kennisbank/zonnepanelen/opbrengst-zonnepanelen-per-maand.html#
 */
 
@@ -53,23 +56,24 @@ var radarData = [
 	]
 ];
 
-var dutchDate = {
+var dutchDate = d3.locale({
 				"decimal": ".",
 				"thousands": ",",
 				"grouping": [3],
 				"currency": ["$", ""],
 				"dateTime": "%a %b %e %X %Y",
-				"date": "%d/%b/%Y",
+				"date": "%Y-%b-%d",
 				"time": "%H:%M:%S",
 				"periods": ["AM", "PM"],
 				"days": ["zondag", "maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag"],
 				"shortDays": ["zo", "ma", "di", "wo", "do", "vr", "za"],
 				"months": ["januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"],
 				"shortMonths": ["jan", "feb", "maa", "apr", "mei", "jun", "jul", "aug", "sep", "okt", "nov", "dec"]
-			};
+			});
 
 // define date format
 var format = d3.time.format("%Y-%b-%d").parse;
+//var format = dutchDate.timeFormat("%Y-%b-%d").parse;
 
 var bisectDate = d3.bisector(function(d) { return d.date; }).left;
 
@@ -94,8 +98,8 @@ var	xAxis;
 var yAxis;
 var yAxisTwo;
 var focus;
-var tempActive = 1;
-var radActive = 1;
+var tempCheck = 1;
+var radCheck = 1;
 
 var arc;
 var pieText;
@@ -376,7 +380,7 @@ function updateLine(station, monthValue, data, monthEfficiency) {
 	}				
 	newLine.select(".yAxis")
 		.duration(500)
-		.call(yAxis.tickValues((d3.range(yDomainMin, yDomainMax, 2))));
+		.call(yAxis.tickFormat(d3.format(2)));
 	
 	// define radiation domains
 	xDomain = x.domain(d3.extent(lineData, function(d) { return d.date; }));
@@ -405,7 +409,7 @@ function updateLine(station, monthValue, data, monthEfficiency) {
 	}				
 	newLine.select(".yAxisTwo")
 		.duration(500)
-		.call(yAxisTwo);	
+		.call(yAxisTwo.tickFormat(d3.format(200)));	
 	
 	// add an invisible chart sizes rectangle to track mouse position for crosshairs
 	gChart.append('rect')
@@ -434,39 +438,9 @@ function updateLine(station, monthValue, data, monthEfficiency) {
 				/*
 					add all crosshair parts which follow the cursor around
 				*/
-				focus.select('#focusCircle')
-					.attr('cx', crossX)
-					.attr('cy', crossY)
-					.attr("stroke", "#cc0000")
-					.attr("fill", "#cc0000");
-				focus.select('#focusCircleTwo')
-					.attr('cx', crossX)
-					.attr('cy', crossYTwo)
-					.attr("stroke", "#ffcc00")
-					.attr("fill", "#ffcc00");
 				focus.select('#focusLineX')
 					.attr('x1', crossX).attr('y1', y(yDomainMin))
 					.attr('x2', crossX).attr('y2', y(yDomainMax));
-				focus.select('#focusLineY')
-					.attr('x1', 0).attr('y1', crossY)
-					.attr('x2', 750).attr('y2', crossY);
-				focus.select('#focusLineYTwo')
-					.attr('x1', 0).attr('y1', crossYTwo)
-					.attr('x2', 750).attr('y2', crossYTwo);
-				focus.select("#focusTextY")
-					.attr("transform", "translate(" + 0 + "," + (crossY - 10) + ")")
-					.text(function() {
-						if (tempActive == true) {
-							return (d.temperature + " °C");
-						}
-					});
-				focus.select("#focusTextYTwo")
-					.attr("transform", "translate(" + 0 + "," + (crossYTwo - 10) + ")")
-					.text(function() {
-						if (radActive == true) {
-							return (d.radiation + " J/cm2");
-						};						
-					});						
 				focus.select("#focusTextX")
 					.attr("transform", "translate(" + (textX + 45) + "," + (y(yDomainMax) - 15) + ")")
 					.text(d.date.toString()
@@ -479,7 +453,48 @@ function updateLine(station, monthValue, data, monthEfficiency) {
 						if (orientation.length != 0 && angle.length != 0 && surface !=0 && panel != 0 && usage != 0) {
 							return (Math.round(dailyResults(d.temperature, d.radiation, data, monthEfficiency)[0]) + " kWh	" + Math.round(dailyResults(d.temperature, d.radiation, data, monthEfficiency)[1]) + " euro");
 						}
-					});
+					});					
+				
+				focus.select('#focusCircle')
+					.attr('cx', crossX)
+					.attr('cy', crossY)
+					.attr("stroke", "#cc0000")
+					.attr("fill", "#cc0000");
+				focus.select('#focusLineY')
+					.attr('x1', 0).attr('y1', crossY)
+					.attr('x2', 750).attr('y2', crossY);
+				focus.select("#focusTextY")
+					.attr("transform", "translate(" + 0 + "," + (crossY - 10) + ")")
+					.text(function() {
+						return (d.temperature + " °C");
+					});											
+				focus.select('#focusCircleTwo')
+					.attr('cx', crossX)
+					.attr('cy', crossYTwo)
+					.attr("stroke", "#ffcc00")
+					.attr("fill", "#ffcc00");
+				focus.select('#focusLineYTwo')
+					.attr('x1', 0).attr('y1', crossYTwo)
+					.attr('x2', 750).attr('y2', crossYTwo);
+				focus.select("#focusTextYTwo")
+					.attr("transform", "translate(" + 0 + "," + (crossYTwo - 10) + ")")
+					.text(function() {
+						return (d.radiation + " J/cm2");
+					});	
+
+				focus.select('#focusCircle')
+					.attr('opacity', tempCheck)
+				focus.select('#focusLineY')
+					.attr('opacity', tempCheck)
+				focus.select("#focusTextY")
+					.attr('opacity', tempCheck)
+				focus.select('#focusCircleTwo')
+					.attr('opacity', radCheck)
+				focus.select('#focusLineYTwo')
+					.attr('opacity', radCheck)
+				focus.select("#focusTextYTwo")
+					.attr('opacity', radCheck)
+				
 			};
 		});
 }	
@@ -524,9 +539,26 @@ function updatePie(newPieData) {
 			.style("fill", function(d) {return d.data["color"];});
 	}		
 	
-	pieText.select("text").transition()
-		.duration(500)
-		.attrTween("transform", labelArcTween);
+	gPie.select(".labelText").remove();	
+	gPie.append("g")
+	.attr("class", "labelText");
+
+	var pieText = gPie.select(".labelText").selectAll("text")
+		.data(pie(monthFactors), function(d) {
+			return d.data["month"]
+		})
+		.enter()
+		.append("text")	
+		.attr("transform", function(d) { 
+			var midAngle = d.endAngle < Math.PI ? d.startAngle/2 + d.endAngle/2 : d.startAngle/2  + d.endAngle/2 + Math.PI ;
+			return "translate(" + labelArc.centroid(d)[0] + "," + labelArc.centroid(d)[1] + ") rotate(-90) rotate(" + (midAngle * 180/Math.PI) + ")"; })
+		.attr("dy", "0.35em")
+		.attr("font-size", "15px")
+		.attr('text-anchor','middle')
+		.text(function(d) { return d.data["month"]; })
+		.each(function(d) {
+			this._current = d;			
+		});
 };
 	
 function arcTween(a) {
@@ -536,15 +568,6 @@ function arcTween(a) {
 		return piePath(i(t));
 	};
 };	
-
-function labelArcTween(a) {
-	var i = d3.interpolate(this._current, a);
-	this._current = i(0);
-	return function(t) {
-		var midAngle = i(t).endAngle < Math.PI ? i(t).startAngle/2 + i(t).endAngle/2 : i(t).startAngle/2  + i(t).endAngle/2 + Math.PI ;
-		return "translate(" + labelArc.centroid(i(t))[0] + "," + labelArc.centroid(i(t))[1] + ") rotate(-90) rotate(" + (midAngle * 180/Math.PI) + ")";
-	};
-};
 
 function updateProgress(houseScore) {
 	colours = {
@@ -641,25 +664,31 @@ function ready(error, data, nld, monthEfficiency) {
 	
 	// temperature line turns on or of depending on whether its checkbox is checked or not
 	$(".check-temperature").on("click", function() {
-		tempActive = tempLine.active ? false : true;
-		
-		newTempOpacity = tempActive ? 0 : 1;
-		
-		d3.select("#tempLine").style("opacity", newTempOpacity);
-		
-		tempLine.active = tempActive;
+		if (tempCheck == 1) {
+			tempCheck = 0
+			d3.select("#tempLine").style("opacity", tempCheck);
+		}
+		else {
+			tempCheck = 1
+			d3.select("#tempLine").style("opacity", tempCheck);
+		};
+				
+		updateLine(station, monthValue, data, monthEfficiency);
 					
 	})
 	
 	// radiation line turns on or of depending on whether its checkbox is checked or not
 	$(".check-radiation").on("click", function() {
-		radActive = radLine.active ? false : true;
+		if (radCheck == 1) {
+			radCheck = 0
+			d3.select("#radLine").style("opacity", radCheck);
+		}
+		else {
+			radCheck = 1
+			d3.select("#radLine").style("opacity", radCheck);
+		};
 		
-		newRadOpacity = radActive ? 0 : 1;
-		
-		d3.select("#radLine").style("opacity", newRadOpacity);
-		
-		radLine.active = radActive;	
+		updateLine(station, monthValue, data, monthEfficiency);
 	})	
 	
 	lineChart(data);

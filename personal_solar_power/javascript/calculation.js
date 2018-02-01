@@ -101,7 +101,7 @@ function calculation(data, monthEfficiency) {
 		});
 		pieColors(monthFactors, piePath);
 		
-		//updatePie(monthFactors);
+		updatePie(monthFactors);
 							
 		// update result div values when a new calculation is made
 		if (monthValue == "Jaar") {
